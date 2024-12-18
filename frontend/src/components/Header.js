@@ -64,25 +64,20 @@ function Header() {
             backdropFilter: 'blur( 8.5px )',
           }}
         >
-          <div className="logo h-[50px] w-[150px] flex justify-start items-center">
+          <Link to="/">
+          <div  className="logo h-[50px] w-[150px] flex justify-start items-center">
             <img
               src={require('../assets/logo.png')}
               className="h-[85px] w-[85px] relative top-[3px]"
               alt="Logo"
             />
           </div>
+          </Link>
+          
           <div className="navabar w-[40%] h-[40px]">
             <nav className="h-full w-full">
               <ul className="flex gap-[10%] items-center justify-center h-full w-full">
-                <li
-                  onMouseEnter={() => handleMouseEnter(0)}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  <Link to="/home" style={linkStyle(0)}>
-                    Home
-                    <span style={lineStyle(0)}></span>
-                  </Link>
-                </li>
+               
                 <li
                   onMouseEnter={() => handleMouseEnter(1)}
                   onMouseLeave={handleMouseLeave}

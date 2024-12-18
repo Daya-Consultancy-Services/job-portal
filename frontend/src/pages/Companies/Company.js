@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import Header from '../home/Header';
+import HomeHeader from '../home/Header';
 import Slider from './Slider';
 import SideBar from './SideBar';
 import Footer from '../../components/Footer';
 import Main from './Main';
+import Header from '../../components/Header';
 
 function Company() {
   const compCard = [
@@ -51,6 +52,8 @@ function Company() {
     },
   ];
 
+    const isLogin = true;
+
   // Default state for displaying all cards
   const [compFilteredList, setCompFilteredList] = useState(compCard);
 
@@ -58,7 +61,12 @@ function Company() {
     <div className="bg-slate-50">
       {/* Fixed Header */}
       <div className="header fixed z-[99999]">
-        <Header />
+             {/* Conditional Rendering of Header */}
+       {isLogin ? (
+            <HomeHeader />
+          ) : (
+           <Header/>
+          )}
       </div>
       <div className="layout-container min-h-[200vh] w-full flex flex-col items-center z-[-1]">
         <div className="h-[80px] bg-red-400"></div>

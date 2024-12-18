@@ -3,8 +3,11 @@ import Header from "../../components/Header";
 import Sidebar from "./Sidebar";
 import Main from "./Main";
 import HeadBar from "./HeadBar";
+import HomeHeader from "../home/Header";
 
 function Jobs() {
+
+  
   
   const cards = [
     {
@@ -44,19 +47,27 @@ function Jobs() {
 
   // State for filtered jobs
   const [filteredList, setFilteredList] = useState(cards);
+  const isLogin = true;
 
   return (
     <div>
-      <Header />
+     
       <div className="layout-container h-[200vh] flex flex-col">
         {/* Header */}
         <header
-          className="relative text-white text-center py-4 text-xl font-semibold h-[250px]"
+          className="relative text-white text-center  text-xl font-semibold h-[250px]"
           style={{
             background:
               "linear-gradient(141deg, rgba(254,243,240,1) 5%, rgba(252,203,214,1) 30%, rgba(238,155,227,1) 84%)",
           }}
         >
+           
+       {/* Conditional Rendering of Header */}
+       {isLogin ? (
+            <HomeHeader />
+          ) : (
+           <Header/>
+          )}
           <HeadBar />
         </header>
 
