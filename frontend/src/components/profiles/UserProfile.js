@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Header from '../../pages/home/Header';
 import Footer from '../Footer';
 import { FaPencilAlt } from "react-icons/fa";
@@ -10,6 +10,10 @@ import { MdLocalPhone } from "react-icons/md";
 import { CiMail } from "react-icons/ci";
 import { TbDeviceMobileCheck } from "react-icons/tb";
 import ResumeUpload from './ResumeUpload';
+import EducationForm from './EducationForm';
+import SkillsForm from './SkillForm';
+import ProjectForm from './ProjectForm';
+import ProfileSummery from './ProfileSummery';
 
 function UserProfile() {
     const [profileImage, setProfileImage] = useState(require('../../assets/profile.png'));
@@ -21,6 +25,62 @@ function UserProfile() {
     const [type, setType] = useState('Fresher');
     const [join, setJoin] = useState('Immediate');
     const [activeLink, setActiveLink] = useState('resume');
+    const [isEducationVisible, setEducationVisible] = useState(false);
+    const [educationData, setEducationData] = useState(null); // State to store the submitted education data
+
+    const [isSkillsVisible, setSkillsVisible] = useState(false);
+    const [skillsData, setSkillsData] = useState([]);
+    const [isProjectVisible, setProjectVisible] = useState(false);
+    const [projectsData, setProjectsData] = useState([]);
+    const [isPersonalDetailsVisible, setPersonalDetailsVisible] = useState(false);
+    const [personalDetails, setPersonalDetails] = useState('');
+
+    const handleButtonClick1 = () => {
+        setEducationVisible(!isEducationVisible);
+    };
+
+
+    const handleEducationSaved = (data) => {
+        setEducationData(data); // Save the education data in the parent state
+        setEducationVisible(false); // Close the popup
+    };
+
+
+
+    const handleButtonClick2 = () => {
+        setSkillsVisible(!isSkillsVisible);
+    };
+
+
+    const handleSkillsSaved = (data) => {
+        if (data) {
+            setSkillsData([...skillsData, data]); // Add new skill to the array
+        }
+        setSkillsVisible(false); // Close the popup
+    };
+
+    const handleButtonClick3 = () => {
+        setProjectVisible(!isProjectVisible);
+    };
+
+    const handleProjectSaved = (data) => {
+        if (data) {
+            setProjectsData([...projectsData, data]); // Add new project to the array
+        }
+        setProjectVisible(false); // Close the popup
+    };
+
+
+    const handleButtonClick4 = () => {
+        setPersonalDetailsVisible(!isPersonalDetailsVisible);
+    };
+
+    const handlePersonalDetailsSaved = (details) => {
+        if (details) {
+            setPersonalDetails(details); // Update personal details state
+        }
+        setPersonalDetailsVisible(false); // Close the popup
+    };
 
 
     const mainSectionRef = useRef(null);
@@ -64,13 +124,24 @@ function UserProfile() {
         setActiveLink(div);
         const targetElement = document.getElementById(div);
         if (targetElement) {
-            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     };
 
-  
 
-   
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     return (
         <>
@@ -182,13 +253,13 @@ function UserProfile() {
                                     </div>
 
                                     <div className="links  h-[500px] w-full bg-white p-4 flex flex-col gap-4 rounded-lg">
-                                        <div onClick={() => scrollToDiv('Resume')} className={`Resume flex justify-between items-center p-1 hover:font-semibold cursor-pointer ${activeLink === 'Resume' ? 'bg-[#ffdfdf]' : ''} `}><h3>Resume</h3> <p className='text-blue-600 font-semibold cursor-pointer hover:text-blue-800 '>Upload</p></div>
-                                        <div onClick={() => scrollToDiv('Resume-headline')} className={`Resume headline flex justify-between items-center p-1 hover:font-semibold cursor-pointer ${activeLink === 'Resume headline' ? 'bg-[#ffdfdf]' : ''} `}><h3>Resume headline</h3> <p className='text-blue-600 font-semibold cursor-pointer hover:text-blue-800 '>Add</p></div>
-                                        <div onClick={() => scrollToDiv('key-skills')} className={`Key-skills flex justify-between items-center p-1 hover:font-semibold cursor-pointer ${activeLink === 'resume' ? 'bg-[#ffdfdf]' : ''} `}><h3>Key skills</h3> <p className='text-blue-600 font-semibold cursor-pointer hover:text-blue-800 '>Add</p></div>
-                                        <div onClick={() => scrollToDiv('education')} className={`Education flex justify-between items-center p-1 hover:font-semibold cursor-pointer ${activeLink === 'resume' ? 'bg-[#ffdfdf]' : ''} `}><h3>Education</h3> <p className='text-blue-600 font-semibold cursor-pointer hover:text-blue-800 '>Add</p></div>
-                                        <div onClick={() => scrollToDiv('IT-skills')} className={`IT-skills flex justify-between items-center p-1 hover:font-semibold cursor-pointer  ${activeLink === 'resume' ? 'bg-[#ffdfdf]' : ''}`}><h3>IT skills</h3> <p className='text-blue-600 font-semibold cursor-pointer hover:text-blue-800 '>Add</p></div>
-                                        <div onClick={() => scrollToDiv('Projects')} className={`Projects flex justify-between items-center p-1 hover:font-semibold cursor-pointer ${activeLink === 'resume' ? 'bg-[#ffdfdf]' : ''} `}><h3>Projects</h3> <p className='text-blue-600 font-semibold cursor-pointer hover:text-blue-800 '>Add</p></div>
-                                        <div onClick={() => scrollToDiv('Profile-summery')} className={`Profile-summery flex justify-between items-center p-1 hover:font-semibold cursor-pointer ${activeLink === 'resume' ? 'bg-[#ffdfdf]' : ''} `}><h3>Profile summery</h3> <p className='text-blue-600 font-semibold cursor-pointer hover:text-blue-800 '>Add</p></div>
+                                        <div onClick={() => scrollToDiv('Resume')} className={`Resume flex justify-between items-center p-1 hover:font-semibold cursor-pointer ${activeLink === 'Resume' ? 'bg-[#ffdfdf]' : ''} `}><h3>Resume</h3> </div>
+                                        <div onClick={() => scrollToDiv('Resume-headline')} className={`Resume headline flex justify-between items-center p-1 hover:font-semibold cursor-pointer  `}><h3>Resume headline</h3> </div>
+                                        <div onClick={() => scrollToDiv('key-skills')} className={`Key-skills flex justify-between items-center p-1 hover:font-semibold cursor-pointer  `}><h3>Key skills</h3> </div>
+                                        <div onClick={() => scrollToDiv('education')} className={`Education flex justify-between items-center p-1 hover:font-semibold cursor-pointer  `}><h3>Education</h3> </div>
+                                        <div onClick={() => scrollToDiv('IT-skills')} className={`IT-skills flex justify-between items-center p-1 hover:font-semibold cursor-pointer  `}><h3>IT skills</h3> </div>
+                                        <div onClick={() => scrollToDiv('Projects')} className={`Projects flex justify-between items-center p-1 hover:font-semibold cursor-pointer  `}><h3>Projects</h3> </div>
+                                        <div onClick={() => scrollToDiv('Profile-summery')} className={`Profile-summery flex justify-between items-center p-1 hover:font-semibold cursor-pointer  `}><h3>Profile summery</h3> </div>
                                         <div onClick={() => scrollToDiv('Accomplishments')} className="Accomplishments flex"><h3>Acomplishments</h3></div>
                                         <div onClick={() => scrollToDiv('Career-profile')} className="Career-profile flex"><h3>Career profile</h3></div>
                                         <div onClick={() => scrollToDiv('Personal-details')} className="Personal-details flex"><h3>Personal Details</h3></div>
@@ -201,74 +272,165 @@ function UserProfile() {
                                     <div className="head">
                                         <div className=""><h1 className='font-semibold text-2xl'>Resume </h1> <p className='text-green-400'>Add 10%</p></div>
                                         <p className='text-zinc-400'>70% of recruiters discover candidates through their resume</p>
-                                        
-                                        
+
+
                                     </div>
-                                    <ResumeUpload/>
+                                    <ResumeUpload />
                                 </div>
                                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Resume-headline'>
-                                <div className="head flex w-full justify-between px-4">
-                                <div className="flex justify-between px-2 h-fit w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Resume headline</h1> <p className='text-green-400'>Add 8%</p></div>
-                                <h1 className='text-blue-700 font-semibold'>Add resume headline</h1>
-                                </div>
-                                <p className='text-zinc-400 px-6'>Add a summary of your resume to introduce yourself to recruiters</p>
+                                    <div className="head flex w-full justify-between px-4">
+                                        <div className="flex justify-between px-2 h-fit w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Resume headline</h1> <p className='text-green-400'>Add 8%</p></div>
+                                        <h1 className='text-blue-700 font-semibold cursor-pointer' onClick={() => togglePopup('add resume headlines')}>Add resume headline</h1>
+                                    </div>
+                                    <p className='text-zinc-400 px-6'>Add a summary of your resume to introduce yourself to recruiters</p>
                                 </div>
                                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='key-skills'>
-                                <div className="head flex w-full justify-between px-4">
-                                <div className="flex justify-between px-2 w-fit gap-5 items-center"><h1 className='font-semibold text-2xl'>Key skills</h1> <p className='text-green-400'>Add 8%</p></div>
-                                <h1 className='text-blue-700 font-semibold'>Add key Skills</h1>
+                                    <div className="head flex w-full justify-between px-4">
+                                        <div className="flex justify-between px-2 w-fit gap-5 items-center"><h1 className='font-semibold text-2xl'>Key skills</h1> <p className='text-green-400'>Add 8%</p></div>
+                                        <h1 className='text-blue-700 font-semibold cursor-pointer' onClick={() => togglePopup('Add key skills')}>Add key Skills</h1>
+                                    </div>
+                                    <p className='text-zinc-400 px-6'>Recruiters look for candidates with specific key skills</p>
                                 </div>
-                                <p className='text-zinc-400 px-6'>Recruiters look for candidates with specific key skills</p>
-                                </div>
+
+
+
                                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='education'>
-                                <div className="head flex w-full justify-between px-4">
-                                <div className="flex justify-between px-2 w-fit gap-5 items-center"><h1 className='font-semibold text-2xl'>Education</h1> <p className='text-green-400'>Add 10%</p></div>
-                                <h1 className='text-blue-700 font-semibold'>Add education</h1>
+                                    <div className="head flex w-full px-4 flex-col">
+                                        <div className="flex justify-between w-full"><div className="flex justify-between px-2 w-fit gap-5 items-center"><h1 className='font-semibold text-2xl'>Education</h1> <p className='text-green-400'>Add 10%</p></div>
+                                            <h1 className='text-blue-700 font-semibold cursor-pointer flex flex-col' onClick={handleButtonClick1}>Add education</h1></div>
+
+                                        {isEducationVisible && (
+                                            <EducationForm onSave={handleEducationSaved} />
+                                        )}
+
+                                        {educationData && (
+                                            <div className="flex justify-between px-2 w-fit gap-5 items-center mt-3">
+
+                                                <div className='flex flex-col'>
+                                                    <p><strong>University/Institute:</strong> {educationData.universityOrInstitute}</p>
+                                                    <p><strong>Course:</strong> {educationData.course}</p>
+                                                    <p><strong>Specialization:</strong> {educationData.specialization}</p>
+                                                    <p><strong>Course Type:</strong> {educationData.courseType}</p>
+                                                    <p><strong>Course Duration:</strong> From {educationData.courseDurationFrom} To {educationData.courseDurationTo}</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <p className='text-zinc-400 px-6'>Your qualifications help employers know your educational background</p>
                                 </div>
-                                <p className='text-zinc-400 px-6'>Your qualifications help employers know your educational background</p>
-                                </div>
+
+
                                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='IT-skills'>
-                                <div className="head flex w-full justify-between px-4">
-                                <div className="flex justify-between px-2 w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>IT skills</h1> <p className='text-green-400'>Add 18%</p></div>
-                                <h1 className='text-blue-700 font-semibold'>Add IT skills</h1>
+                                    <div className="head flex w-full justify-between px-4">
+                                        <div className="flex justify-between px-2 w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>IT skills</h1> <p className='text-green-400'>Add 18%</p></div>
+                                        <h1 className='text-blue-700 font-semibold cursor-pointer'
+                                            onClick={handleButtonClick2}>Add IT skills</h1>
+                                    </div>
+                                    <p className='text-zinc-400 px-6'>Show your technical expertise by mentioning softwares and skills you know</p>
+
+                                    {isSkillsVisible && (
+                                        <SkillsForm onSave={handleSkillsSaved} />
+                                    )}
+
+                                    <div className="skills-list mt-6 p-4">
+                                        {skillsData.length > 0 ? (
+                                            skillsData.map((skill, index) => (
+                                                <div key={index} className="skill-entry flex justify-between p-2 border-b">
+                                                    <p><strong>Skill Name:</strong> {skill.skillName}</p>
+                                                    <p><strong>Experience:</strong> {skill.experienceYears} Years, {skill.experienceMonths} Months</p>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <p></p>
+                                        )}
+                                    </div>
                                 </div>
-                                <p className='text-zinc-400 px-6'>Show your technical expertise by mentioning softwares and skills you know</p>
-                                </div>
+
+
+
                                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Projects'>
-                                <div className="head flex w-full justify-between px-4">
-                                <div className="flex justify-between px-2 w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Projects</h1> <p className='text-green-400'>Add 8%</p></div>
-                                <h1 className='text-blue-700 font-semibold'>Add projects</h1>
+                                    <div className="head flex w-full justify-between px-4">
+                                        <div className="flex justify-between px-2 w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Projects</h1> <p className='text-green-400'>Add 8%</p></div>
+                                        <h1 className='text-blue-700 font-semibold cursor-pointer'
+                                            onClick={handleButtonClick3}>Add projects</h1>
+                                    </div>
+                                    <p className='text-zinc-400 px-6'>Stand out to employers by adding details about projects that you have done so far</p>
+                                    {isProjectVisible && (
+                                        <ProjectForm onSave={handleProjectSaved} />
+                                    )}
+
+                                    <div className="projects-list mt-6">
+                                        {projectsData.length > 0 ? (
+                                            projectsData.map((project, index) => (
+                                                <div key={index} className="project-entry flex justify-between p-2 border-b flex-col pl-5">
+                                                    <p><strong>Project Title:</strong> {project.title}</p>
+                                                    <p><strong>Role:</strong> {project.role}</p>
+                                                    <p><strong>Technologies Used:</strong> {project.technologies.join(', ')}</p>
+                                                    <p><strong>Duration:</strong> {project.duration}</p>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <p></p>
+                                        )}
+                                    </div>
                                 </div>
-                                <p className='text-zinc-400 px-6'>Stand out to employers by adding details about projects that you have done so far</p>
-                                </div>
+
+
+
                                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Profile-summery'>
-                                <div className="head flex w-full justify-between px-4">
-                                <div className="flex justify-between px-2 w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Profile summery</h1> <p className='text-green-400'>Add 10%</p></div>
-                                <h1 className='text-blue-700 font-semibold'>Add profile summery</h1>
+                                    <div className="head flex w-full justify-between px-4">
+                                        <div className="flex justify-between px-2 w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Profile summery</h1> <p className='text-green-400'>Add 10%</p></div>
+                                        <h1 className='text-blue-700 font-semibold cursor-pointer'
+                                            onClick={handleButtonClick4}>Add profile summery</h1>
+                                    </div>
+                                    <p className='text-zinc-400 px-6'>Highlight your key career achievements to help employers know your potential</p>
+                                    {isPersonalDetailsVisible && (
+                                        <ProfileSummery
+                                            onSave={handlePersonalDetailsSaved}
+                                            initialDetails={personalDetails} // Pass existing details to the form
+                                        />
+                                    )}
+
+                                    {personalDetails && (
+                                        <div className="personal-details-display mt-6 px-4">
+                                            <h2 className='text-xl font-semibold'>Your Personal Details</h2>
+                                            <p className='text-zinc-600 mt-2'>{personalDetails}</p>
+                                        </div>
+                                    )}
+
                                 </div>
-                                <p className='text-zinc-400 px-6'>Highlight your key career achievements to help employers know your potential</p>
-                                </div>
+
+
+
                                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Accomplishments'>
-                                <div className="head flex w-full justify-between px-4">
-                                <div className="flex justify-between px-2 w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Accomplishments</h1> <p className='text-green-400'>Add 8%</p></div>
-                                <h1 className='text-blue-700 font-semibold'>Add Accomplishments</h1>
+                                    <div className="head flex w-full justify-between px-4">
+                                        <div className="flex justify-between px-2 w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Accomplishments</h1> <p className='text-green-400'>Add 8%</p></div>
+                                        <h1 className='text-blue-700 font-semibold'>Add Accomplishments</h1>
+                                    </div>
+                                    <p className='text-zinc-400 px-6'>Showcase your credentials by adding relevant certifications, work samples, online profiles, etc.</p>
                                 </div>
-                                <p className='text-zinc-400 px-6'>Showcase your credentials by adding relevant certifications, work samples, online profiles, etc.</p>
-                                </div>
+
+
+
                                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Career-profile'>
-                                <div className="head flex w-full justify-between px-4">
-                                <div className="flex justify-between px-2 w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Career Profile</h1> <p className='text-green-400'>Add 18%</p></div>
-                                <h1 className='text-blue-700 font-semibold'>Add Career profile</h1>
+                                    <div className="head flex w-full justify-between px-4">
+                                        <div className="flex justify-between px-2 w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Career Profile</h1> <p className='text-green-400'>Add 18%</p></div>
+                                        <h1 className='text-blue-700 font-semibold'>Add Career profile</h1>
+                                    </div>
+                                    <p className='text-zinc-400 px-6'>Add details about your current and preferred career profile. This helps us personalise your job recommendations.</p>
                                 </div>
-                                <p className='text-zinc-400 px-6'>Add details about your current and preferred career profile. This helps us personalise your job recommendations.</p>
-                                </div>
+
+
+
                                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Personal-details'>
-                                <div className="head flex w-full justify-between px-4">
-                                <div className="flex justify-between px-2 w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Personal details</h1> <p className='text-green-400'>Add 18%</p></div>
-                                <h1 className='text-blue-700 font-semibold'>Add personal details</h1>
+                                    <div className="head flex w-full justify-between px-4">
+                                        <div className="flex justify-between px-2 w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Personal details</h1> <p className='text-green-400'>Add 18%</p></div>
+                                        <h1 className='text-blue-700 font-semibold' >Add personal details</h1>
+                                    </div>
+                                    <p className='text-zinc-400 px-6'>This information is important for employers to know you better</p>
                                 </div>
-                                <p className='text-zinc-400 px-6'>This information is important for employers to know you better</p>
-                                </div>
+
+
                             </div>
 
                         </div>
@@ -279,7 +441,7 @@ function UserProfile() {
                     <Footer />
                 </div>
 
-                {/* Common Popup */}
+                {/*------------------Common Popup ---------------------*/}
                 {isPopupOpen && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                         <div className="bg-white p-5 rounded-lg shadow-lg w-[400px] relative">
@@ -316,7 +478,12 @@ function UserProfile() {
                         </div>
                     </div>
                 )}
-            </div>
+
+
+
+
+
+            </div >
         </>
     );
 }
