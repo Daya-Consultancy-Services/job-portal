@@ -71,7 +71,7 @@ function Company() {
             </div>
           </header>
           {/* Main Content */}
-          <div className="flex flex-1 w-[60%]">
+          <div className="flex flex-1 w-[80%]">
             {/* Sidebar (Aside) */}
             <aside className="w-[25%] p-4 flex justify-center">
               <SideBar
