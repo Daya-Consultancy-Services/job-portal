@@ -15,7 +15,7 @@ function Register() {
         lastName: "",
         email: "",
         password: "",
-        role:ROLE_TYPE.JOBSEEKER
+        role: ROLE_TYPE.JOBSEEKER
 
     });
     
@@ -59,7 +59,7 @@ function Register() {
 
     // const getBorderClass = (status) =>
     //     selectedStatus === status ? 'border-blue-500' : 'border-gray-300';
-    const {firstName, lastName, email, password} = formData
+    const {firstName, lastName, email, password,role} = formData
 
     const handleChange = (e) => {
         setFormData((prevData) => ({
@@ -95,22 +95,18 @@ function Register() {
     }
 
 
-    const signupData = {
-        ...formData,
-    }
+
     
 
-
-
-    dispatch(setSignupData(signupData))
-
-
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         // if (validateForm()) {
+
             const signupData = { ...formData};
+            console.log(signupData)
             
             dispatch(setSignupData(signupData))
+            console.log(process.env.REACT_APP_BASE_URL )
      
 
             //for reseting after submiting
@@ -119,8 +115,9 @@ function Register() {
                 lastName: '',
                 email: '',
                 password: '',
-                role: ROLE_TYPE.JOBSEEKER,
+                role:ROLE_TYPE.JOBSEEKER
             });
+            
 
             // setRole(ROLE_TYPE.JOBSEEKER);
         // } else {
@@ -214,7 +211,7 @@ function Register() {
                                             placeholder="Enter your password (min 6 characters)"
                                         />
                                     </div>
-                                    {/*<div className="mb-4">
+                                    <div className="mb-4">
                                         <label className="block text-gray-700 font-medium mb-2">
                                             Role <span className="text-red-500">*</span>
                                         </label>
@@ -223,10 +220,10 @@ function Register() {
                                             name="role"
                                             value={role}
                                             onChange={handleChange}
-                                            className={inputClass('roleType')}
+                                            //className={inputClass('roleType')}
                                             placeholder="Enter your role"
                                         />
-                                    </div>*/}
+                                    </div>
                                     {/* <div className="mb-4">
                                         <label className="block text-gray-700 font-medium mb-2">
                                             Phone Number 

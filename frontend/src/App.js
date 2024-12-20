@@ -11,6 +11,7 @@ import CompanyLogin from "./components/auth/Company/CompanyLogin";
 import CompanySignUp from "./components/auth/Company/CompanySignUp";
 import Profile from "./components/profiles/UserProfile";
 
+
 function App() {
   return (
     <Router>
