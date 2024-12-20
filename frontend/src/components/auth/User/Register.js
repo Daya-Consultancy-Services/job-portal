@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link  , useNavigate } from 'react-router-dom'
+import axios from 'axios';
 
 function Register() {
     const [formData, setFormData] = useState({
@@ -8,6 +9,8 @@ function Register() {
         password: '',
         phoneNumber: '',
     });
+
+    const navigate = useNavigate();
 
     const [errors, setErrors] = useState({});
     const [selectedStatus, setSelectedStatus] = useState('');
@@ -74,20 +77,33 @@ function Register() {
     }
 
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+    
         if (validateForm()) {
-            alert(`
-        Name: ${formData.name}
-        Email: ${formData.email}
-        Password: ${formData.password}
-        Phone Number: ${formData.phoneNumber}
-        Location: ${location}
-        Resume: ${resume? resume.name : 'No resume uploaded'}
-        Status: ${selectedStatus}
-      `);
+            const payload = {
+                firstName: formData.name.split(' ')[0] || '', 
+                lastName: formData.name.split(' ')[1] || '', 
+                email: formData.email,
+                password: formData.password,
+                phoneNumber: formData.phoneNumber,
+                role: selectedStatus === 'experienced' ? 'experienced' : 'jobseeker',
+                location: selectedStatus === 'fresher' ? location : null,
+            };
+    
+            try {
+                const response = await axios.post('http://localhost:5000/api/signup', payload);
+                console.log('User registered successfully:', response.data);
+    
+                alert('Registration Successful!');
+                navigate('/components/auth/User/login'); 
+            } catch (error) {
+                console.error('Error during registration:', error.response?.data || error.message);
+                alert('Registration failed. Please try again.');
+            }
         }
     };
+    
     const isFormValid = 
     formData.name.trim() !== "" &&
     formData.email.trim() !== "" &&
