@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 
+
 // all routes from router
 const userRoute = require("./routes/UserRoutes")
 const profileRoute = require("./routes/ProfileRoutes")

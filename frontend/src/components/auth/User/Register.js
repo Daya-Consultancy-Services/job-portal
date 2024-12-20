@@ -1,119 +1,143 @@
 import React, { useState } from 'react'
-import { Link  , useNavigate } from 'react-router-dom'
-import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom'
+import { toast } from "react-hot-toast"
+// import { userPoint } from '../../../services/apis';
+import { ROLE_TYPE } from '../../../slices/constant';
+import { useDispatch } from "react-redux"
+import { setSignupData } from "../../../slices/userSlice"
 
 function Register() {
+    const navigate = useNavigate();
+    const dispatch = useDispatch()
     const [formData, setFormData] = useState({
-        name: '',
+        firstName: '',
+        lastName: '',
         email: '',
         password: '',
-        phoneNumber: '',
+  
+
     });
-
-    const navigate = useNavigate();
-
+    
+    const [role, setRole] = useState(ROLE_TYPE.JOBSEEKER)
     const [errors, setErrors] = useState({});
-    const [selectedStatus, setSelectedStatus] = useState('');
-    const [location, setLocation] = useState('');
-    const [resume, setResume] = useState(null);
-    const [suggestions, setSuggestions] = useState([]);
-    const [locationsList] = useState([
-        'New York',
-        'Los Angeles',
-        'Chicago',
-        'Houston',
-        'Phoenix',
-        'San Francisco',
-        'Seattle',
-    ]);
+    // const [selectedStatus, setSelectedStatus] = useState('');
+    // const [location, setLocation] = useState('');
+    // const [resume, setResume] = useState(null);
+    // const [suggestions, setSuggestions] = useState([]);
+    // const [locationsList] = useState([
+    //     'New York',
+    //     'Los Angeles',
+    //     'Chicago',
+    //     'Houston',
+    //     'Phoenix',
+    //     'San Francisco',
+    //     'Seattle',
+    // ]);
 
-    const handleClick = (status) => {
-        setSelectedStatus(status);
-        setLocation('');
-        setSuggestions([]);
-    };
 
-    const handleLocationChange = (e) => {
-        const userInput = e.target.value;
-        setLocation(userInput);
-        setSuggestions(
-            locationsList.filter((loc) =>
-                loc.toLowerCase().startsWith(userInput.toLowerCase())
-            )
-        );
-    };
-    const handleResumeChange = (e) => {
-        setResume(e.target.files[0]);
-      };
+    // const navigate = useNavigate();
 
-    const getBorderClass = (status) =>
-        selectedStatus === status ? 'border-blue-500' : 'border-gray-300';
+    // const handleClick = (status) => {
+    //     setSelectedStatus(status);
+    //     setLocation('');
+    //     setSuggestions([]);
+    // };
+
+    // const handleLocationChange = (e) => {
+    //     const userInput = e.target.value;
+    //     setLocation(userInput);
+    //     setSuggestions(
+    //         locationsList.filter((loc) =>
+    //             loc.toLowerCase().startsWith(userInput.toLowerCase())
+    //         )
+    //     );
+    // };
+    // const handleResumeChange = (e) => {
+    //     setResume(e.target.files[0]);
+    //   };
+
+    // const getBorderClass = (status) =>
+    //     selectedStatus === status ? 'border-blue-500' : 'border-gray-300';
+    const {firstName, lastName, email, password} = formData
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-
-        setErrors({ ...errors, [name]: false });
+        setFormData((prevData) => ({
+            ...prevData,
+            [e.target.name]: e.target.value,
+          }))
     };
 
 
     //----------------- form validation methods -----------------------
     const validateForm = () => {
         const newErrors = {};
-        if (!formData.name.trim()) {
-            newErrors.name = true;
+        if (!formData.firstName.trim()) {
+            newErrors.firstName = true;
+        }
+        if (!formData.lastName.trim()) {
+            newErrors.lastName = true;
         }
         if (!/\S+@\S+\.\S+/.test(formData.email)) {
             newErrors.email = true;
         }
-        if (formData.password.length < 6) {
+        if (!formData.password.length >= 6) {
             newErrors.password = true;
         }
-        if (!/^\d{10}$/.test(formData.phoneNumber)) {
-            newErrors.phoneNumber = true;
+        if (!formData.role.trim()) {
+            newErrors.role = true;
         }
+        // if (!/^\d{10}$/.test(formData.phoneNumber)) {
+        //     newErrors.phoneNumber = true;
+        // }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     }
 
 
+    const signupData = {
+        ...formData,
+        ROLE_TYPE,
+    }
+
+
+
+    dispatch(setSignupData(signupData))
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
-        if (validateForm()) {
-            const payload = {
-                firstName: formData.name.split(' ')[0] || '', 
-                lastName: formData.name.split(' ')[1] || '', 
-                email: formData.email,
-                password: formData.password,
-                phoneNumber: formData.phoneNumber,
-                role: selectedStatus === 'experienced' ? 'experienced' : 'jobseeker',
-                location: selectedStatus === 'fresher' ? location : null,
-            };
-    
-            try {
-                const response = await axios.post('http://localhost:5000/api/signup', payload);
-                console.log('User registered successfully:', response.data);
-    
-                alert('Registration Successful!');
-                navigate('/components/auth/User/login'); 
-            } catch (error) {
-                console.error('Error during registration:', error.response?.data || error.message);
-                alert('Registration failed. Please try again.');
-            }
-        }
-    };
-    
-    const isFormValid = 
-    formData.name.trim() !== "" &&
-    formData.email.trim() !== "" &&
-    formData.password.trim().length >= 6 &&
-    selectedStatus && 
-    ((selectedStatus === 'experienced' ) || 
-     (selectedStatus === 'fresher'));
+        // if (validateForm()) {
+            const signupData = { ...formData, ROLE_TYPE };
+           console.log( dispatch(setSignupData(signupData)))
+     
 
-    const inputClass = (field) =>
-        `w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`;
+            //for reseting after submiting
+            setFormData({
+                firstName: '',
+                lastName: '',
+                email: '',
+                password: '',
+                role: '',
+            });
+
+            setRole(ROLE_TYPE.JOBSEEKER);
+        // } else {
+        //     alert("Form is not valid.");
+        // }
+    };
+    // const isFormValid =
+    //     formData.firstName.trim() !== "" &&
+    //     formData.lastName.trim() !== "" &&
+    //     formData.email.trim() !== "" &&
+    //     formData.password.trim().length >= 6 &&
+    //     formData.role.trim() !== "";
+    // selectedStatus && 
+    // ((selectedStatus === 'experienced' ) || 
+    //  (selectedStatus === 'fresher'));
+
+
+
+    const inputClass = (field) => `w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`
     return (
         <>
             <div className="div min-h-[100vh] w-full bg-zinc-100">
@@ -138,12 +162,25 @@ function Register() {
                                 <form onSubmit={handleSubmit}>
                                     <div className="mb-4">
                                         <label className="block text-gray-700 font-medium mb-2">
-                                            Name <span className="text-red-500">*</span>
+                                            First Name <span className="text-red-500">*</span>
                                         </label>
                                         <input
                                             type="text"
-                                            name="name"
-                                            value={formData.name}
+                                            name="firstName"
+                                            value={firstName}
+                                            onChange={handleChange}
+                                            className={inputClass('name')}
+                                            placeholder="Enter your name"
+                                        />
+                                    </div>
+                                    <div className="mb-4">
+                                        <label className="block text-gray-700 font-medium mb-2">
+                                            Last Name <span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="lastName"
+                                            value={lastName}
                                             onChange={handleChange}
                                             className={inputClass('name')}
                                             placeholder="Enter your name"
@@ -156,7 +193,7 @@ function Register() {
                                         <input
                                             type="email"
                                             name="email"
-                                            value={formData.email}
+                                            value={email}
                                             onChange={handleChange}
                                             className={inputClass('email')}
                                             placeholder="Enter your email"
@@ -169,13 +206,26 @@ function Register() {
                                         <input
                                             type="password"
                                             name="password"
-                                            value={formData.password}
+                                            value={password}
                                             onChange={handleChange}
                                             className={inputClass('password')}
                                             placeholder="Enter your password (min 6 characters)"
                                         />
                                     </div>
                                     <div className="mb-4">
+                                        <label className="block text-gray-700 font-medium mb-2">
+                                            Role <span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="role"
+                                            value={role}
+                                            onChange={handleChange}
+                                            className={inputClass('roleType')}
+                                            placeholder="Enter your role"
+                                        />
+                                    </div>
+                                    {/* <div className="mb-4">
                                         <label className="block text-gray-700 font-medium mb-2">
                                             Phone Number 
                                         </label>
@@ -187,9 +237,10 @@ function Register() {
                                             className={inputClass('phoneNumber')}
                                             placeholder="Enter your phone number (10 digits)"
                                         />
-                                    </div>
+                                    </div>*/}
 
-                                    <div className="work-status min-h-[180px] w-full flex items-center  gap-10 justify-center flex-col">
+
+                                    {/*<div className="work-status min-h-[180px] w-full flex items-center  gap-10 justify-center flex-col">
                                         <div className=" flex justify-start items-center w-full">     <h1>Work Status <span className="text-red-500">*</span></h1></div>
 
                                         <div className="h-[120px] w-full flex items-center justify-center gap-10 mt-[-40px]"><div className={`experience h-[80%] w-[45%] flex p-3 justify-between cursor-pointer border-2 rounded-lg ${getBorderClass(
@@ -264,18 +315,18 @@ function Register() {
                                                 </div>
                                             )}
                                         </div>
-                                    </div>
+                                    </*div> */}
                                     <div className="ters-cond mt-5">
                                         <p>By clicking Register, you agree to the <span className='text-blue-500 cursor-pointer hover:text-blue-800'>Terms and Conditions</span> & <span className='text-blue-500 cursor-pointer hover:text-blue-800'>Privacy Policy</span> of Onecareer.com</p>
                                     </div>
                                     <button
                                         type="submit"
-                                        className={`px-6 py-2 text-white rounded-lg ${
-                                            isFormValid
-                                              ? 'bg-blue-500 hover:bg-blue-600'
-                                              : 'bg-blue-200 cursor-not-allowed'
-                                          } mt-10`}
-                                          disabled={!isFormValid}
+                                        className='px-4 py-2'
+                                        // className={`px-6 py-2 text-white rounded-lg ${isFormValid
+                                        //         ? 'bg-blue-500 hover:bg-blue-600'
+                                        //         : 'bg-blue-200 cursor-not-allowed'
+                                        //     } mt-10`}
+                                        // disabled={!isFormValid}
                                     >
                                         Register
                                     </button>
