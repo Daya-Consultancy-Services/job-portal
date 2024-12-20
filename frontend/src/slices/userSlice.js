@@ -7,7 +7,7 @@ const initialState = {
 };
 
 const userSlice = createSlice({
-    name:"user",
+    name: "user",
     initialState: initialState,
     reducers : {
         setSignupData(state, value){

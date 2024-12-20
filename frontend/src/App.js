@@ -15,17 +15,17 @@ function App() {
   return (
     <Router>
       <Routes>
-<Route path="/" element={<Landing/>}/>
-<Route path="/components/auth/User/register" element={<Register/>}/>
-<Route path="/components/auth/User/login" element={<Login/>}/>
-<Route path="/components/auth/Company/login" element={<CompanyLogin/>}/>
-<Route path="/components/auth/Company/register" element={<CompanySignUp/>}/>
-<Route path="/components/profiles/UserProfile" element={<Profile/>}/>
-<Route path="/home" element={<Home/>}/>
-<Route path="/jobs" element={<FindaJob/>}/>
-<Route path="/company" element={<Company/>}/>
-<Route path="/services" element={<Blog/>}/>
- </Routes>
+        <Route path="/" element={<Landing/>}/>
+        <Route path="/components/auth/User/register" element={<Register/>}/>
+        <Route path="/components/auth/User/login" element={<Login/>}/>
+        <Route path="/components/auth/Company/login" element={<CompanyLogin/>}/>
+        <Route path="/components/auth/Company/register" element={<CompanySignUp/>}/>
+        <Route path="/components/profiles/UserProfile" element={<Profile/>}/>
+        <Route path="/home" element={<Home/>}/>
+        <Route path="/jobs" element={<FindaJob/>}/>
+        <Route path="/company" element={<Company/>}/>
+        <Route path="/services" element={<Blog/>}/>
+      </Routes>
      
     </Router>
   );
