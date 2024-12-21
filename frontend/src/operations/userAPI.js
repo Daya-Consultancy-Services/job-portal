@@ -3,7 +3,8 @@ import {toast} from 'react-hot-toast'
 import {setLoading,setToken} from '../slices/userSlice'
 import {setUser} from '../slices/userProfileSlice'
 import {apiConnector} from '../services/apiConnector'
-import {userPoint} from '../services/apis'
+import {userPoint} from './apis'
+
 
 const {
 
@@ -27,7 +28,11 @@ export function signupUser(
         const toastId = toast.loading("Loading...")
         dispatch(setLoading(true))
         try {
+<<<<<<< HEAD
             const response = await apiConnector("POST",userPoint.signup_api,{
+=======
+            const response = await apiConnector("POST", signup_api, {
+>>>>>>> 7a06c5d97d91de90908ec3af498e23bd6cc8aeab
 
                 firstName,
                 lastName,

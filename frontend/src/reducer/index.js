@@ -9,7 +9,7 @@ const rootReducer = combineReducers({
     user : userReducer,
     profile : profileReducer,
     company : companyReducer,
-    recruiter : recruiterReducer
+    recruiter : recruiterReducer,
 })
 
 export default rootReducer

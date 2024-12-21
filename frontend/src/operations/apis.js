@@ -4,7 +4,7 @@ export const userPoint = {
     signup_api     : BASE_URL + "/user/signup",
     login_api      : BASE_URL + "/user/login",
     updateUser_api : BASE_URL + "/user/update",
-    deleteUser_api : BASE_URL + "/user/delete"
+    deleteUser_api : BASE_URL + "/user/delete",
 } 
 
 export const profilePoint = {

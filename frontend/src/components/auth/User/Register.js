@@ -11,17 +11,26 @@ import { signupUser } from '../../../operations/userAPI';
 
 function Register() {
     const navigate = useNavigate();
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+
     const [formData, setFormData] = useState({
+<<<<<<< HEAD
         firstName: '',
         lastName: '',
         email: '',
         password: '',
         role: ROLE_TYPE.JOBSEEKER,
+=======
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        role: ROLE_TYPE.JOBSEEKER
+>>>>>>> 7a06c5d97d91de90908ec3af498e23bd6cc8aeab
 
     });
     
-    const [role, setRole] = useState(ROLE_TYPE.JOBSEEKER)
+    // const [role, setRole] = useState(ROLE_TYPE.JOBSEEKER)
     const [errors, setErrors] = useState({});
     // const [selectedStatus, setSelectedStatus] = useState('');
     // const [location, setLocation] = useState('');
@@ -61,7 +70,7 @@ function Register() {
 
     // const getBorderClass = (status) =>
     //     selectedStatus === status ? 'border-blue-500' : 'border-gray-300';
-    const {firstName, lastName, email, password} = formData
+    const {firstName, lastName, email, password,role} = formData
 
     const handleChange = (e) => {
         setFormData((prevData) => ({
@@ -97,18 +106,12 @@ function Register() {
     }
 
 
-    const signupData = {
-        ...formData,
-        ROLE_TYPE,
-    }
 
+    
 
-
-    dispatch(setSignupData(signupData))
-
-
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
+<<<<<<< HEAD
        dispatch(signupUser(
         firstName,
         lastName,
@@ -119,19 +122,38 @@ function Register() {
         if (validateForm()) {
             const signupData = { ...formData, ROLE_TYPE };
            console.log( dispatch(setSignupData(signupData)))
+=======
+        // if (validateForm()) {
+
+            const signupData = { ...formData};
+            console.log(signupData)
+            
+            dispatch(setSignupData(signupData))
+            console.log(process.env.REACT_APP_BASE_URL )
+     
+
+>>>>>>> 7a06c5d97d91de90908ec3af498e23bd6cc8aeab
             //for reseting after submiting
             setFormData({
                 firstName: '',
                 lastName: '',
                 email: '',
                 password: '',
-                role: '',
+                role:ROLE_TYPE.JOBSEEKER
             });
+            
 
+<<<<<<< HEAD
             setRole(ROLE_TYPE.JOBSEEKER);
         } else {
             alert("Form is not valid.");
         }
+=======
+            // setRole(ROLE_TYPE.JOBSEEKER);
+        // } else {
+        //     alert("Form is not valid.");
+        // }
+>>>>>>> 7a06c5d97d91de90908ec3af498e23bd6cc8aeab
     };
     const isFormValid =
         formData.firstName.trim() !== "" &&
@@ -177,7 +199,7 @@ function Register() {
                                             name="firstName"
                                             value={firstName}
                                             onChange={handleChange}
-                                            className={inputClass('name')}
+                                            //className={inputClass('name')}
                                             placeholder="Enter your name"
                                         />
                                     </div>
@@ -190,7 +212,7 @@ function Register() {
                                             name="lastName"
                                             value={lastName}
                                             onChange={handleChange}
-                                            className={inputClass('name')}
+                                            //className={inputClass('name')}
                                             placeholder="Enter your name"
                                         />
                                     </div>
@@ -203,7 +225,7 @@ function Register() {
                                             name="email"
                                             value={email}
                                             onChange={handleChange}
-                                            className={inputClass('email')}
+                                            //className={inputClass('email')}
                                             placeholder="Enter your email"
                                         />
                                     </div>
@@ -216,7 +238,7 @@ function Register() {
                                             name="password"
                                             value={password}
                                             onChange={handleChange}
-                                            className={inputClass('password')}
+                                            //className={inputClass('password')}
                                             placeholder="Enter your password (min 6 characters)"
                                         />
                                     </div>
@@ -229,7 +251,7 @@ function Register() {
                                             name="role"
                                             value={role}
                                             onChange={handleChange}
-                                            className={inputClass('roleType')}
+                                            //className={inputClass('roleType')}
                                             placeholder="Enter your role"
                                         />
                                     </div>
