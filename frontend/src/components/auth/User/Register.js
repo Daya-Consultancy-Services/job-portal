@@ -5,8 +5,6 @@ import { toast } from "react-hot-toast"
 import { ROLE_TYPE } from '../../../slices/constant';
 import { useDispatch } from "react-redux"
 import { setSignupData } from "../../../slices/userSlice"
-import { userPoint } from '../../../services/apis';
-import { apiConnector } from '../../../services/apiConnector';
 import { signupUser } from '../../../operations/userAPI';
 
 function Register() {
@@ -131,7 +129,7 @@ function Register() {
             
 
 
-            setRole(ROLE_TYPE.JOBSEEKER);
+            // setRole(ROLE_TYPE.JOBSEEKER);
         } else {
             alert("Form is not valid.");
         }
@@ -182,7 +180,7 @@ function Register() {
                                             name="firstName"
                                             value={firstName}
                                             onChange={handleChange}
-                                            //className={inputClass('name')}
+                                            className={inputClass('name')}
                                             placeholder="Enter your name"
                                         />
                                     </div>
@@ -195,7 +193,7 @@ function Register() {
                                             name="lastName"
                                             value={lastName}
                                             onChange={handleChange}
-                                            //className={inputClass('name')}
+                                            className={inputClass('name')}
                                             placeholder="Enter your name"
                                         />
                                     </div>
@@ -208,7 +206,7 @@ function Register() {
                                             name="email"
                                             value={email}
                                             onChange={handleChange}
-                                            //className={inputClass('email')}
+                                            className={inputClass('email')}
                                             placeholder="Enter your email"
                                         />
                                     </div>
@@ -221,7 +219,7 @@ function Register() {
                                             name="password"
                                             value={password}
                                             onChange={handleChange}
-                                            //className={inputClass('password')}
+                                            className={inputClass('password')}
                                             placeholder="Enter your password (min 6 characters)"
                                         />
                                     </div>
@@ -234,7 +232,7 @@ function Register() {
                                             name="role"
                                             value={role}
                                             onChange={handleChange}
-                                            //className={inputClass('roleType')}
+                                            className={inputClass('roleType')}
                                             placeholder="Enter your role"
                                         />
                                     </div>
