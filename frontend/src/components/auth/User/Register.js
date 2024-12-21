@@ -14,19 +14,13 @@ function Register() {
     const dispatch = useDispatch();
 
     const [formData, setFormData] = useState({
-<<<<<<< HEAD
+
         firstName: '',
         lastName: '',
         email: '',
         password: '',
         role: ROLE_TYPE.JOBSEEKER,
-=======
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-        role: ROLE_TYPE.JOBSEEKER
->>>>>>> 7a06c5d97d91de90908ec3af498e23bd6cc8aeab
+    
 
     });
     
@@ -111,7 +105,7 @@ function Register() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-<<<<<<< HEAD
+
        dispatch(signupUser(
         firstName,
         lastName,
@@ -122,17 +116,10 @@ function Register() {
         if (validateForm()) {
             const signupData = { ...formData, ROLE_TYPE };
            console.log( dispatch(setSignupData(signupData)))
-=======
-        // if (validateForm()) {
 
-            const signupData = { ...formData};
-            console.log(signupData)
-            
-            dispatch(setSignupData(signupData))
-            console.log(process.env.REACT_APP_BASE_URL )
-     
 
->>>>>>> 7a06c5d97d91de90908ec3af498e23bd6cc8aeab
+
+
             //for reseting after submiting
             setFormData({
                 firstName: '',
@@ -143,17 +130,13 @@ function Register() {
             });
             
 
-<<<<<<< HEAD
+
             setRole(ROLE_TYPE.JOBSEEKER);
         } else {
             alert("Form is not valid.");
         }
-=======
-            // setRole(ROLE_TYPE.JOBSEEKER);
-        // } else {
-        //     alert("Form is not valid.");
-        // }
->>>>>>> 7a06c5d97d91de90908ec3af498e23bd6cc8aeab
+
+       
     };
     const isFormValid =
         formData.firstName.trim() !== "" &&
