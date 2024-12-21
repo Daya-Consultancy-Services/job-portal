@@ -1,9 +1,9 @@
-import {toast} from 'react-hot-toast'
+import { toast } from 'react-hot-toast'
 
-import {setLoading,setToken} from '../slices/userSlice'
-import {setUser} from '../slices/userProfileSlice'
-import {apiConnector} from '../services/apiConnector'
-import {userPoint} from './apis'
+import { setLoading,setToken } from '../slices/userSlice'
+import { setUser } from '../slices/userProfileSlice'
+import { apiConnector } from '../services/apiConnector'
+import { userPoint } from './apis'
 
 
 const {
@@ -21,7 +21,8 @@ export function signupUser(
     lastName,
     email,
     password,
-    role
+    role,
+    navigate
 
 ){
     return async (dispatch) => {    
@@ -47,6 +48,7 @@ export function signupUser(
             }
             toast.success("Signup Successful*****!!!")
             // user navigate to login page for better transition
+            navigate("/components/auth/User/login")
 
         } catch (error) {
             console.log("Signup Error for user.....",error)
@@ -61,7 +63,8 @@ export function signupUser(
 
 export function login(
     email,
-    password
+    password,
+    navigate
 ){
     return async (dispatch) => {
         const toastId = toast.loading("Loading......")
@@ -81,7 +84,7 @@ export function login(
 
             dispatch(setUser({ ...response.data.user }))
             localStorage.setItem("token",JSON.stringify(response.data.token))
-            // navigate to dashboard and then go into profile
+            navigate("/home")
 
         } catch (error) {
             console.log("Login Api error...............",error)
@@ -94,4 +97,29 @@ export function login(
 
 // update user detail API 
 
-// Delete user API remaining 
+export function updateProfile(token, formData) {
+   return async (dispatch) => {
+    const toastId = toast.loading("Loading....");
+
+    try {
+        const response = await apiConnector("PUT", updateUser_api, formData,{
+            Authorization: `Bearer ${token}`,
+        });
+        console.log("Update Api Response.......", response);
+        if (!response.data.success) {
+            throw new Error(response.data.message);
+        }
+        
+
+        dispatch(
+            setUser({...response.data.updateProfile})
+        )
+        toast.success("Profile updated successfully");
+    } catch (error) {
+        console.log("update profile api error......");
+        toast.error("Profile update failed");
+    }
+    toast.dismiss(toastId);
+   }
+}
+

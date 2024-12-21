@@ -109,11 +109,14 @@ function Register() {
         lastName,
         email,
         password,
-        role
+        role,
+        navigate
        ));
         if (validateForm()) {
             const signupData = { ...formData, ROLE_TYPE };
            console.log( dispatch(setSignupData(signupData)))
+
+ 
 
 
 
@@ -124,7 +127,8 @@ function Register() {
                 lastName: '',
                 email: '',
                 password: '',
-                role:ROLE_TYPE.JOBSEEKER
+                role:ROLE_TYPE.JOBSEEKER,
+                
             });
             
 

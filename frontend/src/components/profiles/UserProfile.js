@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, {  useRef, useState } from 'react';
 import Header from '../../pages/home/Header';
 import Footer from '../Footer';
 import { FaPencilAlt } from "react-icons/fa";
@@ -14,12 +14,14 @@ import EducationForm from './EducationForm';
 import SkillsForm from './SkillForm';
 import ProjectForm from './ProjectForm';
 import ProfileSummery from './ProfileSummery';
+import { useDispatch } from 'react-redux';
+import { updateProfile } from '../../operations/userAPI';
 
 function UserProfile() {
+   const [user, setUser] = useState(null);
     const [profileImage, setProfileImage] = useState(require('../../assets/profile.png'));
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [popupType, setPopupType] = useState('');
-    const [userName, setUserName] = useState('Ladukishor Subudhi');
     const [newInput, setNewInput] = useState('');
     const [location, setLocation] = useState('Add Location');
     const [type, setType] = useState('Fresher');
@@ -34,6 +36,12 @@ function UserProfile() {
     const [projectsData, setProjectsData] = useState([]);
     const [isPersonalDetailsVisible, setPersonalDetailsVisible] = useState(false);
     const [personalDetails, setPersonalDetails] = useState('');
+    const [firstName, setFirstName] = useState('ladukishor');
+    const [lastName, setLastName] = useState('subudhi');
+    const [email, setEmail] = useState('abcd@gmail.com');
+
+
+
 
     const handleButtonClick1 = () => {
         setEducationVisible(!isEducationVisible);
@@ -41,8 +49,8 @@ function UserProfile() {
 
 
     const handleEducationSaved = (data) => {
-        setEducationData(data); // Save the education data in the parent state
-        setEducationVisible(false); // Close the popup
+        setEducationData(data); 
+        setEducationVisible(false); 
     };
 
 
@@ -54,9 +62,9 @@ function UserProfile() {
 
     const handleSkillsSaved = (data) => {
         if (data) {
-            setSkillsData([...skillsData, data]); // Add new skill to the array
+            setSkillsData([...skillsData, data]); 
         }
-        setSkillsVisible(false); // Close the popup
+        setSkillsVisible(false); 
     };
 
     const handleButtonClick3 = () => {
@@ -65,9 +73,9 @@ function UserProfile() {
 
     const handleProjectSaved = (data) => {
         if (data) {
-            setProjectsData([...projectsData, data]); // Add new project to the array
+            setProjectsData([...projectsData, data]); 
         }
-        setProjectVisible(false); // Close the popup
+        setProjectVisible(false); 
     };
 
 
@@ -77,9 +85,9 @@ function UserProfile() {
 
     const handlePersonalDetailsSaved = (details) => {
         if (details) {
-            setPersonalDetails(details); // Update personal details state
+            setPersonalDetails(details); 
         }
-        setPersonalDetailsVisible(false); // Close the popup
+        setPersonalDetailsVisible(false);
     };
 
 
@@ -98,11 +106,14 @@ function UserProfile() {
         setNewInput('');
     };
 
+    const dispatch = useDispatch();
+
     const handleSave = () => {
         if (newInput.trim()) {
             switch (popupType) {
                 case 'name':
-                    setUserName(newInput);
+                    setFirstName(newInput);
+                    setLastName(newInput);
                     break;
                 case 'location':
                     setLocation(newInput);
@@ -120,6 +131,20 @@ function UserProfile() {
         setIsPopupOpen(false);
     };
 
+    const userData = {
+
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+
+        // Add any other fields you want to update
+
+    };
+    // Dispatch the updateProfile action
+
+    dispatch(updateProfile(userData));
+
+
     const scrollToDiv = (div) => {
         setActiveLink(div);
         const targetElement = document.getElementById(div);
@@ -127,20 +152,6 @@ function UserProfile() {
             targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     return (
@@ -178,7 +189,7 @@ function UserProfile() {
                                 <div className="profile-info w-[70%] p-4">
                                     <div className="heading w-full flex flex-col gap-4 border-b-[0.5px] pb-3">
                                         <div className="name flex gap-5 items-center pt-4 group">
-                                            <h1 className='w-fit h-fit text-3xl font-semibold'>{userName}</h1>
+                                            <h1 className='w-fit h-fit text-3xl font-semibold'>{firstName} {lastName}</h1>
                                             <FaPencilAlt onClick={() => togglePopup('name')} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                                         </div>
                                         <p className='text-zinc-400'>Profile last updated - <span className='font-semibold text-black'>Yesterday</span></p>
@@ -210,7 +221,7 @@ function UserProfile() {
                                             </div>
                                             <div className="p-number flex gap-5 items-center group">
                                                 <CiMail />
-                                                <span className="text-md font-medium text-black">email id</span>
+                                                <span className="text-md font-medium text-black">{email}</span>
                                                 <FaPencilAlt onClick={() => togglePopup('email id')} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </div>
 
