@@ -5,6 +5,9 @@ import { toast } from "react-hot-toast"
 import { ROLE_TYPE } from '../../../slices/constant';
 import { useDispatch } from "react-redux"
 import { setSignupData } from "../../../slices/userSlice"
+import { userPoint } from '../../../services/apis';
+import { apiConnector } from '../../../services/apiConnector';
+import { signupUser } from '../../../operations/userAPI';
 
 function Register() {
     const navigate = useNavigate();
@@ -14,7 +17,7 @@ function Register() {
         lastName: '',
         email: '',
         password: '',
-  
+        role: ROLE_TYPE.JOBSEEKER,
 
     });
     
@@ -106,11 +109,16 @@ function Register() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // if (validateForm()) {
+       dispatch(signupUser(
+        firstName,
+        lastName,
+        email,
+        password,
+        role
+       ));
+        if (validateForm()) {
             const signupData = { ...formData, ROLE_TYPE };
            console.log( dispatch(setSignupData(signupData)))
-     
-
             //for reseting after submiting
             setFormData({
                 firstName: '',
@@ -121,16 +129,16 @@ function Register() {
             });
 
             setRole(ROLE_TYPE.JOBSEEKER);
-        // } else {
-        //     alert("Form is not valid.");
-        // }
+        } else {
+            alert("Form is not valid.");
+        }
     };
-    // const isFormValid =
-    //     formData.firstName.trim() !== "" &&
-    //     formData.lastName.trim() !== "" &&
-    //     formData.email.trim() !== "" &&
-    //     formData.password.trim().length >= 6 &&
-    //     formData.role.trim() !== "";
+    const isFormValid =
+        formData.firstName.trim() !== "" &&
+        formData.lastName.trim() !== "" &&
+        formData.email.trim() !== "" &&
+        formData.password.trim().length >= 6 &&
+        formData.role.trim() !== "";
     // selectedStatus && 
     // ((selectedStatus === 'experienced' ) || 
     //  (selectedStatus === 'fresher'));
@@ -321,12 +329,11 @@ function Register() {
                                     </div>
                                     <button
                                         type="submit"
-                                        className='px-4 py-2'
-                                        // className={`px-6 py-2 text-white rounded-lg ${isFormValid
-                                        //         ? 'bg-blue-500 hover:bg-blue-600'
-                                        //         : 'bg-blue-200 cursor-not-allowed'
-                                        //     } mt-10`}
-                                        // disabled={!isFormValid}
+                                        className={`px-6 py-2 text-white rounded-lg ${isFormValid
+                                                ? 'bg-blue-500 hover:bg-blue-600'
+                                                : 'bg-blue-200 cursor-not-allowed'
+                                            } mt-10`}
+                                        disabled={!isFormValid}
                                     >
                                         Register
                                     </button>

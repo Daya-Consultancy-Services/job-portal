@@ -27,7 +27,7 @@ export function signupUser(
         const toastId = toast.loading("Loading...")
         dispatch(setLoading(true))
         try {
-            const response = await apiConnector("POST",signup_api,{
+            const response = await apiConnector("POST",userPoint.signup_api,{
 
                 firstName,
                 lastName,
