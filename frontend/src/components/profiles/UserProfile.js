@@ -29,7 +29,7 @@ import ProjectForm from './ProjectForm';
 
 import ProfileSummery from './ProfileSummery';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { updateProfile } from '../../operations/userAPI';
 
@@ -41,8 +41,9 @@ import Cookies from 'js-cookie';
 
 
 function UserProfile() {
-
-    const [user, setUser ] = useState(null);
+    const {user} = useSelector((state) => state.user)
+    //const {token} = useSelector((state) => state.user)
+    // const [user, setUser ] = useState(null);
 
     const [profileImage, setProfileImage] = useState(require('../../assets/profile.png'));
 
