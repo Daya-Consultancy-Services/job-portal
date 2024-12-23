@@ -250,11 +250,13 @@ function UserProfile() {
 
         const updatedData = {
 
-            ...userData,
+            //...userData,
 
             firstName: newFirstName,
 
             lastName: newLastName,
+
+            email: email
 
         };
 
@@ -607,6 +609,16 @@ function UserProfile() {
                                     id="lastName"
                                     value={newLastName}
                                     onChange={(e) => setNewLastName(e.target.value)}
+                                    className="w-full p-2 border rounded"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="email" className="block text-lg">Last Name</label>
+                                <input
+                                    type="text"
+                                    id="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     className="w-full p-2 border rounded"
                                 />
                             </div>

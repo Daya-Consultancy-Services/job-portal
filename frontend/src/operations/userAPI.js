@@ -1,7 +1,7 @@
 import { toast } from 'react-hot-toast'
 
 import { setLoading,setToken } from '../slices/userSlice'
-import { setUser } from '../slices/userProfileSlice'
+import { setUser } from '../slices/userSlice'
 import { apiConnector } from '../services/apiConnector'
 import { userPoint } from './apis'
 
@@ -97,25 +97,29 @@ export function login(
 
 // update user detail API 
 
-export const updateProfile = (token, updatedData) => async (dispatch) => {
-    console.log(updatedData)
+export function updateProfile(token, updatedData) {
+    return async (dispatch) =>{
+        console.log(updatedData)
 
-    const toastId = toast.loading('Updating profile...');
-
-    try {
-        const response = await apiConnector('PUT',updateUser_api, updatedData, {
-            Authorization: `Bearer ${token}`,
-        });
-        if (!response.data.success) {
-            throw new Error(response.data.message);
+        const toastId = toast.loading('Updating profile...');
+    
+        try {
+            const response = await apiConnector('PUT',updateUser_api, updatedData, {
+                Authorization: `Bearer ${token}`,
+            });
+            if (!response.data.success) {
+                throw new Error(response.data.message);
+            }
+            dispatch(setUser({ ...response.data.user}));
+            toast.success('Profile updated successfully!');
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            toast.error('Failed to update profile.');
+        } finally {
+            toast.dismiss(toastId);
         }
-        dispatch(setUser({ ...response.data.updatedProfile }));
-        toast.success('Profile updated successfully!');
-    } catch (error) {
-        console.error('Error updating profile:', error);
-        toast.error('Failed to update profile.');
-    } finally {
-        toast.dismiss(toastId);
+
     }
+
 };
 
