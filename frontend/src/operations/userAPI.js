@@ -97,12 +97,13 @@ export function login(
 
 // update user detail API 
 
-export const updateProfile = (token, userData) => async (dispatch) => {
+export const updateProfile = (token, updatedData) => async (dispatch) => {
+    console.log(updatedData)
 
     const toastId = toast.loading('Updating profile...');
 
     try {
-        const response = await apiConnector('PUT',updateUser_api, userData, {
+        const response = await apiConnector('PUT',updateUser_api, updatedData, {
             Authorization: `Bearer ${token}`,
         });
         if (!response.data.success) {

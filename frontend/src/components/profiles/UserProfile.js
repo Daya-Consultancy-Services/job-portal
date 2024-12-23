@@ -42,7 +42,7 @@ import Cookies from 'js-cookie';
 
 function UserProfile() {
 
-    // const [user, setUser ] = useState(null);
+    const [user, setUser ] = useState(null);
 
     const [profileImage, setProfileImage] = useState(require('../../assets/profile.png'));
 
@@ -89,6 +89,32 @@ function UserProfile() {
     const [newLastName, setNewLastName] = useState(lastName);
 
     const [isNamePopupOpen, setIsNamePopupOpen] = useState(false);
+
+    const [userData, setUserData] = useState({
+
+        firstName: '',
+
+        lastName: '',
+
+        email: 'abcd@.com',
+
+        location: 'Add Location',
+
+        type: 'Fresher',
+
+        join: 'Immediate',
+
+        profileImage: require('../../assets/profile.png'),
+
+        educationData: null,
+
+        skillsData: [],
+
+        projectsData: [],
+
+        personalDetails: '',
+
+    });
 
 
 
@@ -167,40 +193,78 @@ function UserProfile() {
         setIsNamePopupOpen(!isNamePopupOpen);
     };
 
-    const handleSaveForName = () => {
-        setFirstName(newFirstName);
-        setLastName(newLastName);
-        setIsPopupOpen(false); 
-        dispatch(updateProfile(token, {firstName: newFirstName, lastName: newLastName}))
-    };
+  
 
     const dispatch = useDispatch();
 
     const handleSave = () => {
+
         if (newInput.trim()) {
+
+            const updatedData = { ...userData };
+
             switch (popupType) {
-              
+
                 case 'location':
-                    setLocation(newInput);
-                    // dispatch(updateProfile(token ,{ location: newInput }));
+
+                    updatedData.location = newInput;
+
                     break;
+
                 case 'type':
-                    setType(newInput);
-                    // dispatch(updateProfile(token ,{ type: newInput }));
+
+                    updatedData.type = newInput;
+
                     break;
+
                 case 'join':
-                    setJoin(newInput);
-                    // dispatch(updateProfile(token ,{ join: newInput }));
+
+                    updatedData.join = newInput;
+
                     break;
+
                 case 'email':
-                    setJoin(newInput);
-                    dispatch(updateProfile(token ,{ email: newInput }));
+
+                    updatedData.email = newInput;
+
                     break;
+
                 default:
+
                     break;
+
             }
+
+            setUserData(updatedData);
+            console.log(updatedData);
+
+            dispatch(updateProfile(token, updatedData)); // Dispatch updated userData
+
         }
+
         setIsPopupOpen(false);
+
+    };
+
+    const handleSaveForName = () => {
+
+        const updatedData = {
+
+            ...userData,
+
+            firstName: newFirstName,
+
+            lastName: newLastName,
+
+        };
+
+        setUserData(updatedData);
+       
+
+        dispatch(updateProfile(token, updatedData)); // Dispatch updated userData
+
+        setIsNamePopupOpen(false);
+
     };
 
     
@@ -234,7 +298,7 @@ function UserProfile() {
                             <div className="profile-info w-[65%] h-full  flex ">
                                 <div className="profile h-full w-[30%]  flex items-center justify-center">
                                     <div className="img-div h-[150px] w-[150px]  rounded-full overflow-hidden relative group">
-                                        <img className="h-full w-full object-cover" src={profileImage} alt="Profile" />
+                                        <img className="h-full w-full object-cover" src={userData.profileImage} alt="Profile" />
                                         {/* Overlay for Upload */}
                                         <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                             <label
@@ -256,7 +320,7 @@ function UserProfile() {
                                 <div className="profile-info w-[70%] p-4">
                                     <div className="heading w-full flex flex-col gap-4 border-b-[0.5px] pb-3">
                                         <div className="name flex gap-5 items-center pt-4 group">
-                                            <h1 className='w-fit h-fit text-3xl font-semibold'>{newFirstName} {newLastName}</h1>
+                                            <h1 className='w-fit h-fit text-3xl font-semibold'>{userData.firstName} {userData.lastName}</h1>
                                             <FaPencilAlt onClick={() => togglePopupForName()} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                                         </div>
                                         <p className='text-zinc-400'>Profile last updated - <span className='font-semibold text-black'>Yesterday</span></p>
@@ -265,17 +329,17 @@ function UserProfile() {
                                         <div className="left-div h-full w-[50%] flex flex-col gap-3 p-2">
                                             <div className="location flex gap-5 items-center group">
                                                 <IoLocationOutline />
-                                                <span className={`text-md font-medium `}>{location}</span>
+                                                <span className={`text-md font-medium `}>{userData.location}</span>
                                                 <FaPencilAlt onClick={() => togglePopup('location')} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </div>
                                             <div className="type flex gap-5 items-center group">
                                                 <HiOutlineBriefcase />
-                                                <span className="text-md font-medium text-black">{type}</span>
+                                                <span className="text-md font-medium text-black">{userData.type}</span>
                                                 <FaPencilAlt onClick={() => togglePopup('type')} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </div>
                                             <div className="join flex gap-5 items-center group">
                                                 <SlCalender />
-                                                <span className="text-md font-medium text-black">{join}</span>
+                                                <span className="text-md font-medium text-black">{userData.join}</span>
                                                 <FaPencilAlt onClick={() => togglePopup('join')} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </div>
                                         </div>
@@ -286,9 +350,9 @@ function UserProfile() {
                                                 <span className="text-md font-medium text-black">Phone number</span>
                                                 <FaPencilAlt onClick={() => togglePopup('phone number')} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </div>
-                                            <div className="p-number flex gap-5 items-center group">
+                                            <div className="email flex gap-5 items-center group">
                                                 <CiMail />
-                                                <span className="text-md font-medium text-black">{email}</span>
+                                                <span className="text-md font-medium text-black">{userData.email}</span>
                                                 <FaPencilAlt onClick={() => togglePopup('email id')} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </div>
 
