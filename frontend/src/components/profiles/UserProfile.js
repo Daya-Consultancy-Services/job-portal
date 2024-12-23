@@ -283,7 +283,7 @@ function UserProfile() {
 
    
     const token = localStorage.getItem("token")||Cookies.get('token');
-    console.log(token);
+
 
     return (
         <>

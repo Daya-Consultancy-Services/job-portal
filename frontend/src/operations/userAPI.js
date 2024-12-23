@@ -98,7 +98,8 @@ export function login(
 // update user detail API 
 
 export const updateProfile = (token, updatedData) => async (dispatch) => {
-    console.log(updatedData)
+    console.log(updatedData);
+    // console.log(token);
 
     const toastId = toast.loading('Updating profile...');
 
