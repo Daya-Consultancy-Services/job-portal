@@ -30,7 +30,7 @@ export function signupUser(
         dispatch(setLoading(true))
         try {
 
-            const response = await apiConnector("POST",userPoint.signup_api,{
+            const response = await apiConnector("POST",signup_api,{
 
 
                 firstName,
@@ -97,29 +97,24 @@ export function login(
 
 // update user detail API 
 
-export function updateProfile(token, formData) {
-   return async (dispatch) => {
-    const toastId = toast.loading("Loading....");
+export const updateProfile = (token, userData) => async (dispatch) => {
+
+    const toastId = toast.loading('Updating profile...');
 
     try {
-        const response = await apiConnector("PUT", updateUser_api, formData,{
+        const response = await apiConnector('PUT',updateUser_api, userData, {
             Authorization: `Bearer ${token}`,
         });
-        console.log("Update Api Response.......", response);
         if (!response.data.success) {
             throw new Error(response.data.message);
         }
-        
-
-        dispatch(
-            setUser({...response.data.updateProfile})
-        )
-        toast.success("Profile updated successfully");
+        dispatch(setUser({ ...response.data.updatedProfile }));
+        toast.success('Profile updated successfully!');
     } catch (error) {
-        console.log("update profile api error......");
-        toast.error("Profile update failed");
+        console.error('Error updating profile:', error);
+        toast.error('Failed to update profile.');
+    } finally {
+        toast.dismiss(toastId);
     }
-    toast.dismiss(toastId);
-   }
-}
+};
 

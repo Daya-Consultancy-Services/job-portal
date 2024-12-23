@@ -1,44 +1,94 @@
 import React, {  useRef, useState } from 'react';
+
+
 import Header from '../../pages/home/Header';
+
 import Footer from '../Footer';
-import { FaPencilAlt } from "react-icons/fa";
-import { FaTimes } from "react-icons/fa";
+
+import { FaPencilAlt, FaTimes } from "react-icons/fa";
+
 import { IoLocationOutline } from "react-icons/io5";
+
 import { HiOutlineBriefcase } from "react-icons/hi2";
+
 import { SlCalender } from "react-icons/sl";
+
 import { MdLocalPhone } from "react-icons/md";
+
 import { CiMail } from "react-icons/ci";
+
 import { TbDeviceMobileCheck } from "react-icons/tb";
+
 import ResumeUpload from './ResumeUpload';
+
 import EducationForm from './EducationForm';
+
 import SkillsForm from './SkillForm';
+
 import ProjectForm from './ProjectForm';
+
 import ProfileSummery from './ProfileSummery';
+
 import { useDispatch } from 'react-redux';
+
 import { updateProfile } from '../../operations/userAPI';
 
+import ExtraProfile from './ExtraProfile';
+
+import Cookies from 'js-cookie';
+
+// import { toast } from 'react-toastify';
+
+
 function UserProfile() {
-   const [user, setUser] = useState(null);
+
+    // const [user, setUser ] = useState(null);
+
     const [profileImage, setProfileImage] = useState(require('../../assets/profile.png'));
+
     const [isPopupOpen, setIsPopupOpen] = useState(false);
+
     const [popupType, setPopupType] = useState('');
+
     const [newInput, setNewInput] = useState('');
+
     const [location, setLocation] = useState('Add Location');
+
     const [type, setType] = useState('Fresher');
+
     const [join, setJoin] = useState('Immediate');
+
     const [activeLink, setActiveLink] = useState('resume');
+
     const [isEducationVisible, setEducationVisible] = useState(false);
-    const [educationData, setEducationData] = useState(null); // State to store the submitted education data
+
+    const [educationData, setEducationData] = useState(null);
 
     const [isSkillsVisible, setSkillsVisible] = useState(false);
+
     const [skillsData, setSkillsData] = useState([]);
+
     const [isProjectVisible, setProjectVisible] = useState(false);
+
     const [projectsData, setProjectsData] = useState([]);
+
     const [isPersonalDetailsVisible, setPersonalDetailsVisible] = useState(false);
+
     const [personalDetails, setPersonalDetails] = useState('');
-    const [firstName, setFirstName] = useState('ladukishor');
-    const [lastName, setLastName] = useState('subudhi');
-    const [email, setEmail] = useState('abcd@gmail.com');
+
+    const [firstName, setFirstName] = useState('');
+
+    const [lastName, setLastName] = useState('');
+
+    const [email, setEmail] = useState('abcd@.com');
+
+    const [showExtraProfile, setShowExtraProfile] = useState(false);
+
+    const [newFirstName, setNewFirstName] = useState(firstName);
+
+    const [newLastName, setNewLastName] = useState(lastName);
+
+    const [isNamePopupOpen, setIsNamePopupOpen] = useState(false);
 
 
 
@@ -51,6 +101,7 @@ function UserProfile() {
     const handleEducationSaved = (data) => {
         setEducationData(data); 
         setEducationVisible(false); 
+        // dispatch(updateProfile({ education: data }));
     };
 
 
@@ -63,6 +114,7 @@ function UserProfile() {
     const handleSkillsSaved = (data) => {
         if (data) {
             setSkillsData([...skillsData, data]); 
+            // dispatch(updateProfile({ skills: [...skillsData, data] }));
         }
         setSkillsVisible(false); 
     };
@@ -74,6 +126,7 @@ function UserProfile() {
     const handleProjectSaved = (data) => {
         if (data) {
             setProjectsData([...projectsData, data]); 
+            // dispatch(updateProfile({ projects: [...projectsData, data] }));
         }
         setProjectVisible(false); 
     };
@@ -86,6 +139,7 @@ function UserProfile() {
     const handlePersonalDetailsSaved = (details) => {
         if (details) {
             setPersonalDetails(details); 
+            // dispatch(updateProfile({ personalDetails: details }));
         }
         setPersonalDetailsVisible(false);
     };
@@ -97,13 +151,27 @@ function UserProfile() {
         if (file) {
             const imageURL = URL.createObjectURL(file);
             setProfileImage(imageURL);
+            // dispatch(updateProfile({ profileImage: imageURL }));
         }
     };
 
     const togglePopup = (field) => {
         setPopupType(field);
         setIsPopupOpen(!isPopupOpen);
+       
         setNewInput('');
+        
+    };
+
+    const togglePopupForName = () => {
+        setIsNamePopupOpen(!isNamePopupOpen);
+    };
+
+    const handleSaveForName = () => {
+        setFirstName(newFirstName);
+        setLastName(newLastName);
+        setIsPopupOpen(false); 
+        dispatch(updateProfile(token, {firstName: newFirstName, lastName: newLastName}))
     };
 
     const dispatch = useDispatch();
@@ -111,18 +179,22 @@ function UserProfile() {
     const handleSave = () => {
         if (newInput.trim()) {
             switch (popupType) {
-                case 'name':
-                    setFirstName(newInput);
-                    setLastName(newInput);
-                    break;
+              
                 case 'location':
                     setLocation(newInput);
+                    // dispatch(updateProfile(token ,{ location: newInput }));
                     break;
                 case 'type':
                     setType(newInput);
+                    // dispatch(updateProfile(token ,{ type: newInput }));
                     break;
                 case 'join':
                     setJoin(newInput);
+                    // dispatch(updateProfile(token ,{ join: newInput }));
+                    break;
+                case 'email':
+                    setJoin(newInput);
+                    dispatch(updateProfile(token ,{ email: newInput }));
                     break;
                 default:
                     break;
@@ -131,18 +203,7 @@ function UserProfile() {
         setIsPopupOpen(false);
     };
 
-    const userData = {
-
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-
-        // Add any other fields you want to update
-
-    };
-    // Dispatch the updateProfile action
-
-    dispatch(updateProfile(userData));
+    
 
 
     const scrollToDiv = (div) => {
@@ -153,6 +214,12 @@ function UserProfile() {
         }
     };
 
+
+
+
+   
+    const token = localStorage.getItem("token")||Cookies.get('token');
+    console.log(token);
 
     return (
         <>
@@ -189,8 +256,8 @@ function UserProfile() {
                                 <div className="profile-info w-[70%] p-4">
                                     <div className="heading w-full flex flex-col gap-4 border-b-[0.5px] pb-3">
                                         <div className="name flex gap-5 items-center pt-4 group">
-                                            <h1 className='w-fit h-fit text-3xl font-semibold'>{firstName} {lastName}</h1>
-                                            <FaPencilAlt onClick={() => togglePopup('name')} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                            <h1 className='w-fit h-fit text-3xl font-semibold'>{newFirstName} {newLastName}</h1>
+                                            <FaPencilAlt onClick={() => togglePopupForName()} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                                         </div>
                                         <p className='text-zinc-400'>Profile last updated - <span className='font-semibold text-black'>Yesterday</span></p>
                                     </div>
@@ -248,10 +315,11 @@ function UserProfile() {
                                         <span className='px-3 py-1 bg-white rounded-full absolute right-1'>2%</span>
                                     </div>
 
-                                    <button className='px-3 py-2 rounded-full bg-orange-500 text-white'>Add 13 missing details</button>
+                                    <button className='px-3 py-2 rounded-full bg-orange-500 text-white ' onClick={() => setShowExtraProfile(true)}>Add missing details</button>
 
                                 </div>
                             </div>
+                            {showExtraProfile && <ExtraProfile  token={token}/>}
 
 
                         </div>
@@ -451,6 +519,51 @@ function UserProfile() {
                 <div className="footer">
                     <Footer />
                 </div>
+
+
+                {isNamePopupOpen && (
+                <div className="popup-overlay fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
+                    <div className="popup-container bg-white p-8 rounded-lg w-96">
+                        <h2 className="text-xl font-semibold mb-4">Edit Name</h2>
+                        <div className="flex flex-col gap-4">
+                            <div>
+                                <label htmlFor="firstName" className="block text-lg">First Name</label>
+                                <input
+                                    type="text"
+                                    id="firstName"
+                                    value={newFirstName}
+                                    onChange={(e) => setNewFirstName(e.target.value)}
+                                    className="w-full p-2 border rounded"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="lastName" className="block text-lg">Last Name</label>
+                                <input
+                                    type="text"
+                                    id="lastName"
+                                    value={newLastName}
+                                    onChange={(e) => setNewLastName(e.target.value)}
+                                    className="w-full p-2 border rounded"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex justify-end mt-4">
+                            <button
+                                onClick={handleSaveForName}
+                                className="bg-blue-500 text-white px-4 py-2 rounded"
+                            >
+                                Save
+                            </button>
+                            <button
+                                onClick={togglePopupForName}
+                                className="ml-2 bg-gray-300 px-4 py-2 rounded"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
                 {/*------------------Common Popup ---------------------*/}
                 {isPopupOpen && (
