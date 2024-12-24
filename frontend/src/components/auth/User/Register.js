@@ -130,10 +130,12 @@ function Register() {
                 role:ROLE_TYPE.JOBSEEKER,
                 
             });
+
             
 
 
-            // setRole(ROLE_TYPE.JOBSEEKER);
+          
+          
         } else {
             alert("Form is not valid.");
         }

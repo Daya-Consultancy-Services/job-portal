@@ -41,8 +41,18 @@ import Cookies from 'js-cookie';
 
 
 function UserProfile() {
+<<<<<<< HEAD
     const {user} = useSelector((state) => state.user)
     //const {token} = useSelector((state) => state.user)
+=======
+
+    // const state = useSelector((state) => state);
+    // console.log(state);
+    const { user, token } = useSelector((state) => state.user);
+    console.log(token);
+    console.log(user);
+
+>>>>>>> 875e8fef66386a15cc2ad80594a6d667b8ff92c3
     // const [user, setUser ] = useState(null);
 
     const [profileImage, setProfileImage] = useState(require('../../assets/profile.png'));
@@ -53,11 +63,11 @@ function UserProfile() {
 
     const [newInput, setNewInput] = useState('');
 
-    const [location, setLocation] = useState('Add Location');
+    // const [location, setLocation] = useState('Add Location');
 
-    const [type, setType] = useState('Fresher');
+    // const [type, setType] = useState('Fresher');
 
-    const [join, setJoin] = useState('Immediate');
+    // const [join, setJoin] = useState('Immediate');
 
     const [activeLink, setActiveLink] = useState('resume');
 
@@ -285,8 +295,8 @@ function UserProfile() {
 
 
    
-    const token = localStorage.getItem("token")||Cookies.get('token');
-    console.log(token);
+    // const token = localStorage.getItem("token")||Cookies.get('token');
+
 
     return (
         <>
@@ -323,7 +333,7 @@ function UserProfile() {
                                 <div className="profile-info w-[70%] p-4">
                                     <div className="heading w-full flex flex-col gap-4 border-b-[0.5px] pb-3">
                                         <div className="name flex gap-5 items-center pt-4 group">
-                                            <h1 className='w-fit h-fit text-3xl font-semibold'>{userData.firstName} {userData.lastName}</h1>
+                                            <h1 className='w-fit h-fit text-3xl font-semibold'>{user?.firstName} {user?.lastName}</h1>
                                             <FaPencilAlt onClick={() => togglePopupForName()} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                                         </div>
                                         <p className='text-zinc-400'>Profile last updated - <span className='font-semibold text-black'>Yesterday</span></p>
@@ -355,7 +365,7 @@ function UserProfile() {
                                             </div>
                                             <div className="email flex gap-5 items-center group">
                                                 <CiMail />
-                                                <span className="text-md font-medium text-black">{userData.email}</span>
+                                                <span className="text-md font-medium text-black">{user?.email}</span>
                                                 <FaPencilAlt onClick={() => togglePopup('email id')} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </div>
 

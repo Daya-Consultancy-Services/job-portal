@@ -44,7 +44,7 @@ function Section6() {
         <div className="mt-16 grid-temp h-[220vh] w-full flex flex-col gap-[20px] items-center">
         {imageCard.map((card, index)=>{
                     return(
-                        <div className="grid-item-1 h-[100vh] w-full flex gap-10 justify-center">
+                        <div key={index} className="grid-item-1 h-[100vh] w-full flex gap-10 justify-center">
              
                         <div className="image h-[500px] w-[500px] bg-zinc-200 border rounded-[30px] overflow-hidden flex justify-center items-center shadow-md">
                             <img className='hover:h-[520px] hover:w-[520px] ease-in object-center ' src={require(`../../assets/${card.imageUrl}`)} alt='card'></img>
