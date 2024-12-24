@@ -6,6 +6,7 @@ import { apiConnector } from '../services/apiConnector'
 import { userPoint } from './apis'
 
 
+
 const {
 
     signup_api,
@@ -15,51 +16,39 @@ const {
 
 } = userPoint
 
-export function signupUser(
-
-    firstName,
-    lastName,
-    email,
-    password,
-    role,
-    navigate
-
-){
-    return async (dispatch) => {    
-        const toastId = toast.loading("Loading...")
-        dispatch(setLoading(true))
+export function signupUser(firstName, lastName, email, password, role, navigate) {
+    return async (dispatch) => {
+        const toastId = toast.loading("Loading...");
+        dispatch(setLoading(true)); // Use dispatch directly
         try {
-
-            const response = await apiConnector("POST",signup_api,{
-
-
+            const response = await apiConnector("POST", signup_api, {
                 firstName,
                 lastName,
                 email,
                 password,
-                role
+                role,
+            });
 
-            })
-            console.log("Signup Api response........",response); // the response after signup user 
+            console.log("Signup API response........", response); // Log API response
 
-            // check whats the error is if the response give error
-            if(!response.data.success){
+            if (!response.data.success) {
                 throw new Error(response.data.message);
             }
-            toast.success("Signup Successful*****!!!")
-            // user navigate to login page for better transition
-            navigate("/components/auth/User/login")
 
+            toast.success("Signup Successful!!!");
+            dispatch(setUser(response.data.user)); // Dispatch action to update user
+            localStorage.setItem("user", JSON.stringify(response.data.user)); // Store user in localStorage
+            navigate("/components/auth/User/login"); // Navigate to login page
         } catch (error) {
-            console.log("Signup Error for user.....",error)
-            toast.error("Signup Fail, Try again");
-            //navigate to signup page again
+            console.error("Signup Error for user.....", error);
+            toast.error("Signup Failed, Try again.");
+        } finally {
+            dispatch(setLoading(false)); // Stop loading
+            toast.dismiss(toastId);
         }
-        dispatch(setLoading(false))
-       toast.dismiss(toastId)
-    }
-
+    };
 }
+
 
 export function login(
     email,
@@ -75,20 +64,21 @@ export function login(
                 password
             })
             console.log("Login Api Response.......", response)
+            dispatch(setToken(response.data.token))
+            dispatch(setUser(response.data.user));
+            localStorage.setItem("token",JSON.stringify(response.data.token));
+            localStorage.setItem("user", JSON.stringify(response.data.user));
 
             if(!response.data.success){
                 throw new Error(response.data.message);
             }
             toast.success("Login Successful")
-            dispatch(setToken(response.data.token))
-
-            dispatch(setUser({ ...response.data.user }))
-            localStorage.setItem("token",JSON.stringify(response.data.token))
             navigate("/home")
 
         } catch (error) {
             console.log("Login Api error...............",error)
             toast.error("Login failed")
+         
         }
         dispatch(setLoading(false))
         toast.dismiss(toastId)
@@ -98,8 +88,8 @@ export function login(
 // update user detail API 
 
 export const updateProfile = (token, updatedData) => async (dispatch) => {
-    console.log(updatedData);
-    // console.log(token);
+    console.log( "updated data",updatedData);
+    console.log(  "token",token);
 
     const toastId = toast.loading('Updating profile...');
 
