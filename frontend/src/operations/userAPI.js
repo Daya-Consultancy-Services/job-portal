@@ -87,15 +87,10 @@ export function login(
 
 // update user detail API 
 
-<<<<<<< HEAD
 export function updateProfile(token, updatedData) {
     return async (dispatch) =>{
-        console.log(updatedData)
-=======
-export const updateProfile = (token, updatedData) => async (dispatch) => {
-    console.log( "updated data",updatedData);
-    console.log(  "token",token);
->>>>>>> 875e8fef66386a15cc2ad80594a6d667b8ff92c3
+        console.log("updated data",updatedData)
+        console.log(  "token",token);
 
         const toastId = toast.loading('Updating profile...');
     
@@ -106,7 +101,7 @@ export const updateProfile = (token, updatedData) => async (dispatch) => {
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
-            dispatch(setUser({ ...response.data.user}));
+            dispatch(setUser({ ...response.data.userDetail}));
             toast.success('Profile updated successfully!');
         } catch (error) {
             console.error('Error updating profile:', error);

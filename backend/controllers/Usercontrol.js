@@ -158,7 +158,7 @@ exports.updateDetail = async(req,res) => {
 
         // get the user Id from the request body
         const userID = req.user.id
-
+        
         if (!userID) {
             return res.status(400).json({
                 success: false,
@@ -176,26 +176,36 @@ exports.updateDetail = async(req,res) => {
         }
 
         // find the user 
-        const user = await User.findById(userID);
+        // const user = await User.findById(req.user.id);
+        const userDetail = await User.findByIdAndUpdate(
+            req.user.id,
+            { 
+                firstName: firstName,
+                lastName : lastName,
+                email:email
+            },
+            { new: true }
+        )
+        // console.log(userDetail)
 
         // by the refrence id we can make changes to the firstname , lastname , email to the user table
-        user.firstName = firstName;
-        user.lastName = lastName;
-        user.email = email;
+        // user.firstName = firstName;
+        // user.lastName = lastName;
+        // user.email = email;
         
         // Hash the new password before saving
         // const hashedPassword = await bcrypt.hash(password, 10);  // not good for the security reason
         // user.password = hashedPassword;
  
         // Save the updated user to the database
-        await user.save();
+        
 
  
         // Respond with a success message and the new token
         return res.status(200).json({
              success: true,
              message: "User details updated successfully!",
-             user
+             userDetail
         });   
         
     } catch (error) {
