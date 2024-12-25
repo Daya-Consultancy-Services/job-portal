@@ -42,7 +42,7 @@ import Cookies from 'js-cookie';
 
 function UserProfile() {
 
-    const {user} = useSelector((state) => state.user)
+    const {user, token} = useSelector((state) => state.user)
 
 
     const [profileImage, setProfileImage] = useState(require('../../assets/profile.png'));
