@@ -41,19 +41,15 @@ import Cookies from 'js-cookie';
 
 
 function UserProfile() {
-<<<<<<< HEAD
+
     const {user} = useSelector((state) => state.user)
-    //const {token} = useSelector((state) => state.user)
-=======
-
-    // const state = useSelector((state) => state);
-    // console.log(state);
-    const { user, token } = useSelector((state) => state.user);
-    console.log(token);
     console.log(user);
+    const {token} = useSelector((state) => state.user)
 
->>>>>>> 875e8fef66386a15cc2ad80594a6d667b8ff92c3
-    // const [user, setUser ] = useState(null);
+
+   
+
+ 
 
     const [profileImage, setProfileImage] = useState(require('../../assets/profile.png'));
 
@@ -100,6 +96,8 @@ function UserProfile() {
     const [newLastName, setNewLastName] = useState(lastName);
 
     const [isNamePopupOpen, setIsNamePopupOpen] = useState(false);
+    
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [userData, setUserData] = useState({
 
@@ -109,21 +107,7 @@ function UserProfile() {
 
         email: 'abcd@.com',
 
-        location: 'Add Location',
-
-        type: 'Fresher',
-
-        join: 'Immediate',
-
-        profileImage: require('../../assets/profile.png'),
-
-        educationData: null,
-
-        skillsData: [],
-
-        projectsData: [],
-
-        personalDetails: '',
+      
 
     });
 
@@ -202,6 +186,7 @@ function UserProfile() {
 
     const togglePopupForName = () => {
         setIsNamePopupOpen(!isNamePopupOpen);
+        
     };
 
   
@@ -238,6 +223,7 @@ function UserProfile() {
 
                     updatedData.email = newInput;
 
+
                     break;
 
                 default:
@@ -260,15 +246,9 @@ function UserProfile() {
     const handleSaveForName = () => {
 
         const updatedData = {
-
-            //...userData,
-
             firstName: newFirstName,
-
             lastName: newLastName,
-
             email: email
-
         };
 
         setUserData(updatedData);
@@ -280,7 +260,17 @@ function UserProfile() {
 
     };
 
-    
+
+   
+    const handleDelete = () => {
+        console.log("Profile deleted");
+        setIsModalOpen(false); 
+    };
+
+    const handleCancel = () => {
+        console.log("Profile deletion canceled");
+        setIsModalOpen(false); 
+    };
 
 
     const scrollToDiv = (div) => {
@@ -292,10 +282,6 @@ function UserProfile() {
     };
 
 
-
-
-   
-    // const token = localStorage.getItem("token")||Cookies.get('token');
 
 
     return (
@@ -311,7 +297,7 @@ function UserProfile() {
                             <div className="profile-info w-[65%] h-full  flex ">
                                 <div className="profile h-full w-[30%]  flex items-center justify-center">
                                     <div className="img-div h-[150px] w-[150px]  rounded-full overflow-hidden relative group">
-                                        <img className="h-full w-full object-cover" src={userData.profileImage} alt="Profile" />
+                                        <img className="h-full w-full object-cover" src={user?.profileImage} alt="Profile" />
                                         {/* Overlay for Upload */}
                                         <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                             <label
@@ -368,11 +354,9 @@ function UserProfile() {
                                                 <span className="text-md font-medium text-black">{user?.email}</span>
                                                 <FaPencilAlt onClick={() => togglePopup('email id')} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
                             <div className="extra-info w-[35%] h-full flex justify-center items-center">
                                 <div className="box h-[85%] w-[85%] bg-[#FFF2E3] rounded-xl p-5 flex flex-col gap-6">
@@ -391,14 +375,10 @@ function UserProfile() {
                                         <p>Upload Resume</p>
                                         <span className='px-3 py-1 bg-white rounded-full absolute right-1'>2%</span>
                                     </div>
-
                                     <button className='px-3 py-2 rounded-full bg-orange-500 text-white ' onClick={() => setShowExtraProfile(true)}>Add missing details</button>
-
                                 </div>
                             </div>
                             {showExtraProfile && <ExtraProfile  token={token}/>}
-
-
                         </div>
 
                         <div className=" min-h-[600px] w-full flex gap-3 rounded-xl  ">
@@ -420,6 +400,11 @@ function UserProfile() {
                                         <div onClick={() => scrollToDiv('Career-profile')} className="Career-profile flex"><h3>Career profile</h3></div>
                                         <div onClick={() => scrollToDiv('Personal-details')} className="Personal-details flex"><h3>Personal Details</h3></div>
                                     </div>
+                                    <div className="delete-btn mt-5">
+                                        <button  onClick={() => setIsModalOpen(true)}  className='px-3 py-2 border bg-red-500 text-white rounded-full cursor-pointer font-semibold hover:bg-red-600'>
+                                             Delete profile
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
@@ -428,8 +413,6 @@ function UserProfile() {
                                     <div className="head">
                                         <div className=""><h1 className='font-semibold text-2xl'>Resume </h1> <p className='text-green-400'>Add 10%</p></div>
                                         <p className='text-zinc-400'>70% of recruiters discover candidates through their resume</p>
-
-
                                     </div>
                                     <ResumeUpload />
                                 </div>
@@ -693,10 +676,28 @@ function UserProfile() {
 
 
 
-
+{isModalOpen && (
+                <div className="modal fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center">
+                    <div className="modal-content bg-white p-6 rounded shadow-lg w-1/3 text-center">
+                        <h2 className="text-xl font-bold mb-4">Confirm Deletion</h2>
+                        <p className="text-gray-700 mb-6">Are you sure you want to delete your profile?</p>
+                        <div className="flex justify-center gap-4">
+                            <button
+                                onClick={handleDelete}
+                                className="px-4 py-2 bg-red-500 text-white rounded-full font-semibold hover:bg-red-600">
+                                Yes, Delete
+                            </button>
+                            <button
+                                onClick={handleCancel}
+                                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-full font-semibold hover:bg-gray-400">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             </div >
         </>
     );
 }
-
 export default UserProfile;
