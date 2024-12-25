@@ -67,7 +67,7 @@ export function login(
             dispatch(setToken(response.data.token))
             dispatch(setUser(response.data.user));
             localStorage.setItem("token",JSON.stringify(response.data.token));
-            localStorage.setItem("user", JSON.stringify(response.data.user));
+          
 
             if(!response.data.success){
                 throw new Error(response.data.message);
@@ -101,7 +101,15 @@ export function updateProfile(token, updatedData) {
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
-            dispatch(setUser({ ...response.data.userDetail}));
+          
+         // Update the user in the Redux state
+         const updatedUser = { ...response.data.userDetail };
+         dispatch(setUser(updatedUser));
+
+         // Persist the updated user to localStorage
+         localStorage.setItem("user", JSON.stringify(updatedUser));
+
+         
             toast.success('Profile updated successfully!');
         } catch (error) {
             console.error('Error updating profile:', error);
