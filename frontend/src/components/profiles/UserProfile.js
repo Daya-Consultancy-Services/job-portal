@@ -44,6 +44,7 @@ import { useNavigate } from 'react-router-dom';
 function UserProfile() {
 
     const {user, token} = useSelector((state) => state.user)
+    
     const navigate = useNavigate();
 
 

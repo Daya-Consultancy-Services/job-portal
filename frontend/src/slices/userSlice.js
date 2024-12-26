@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const parseJSON = (item) => {
     if (item === null || item === undefined) {
-        console.error("Received null or undefined item, returning null.");
+        console.warn("Received null or undefined item, returning null.");
         return null;
     }
     try {
@@ -13,29 +13,33 @@ const parseJSON = (item) => {
     }
 };
 
+// Check localStorage and initialize values
+const token = localStorage.getItem("token");
+const user = localStorage.getItem("user");
+
 const initialState = {
     signupData: null,
     loading: false,
-    token: parseJSON(localStorage.getItem("token")),
-    user: parseJSON(localStorage.getItem("user")),
+    token: parseJSON(token) || "", // Default to empty string if null or undefined
+    user: parseJSON(user) || {}, // Default to empty object if null or undefined
 };
 
 const userSlice = createSlice({
     name: "user",
     initialState: initialState,
     reducers: {
-        setSignupData(state, value) {
-            state.signupData = value.payload;
+        setSignupData(state, action) {
+            state.signupData = action.payload;
         },
-        setLoading(state, value) {
-            state.loading = value.payload;
+        setLoading(state, action) {
+            state.loading = action.payload;
         },
-        setToken(state, value) {
-            state.token = value.payload;
+        setToken(state, action) {
+            state.token = action.payload;
         },
-        setUser(state, value) {
-            state.user = value.payload;
-            console.log("set user value", value.payload);
+        setUser(state, action) {
+            state.user = action.payload;
+            console.log("set user value", action.payload);
         },
     },
 });

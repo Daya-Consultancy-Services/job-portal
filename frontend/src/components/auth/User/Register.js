@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from "react-hot-toast"
 // import { userPoint } from '../../../services/apis';
-import { ROLE_TYPE } from '../../../slices/constant';
+import { ROLE_TYPE , USER_TYPE} from '../../../slices/constant';
 import { useDispatch } from "react-redux"
 import { setSignupData } from "../../../slices/userSlice"
 import { signupUser } from '../../../operations/userAPI';
@@ -10,6 +10,7 @@ import { signupUser } from '../../../operations/userAPI';
 function Register() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const [userType, setUserType] = useState(USER_TYPE.FRESHER);
 
     const [formData, setFormData] = useState({
 
@@ -18,13 +19,15 @@ function Register() {
         email: '',
         password: '',
         role: ROLE_TYPE.JOBSEEKER,
+        status: userType,
+        
     
 
     });
     
     // const [role, setRole] = useState(ROLE_TYPE.JOBSEEKER)
     const [errors, setErrors] = useState({});
-    const [selectedStatus, setSelectedStatus] = useState('');
+    const [selectedStatus, setSelectedStatus] = useState(''); 
     const [location, setLocation] = useState('');
     const [resume, setResume] = useState(null);
     const [suggestions, setSuggestions] = useState([]);
@@ -42,27 +45,47 @@ function Register() {
 
 
     const handleClick = (status) => {
+
         setSelectedStatus(status);
+
+        setFormData((prevData) => ({
+
+            ...prevData,
+
+            workstatus: userType // Update workstatus in formData
+
+        }));
+      
+        if (status === 'experienced') {
+            
+            setUserType(USER_TYPE.EXPERIENCED)
+        }else{
+            setUserType(USER_TYPE.FRESHER)
+            console.log(status);
+        }
+
         setLocation('');
+
         setSuggestions([]);
+
     };
 
-    const handleLocationChange = (e) => {
-        const userInput = e.target.value;
-        setLocation(userInput);
-        setSuggestions(
-            locationsList.filter((loc) =>
-                loc.toLowerCase().startsWith(userInput.toLowerCase())
-            )
-        );
-    };
-    const handleResumeChange = (e) => {
-        setResume(e.target.files[0]);
-      };
+    // const handleLocationChange = (e) => {
+    //     const userInput = e.target.value;
+    //     setLocation(userInput);
+    //     setSuggestions(
+    //         locationsList.filter((loc) =>
+    //             loc.toLowerCase().startsWith(userInput.toLowerCase())
+    //         )
+    //     );
+    // };
+    // const handleResumeChange = (e) => {
+    //     setResume(e.target.files[0]);
+    //   };
 
     const getBorderClass = (status) =>
         selectedStatus === status ? 'border-blue-500' : 'border-gray-300';
-    const {firstName, lastName, email, password,role} = formData
+    const {firstName, lastName, email, password,role, workstatus} = formData
 
     const handleChange = (e) => {
         setFormData((prevData) => ({
@@ -110,6 +133,7 @@ function Register() {
         email,
         password,
         role,
+        workstatus,
         navigate
        ));
         if (validateForm()) {
@@ -128,6 +152,8 @@ function Register() {
                 email: '',
                 password: '',
                 role:ROLE_TYPE.JOBSEEKER,
+                workstatus: selectedStatus,
+            
                 
             });
 
@@ -242,7 +268,7 @@ function Register() {
                                             placeholder="Enter your role"
                                         />
                                     </div>
-                                    <div className="mb-4">
+                                    {/* <div className="mb-4">
                                         <label className="block text-gray-700 font-medium mb-2">
                                             Phone Number 
                                         </label>
@@ -254,7 +280,7 @@ function Register() {
                                             className={inputClass('phoneNumber')}
                                             placeholder="Enter your phone number (10 digits)"
                                         />
-                                    </div>
+                                    </div> */}
 
 
                                     <div className="work-status min-h-[180px] w-full flex items-center  gap-10 justify-center flex-col">
@@ -276,7 +302,7 @@ function Register() {
                                         </div>
                                             <div className={`fresher h-[80%] w-[45%] flex p-3 justify-between cursor-pointer border-2 rounded-lg ${getBorderClass(
                                                 'fresher')}`}
-                                                onClick={() => handleClick('fresher')}
+                                                onClick={() => handleClick('fresher')}  
                                                 value="fresher"
                                             >
                                                 <div className="info w-[65%] p-1">
@@ -289,7 +315,7 @@ function Register() {
                                             </div>
                                         </div>
 
-                                        <div className="additional-fields w-full flex ">
+                                        {/* <div className="additional-fields w-full flex ">
                                             {selectedStatus === 'experienced' && (
                                                 <div className="upload-resume w-[60%] flex flex-col">
                                                     <label htmlFor="resume" className="font-semibold text-sm mb-2">
@@ -331,7 +357,8 @@ function Register() {
                                                     )}
                                                 </div>
                                             )}
-                                        </div>
+                                        </div> */}
+
                                     </div>
                                     <div className="ters-cond mt-5">
                                         <p>By clicking Register, you agree to the <span className='text-blue-500 cursor-pointer hover:text-blue-800'>Terms and Conditions</span> & <span className='text-blue-500 cursor-pointer hover:text-blue-800'>Privacy Policy</span> of Onecareer.com</p>

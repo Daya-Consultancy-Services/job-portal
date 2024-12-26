@@ -3,3 +3,8 @@ export const ROLE_TYPE = {
     COMPANY: "company",
     ADMIN: "admin",
   }
+
+  export const USER_TYPE = {
+    FRESHER: "Fresher",
+    EXPERIENCED: "Experienced",
+  }
