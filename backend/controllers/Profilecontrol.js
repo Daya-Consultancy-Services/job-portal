@@ -13,11 +13,13 @@ exports.updateProfile = async (req,res) => {
                 address,
                 contactNumber,
                 education,
-                workstatus,
                 empType,
                 skills,
-                coverletter
-                // image 
+                coverletter,
+                resumeHeadline,
+                profileSummary,
+                location,
+                image 
                 // links
                 // certificate left
             } = req.body
@@ -28,10 +30,13 @@ exports.updateProfile = async (req,res) => {
                 !address || 
                 !contactNumber || 
                 !education || 
-                !workstatus || 
                 !empType || 
                 !skills || 
-                !coverletter
+                !coverletter ||
+                !resumeHeadline ||
+                !profileSummary ||
+                !location || 
+                !image
             )
                 {
                     return res.status(400).json({
@@ -52,10 +57,13 @@ exports.updateProfile = async (req,res) => {
             profileDetail.address = address
             profileDetail.contactNumber = contactNumber
             profileDetail.education = education
-            profileDetail.workstatus = workstatus
             profileDetail.empType = empType
             profileDetail.skills = skills
             profileDetail.coverletter = coverletter
+            profileDetail.resumeHeadline = resumeHeadline
+            profileDetail.profileSummary = profileSummary
+            profileDetail.location = location
+            profileDetail.image = image
 
             await profileDetail.save();
 

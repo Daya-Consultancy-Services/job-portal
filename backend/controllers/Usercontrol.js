@@ -12,6 +12,7 @@ exports.signup = async (req,res) => {
             lastName,
             email,
             password,
+            workstatus,
             role
         } = req.body
 
@@ -21,6 +22,7 @@ exports.signup = async (req,res) => {
         !lastName ||
         !email ||
         !password ||
+        !workstatus ||
         !role
     )
         {
@@ -47,7 +49,6 @@ exports.signup = async (req,res) => {
         gender:null,
         dateOfBirth:null,
         contactNumber:null,
-        workstatus:null,
     });
 
     //Create a database entry for the user 
@@ -57,6 +58,7 @@ exports.signup = async (req,res) => {
         email,
         role,
         password:hashedPassword,
+        workstatus,
         profile:profileDetail._id
     });
     
@@ -153,6 +155,7 @@ exports.updateDetail = async(req,res) => {
             firstName,
             lastName,
             email,
+            workstatus
             // password  // have to remove this 
         } = req.body
 
@@ -167,7 +170,7 @@ exports.updateDetail = async(req,res) => {
         }
         
 
-        if(!firstName || !lastName || !email  )   // || !password
+        if(!firstName || !lastName || !email || !workstatus )   // || !password
         {
             return res.status(400).json({
                 success:false,
@@ -182,7 +185,8 @@ exports.updateDetail = async(req,res) => {
             { 
                 firstName: firstName,
                 lastName : lastName,
-                email:email
+                email:email,
+                workstatus:workstatus
             },
             { new: true }
         )
