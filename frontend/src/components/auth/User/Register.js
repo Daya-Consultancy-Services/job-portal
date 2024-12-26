@@ -24,44 +24,44 @@ function Register() {
     
     // const [role, setRole] = useState(ROLE_TYPE.JOBSEEKER)
     const [errors, setErrors] = useState({});
-    // const [selectedStatus, setSelectedStatus] = useState('');
-    // const [location, setLocation] = useState('');
-    // const [resume, setResume] = useState(null);
-    // const [suggestions, setSuggestions] = useState([]);
-    // const [locationsList] = useState([
-    //     'New York',
-    //     'Los Angeles',
-    //     'Chicago',
-    //     'Houston',
-    //     'Phoenix',
-    //     'San Francisco',
-    //     'Seattle',
-    // ]);
+    const [selectedStatus, setSelectedStatus] = useState('');
+    const [location, setLocation] = useState('');
+    const [resume, setResume] = useState(null);
+    const [suggestions, setSuggestions] = useState([]);
+    const [locationsList] = useState([
+        'New York',
+        'Los Angeles',
+        'Chicago',
+        'Houston',
+        'Phoenix',
+        'San Francisco',
+        'Seattle',
+    ]);
 
 
-    // const navigate = useNavigate();
 
-    // const handleClick = (status) => {
-    //     setSelectedStatus(status);
-    //     setLocation('');
-    //     setSuggestions([]);
-    // };
 
-    // const handleLocationChange = (e) => {
-    //     const userInput = e.target.value;
-    //     setLocation(userInput);
-    //     setSuggestions(
-    //         locationsList.filter((loc) =>
-    //             loc.toLowerCase().startsWith(userInput.toLowerCase())
-    //         )
-    //     );
-    // };
-    // const handleResumeChange = (e) => {
-    //     setResume(e.target.files[0]);
-    //   };
+    const handleClick = (status) => {
+        setSelectedStatus(status);
+        setLocation('');
+        setSuggestions([]);
+    };
 
-    // const getBorderClass = (status) =>
-    //     selectedStatus === status ? 'border-blue-500' : 'border-gray-300';
+    const handleLocationChange = (e) => {
+        const userInput = e.target.value;
+        setLocation(userInput);
+        setSuggestions(
+            locationsList.filter((loc) =>
+                loc.toLowerCase().startsWith(userInput.toLowerCase())
+            )
+        );
+    };
+    const handleResumeChange = (e) => {
+        setResume(e.target.files[0]);
+      };
+
+    const getBorderClass = (status) =>
+        selectedStatus === status ? 'border-blue-500' : 'border-gray-300';
     const {firstName, lastName, email, password,role} = formData
 
     const handleChange = (e) => {
@@ -242,7 +242,7 @@ function Register() {
                                             placeholder="Enter your role"
                                         />
                                     </div>
-                                    {/* <div className="mb-4">
+                                    <div className="mb-4">
                                         <label className="block text-gray-700 font-medium mb-2">
                                             Phone Number 
                                         </label>
@@ -254,10 +254,10 @@ function Register() {
                                             className={inputClass('phoneNumber')}
                                             placeholder="Enter your phone number (10 digits)"
                                         />
-                                    </div>*/}
+                                    </div>
 
 
-                                    {/*<div className="work-status min-h-[180px] w-full flex items-center  gap-10 justify-center flex-col">
+                                    <div className="work-status min-h-[180px] w-full flex items-center  gap-10 justify-center flex-col">
                                         <div className=" flex justify-start items-center w-full">     <h1>Work Status <span className="text-red-500">*</span></h1></div>
 
                                         <div className="h-[120px] w-full flex items-center justify-center gap-10 mt-[-40px]"><div className={`experience h-[80%] w-[45%] flex p-3 justify-between cursor-pointer border-2 rounded-lg ${getBorderClass(
@@ -332,7 +332,7 @@ function Register() {
                                                 </div>
                                             )}
                                         </div>
-                                    </*div> */}
+                                    </div>
                                     <div className="ters-cond mt-5">
                                         <p>By clicking Register, you agree to the <span className='text-blue-500 cursor-pointer hover:text-blue-800'>Terms and Conditions</span> & <span className='text-blue-500 cursor-pointer hover:text-blue-800'>Privacy Policy</span> of Onecareer.com</p>
                                     </div>
