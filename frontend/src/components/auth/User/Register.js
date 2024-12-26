@@ -139,12 +139,6 @@ function Register() {
         if (validateForm()) {
             const signupData = { ...formData, ROLE_TYPE };
            console.log( dispatch(setSignupData(signupData)))
-
- 
-
-
-
-
             //for reseting after submiting
             setFormData({
                 firstName: '',
