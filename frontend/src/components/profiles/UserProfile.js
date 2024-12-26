@@ -31,7 +31,7 @@ import ProfileSummery from './ProfileSummery';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { updateProfile } from '../../operations/userAPI';
+import { updateDetail } from '../../operations/userAPI';
 
 import ExtraProfile from './ExtraProfile';
 
@@ -116,7 +116,7 @@ function UserProfile() {
     const handleEducationSaved = (data) => {
         setEducationData(data); 
         setEducationVisible(false); 
-        // dispatch(updateProfile({ education: data }));
+        // dispatch(updateDetail({ education: data }));
     };
 
 
@@ -129,7 +129,7 @@ function UserProfile() {
     const handleSkillsSaved = (data) => {
         if (data) {
             setSkillsData([...skillsData, data]); 
-            // dispatch(updateProfile({ skills: [...skillsData, data] }));
+            // dispatch(updateDetail({ skills: [...skillsData, data] }));
         }
         setSkillsVisible(false); 
     };
@@ -141,7 +141,7 @@ function UserProfile() {
     const handleProjectSaved = (data) => {
         if (data) {
             setProjectsData([...projectsData, data]); 
-            // dispatch(updateProfile({ projects: [...projectsData, data] }));
+            // dispatch(updateDetail({ projects: [...projectsData, data] }));
         }
         setProjectVisible(false); 
     };
@@ -154,7 +154,7 @@ function UserProfile() {
     const handlePersonalDetailsSaved = (details) => {
         if (details) {
             setPersonalDetails(details); 
-            // dispatch(updateProfile({ personalDetails: details }));
+            // dispatch(updateDetail({ personalDetails: details }));
         }
         setPersonalDetailsVisible(false);
     };
@@ -166,7 +166,7 @@ function UserProfile() {
         if (file) {
             const imageURL = URL.createObjectURL(file);
             setProfileImage(imageURL);
-            // dispatch(updateProfile({ profileImage: imageURL }));
+            // dispatch(updateDetail({ profileImage: imageURL }));
         }
     };
 
@@ -229,7 +229,7 @@ function UserProfile() {
             setUserData(updatedData);
             console.log(updatedData);
 
-            dispatch(updateProfile(token, updatedData)); // Dispatch updated userData
+            dispatch(updateDetail(token, updatedData)); // Dispatch updated userData
 
         }
 
@@ -248,7 +248,7 @@ function UserProfile() {
         setUserData(updatedData);
        
 
-        dispatch(updateProfile(token, updatedData)); // Dispatch updated userData
+        dispatch(updateDetail(token, updatedData)); // Dispatch updated userData
 
         setIsNamePopupOpen(false);
 

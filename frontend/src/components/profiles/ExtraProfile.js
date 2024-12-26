@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify"; 
-import { updateProfile } from "../../operations/userAPI";
+import { updateDetail } from "../../operations/userAPI";
 
 function ExtraProfile({ token }) {
     const dispatch = useDispatch();
@@ -39,7 +39,7 @@ function ExtraProfile({ token }) {
             workStatus,
             skills,
         };
-        dispatch(updateProfile(token, formData)); 
+        dispatch(updateDetail(token, formData)); 
 
 
       

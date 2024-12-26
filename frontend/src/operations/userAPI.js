@@ -87,7 +87,7 @@ export function login(
 
 // update user detail API 
 
-export function updateProfile(token, updatedData) {
+export function updateDetail(token, updatedData) {
     return async (dispatch) =>{
         console.log("updated data",updatedData)
         console.log(  "token",token);
