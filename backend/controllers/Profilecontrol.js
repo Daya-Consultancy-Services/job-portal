@@ -1,5 +1,6 @@
 const User = require("../models/User")
 const Profile = require("../models/Profile")
+const employmentProfile = require("../models/ExtraProfile/employmentProfile");
 require("dotenv").config();
 
 
@@ -15,7 +16,7 @@ exports.updateProfile = async (req,res) => {
                 education,
                 empType,
                 skills,
-                coverletter,
+                resume,
                 resumeHeadline,
                 profileSummary,
                 location,
@@ -32,7 +33,7 @@ exports.updateProfile = async (req,res) => {
                 !education || 
                 !empType || 
                 !skills || 
-                !coverletter ||
+                !resume ||
                 !resumeHeadline ||
                 !profileSummary ||
                 !location || 
@@ -46,6 +47,13 @@ exports.updateProfile = async (req,res) => {
                 }
             
             const Id = req.user.id
+            
+            const empProfile = await employmentProfile.create({
+                isCurrentEmp : null,
+                totalExp : null,
+                currentJobTitle : null,
+                noticePeriod : null,
+            })
 
             const userDetail = await User.findById(Id);
             const profileDetail = await Profile.findByIdAndUpdate(userDetail.profile)
@@ -59,7 +67,7 @@ exports.updateProfile = async (req,res) => {
             profileDetail.education = education
             profileDetail.empType = empType
             profileDetail.skills = skills
-            profileDetail.coverletter = coverletter
+            profileDetail.resume = resume
             profileDetail.resumeHeadline = resumeHeadline
             profileDetail.profileSummary = profileSummary
             profileDetail.location = location
@@ -70,7 +78,8 @@ exports.updateProfile = async (req,res) => {
             return res.status(200).json({
                 success:true,
                 message:"Updated Profile Successfully !!",
-                profileDetail
+                profileDetail,
+                profileDetail:empProfile
             })
 
         } catch (error) {

@@ -36,8 +36,7 @@ export function signupUser(firstName, lastName, email, password, role, navigate)
             }
 
             toast.success("Signup Successful!!!");
-            dispatch(setUser(response.data.user)); // Dispatch action to update user
-            localStorage.setItem("user", JSON.stringify(response.data.user)); // Store user in localStorage
+
             navigate("/components/auth/User/login"); // Navigate to login page
         } catch (error) {
             console.error("Signup Error for user.....", error);

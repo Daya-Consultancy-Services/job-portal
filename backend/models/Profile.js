@@ -46,7 +46,7 @@ const profileSchema = new mongoose.Schema({
     certificate:{
         type:String // how to get the certificate in pdf or file format
     },
-    coverletter:{
+    resume:{
         type:String
     },
     resumeHeadline:{
@@ -54,6 +54,10 @@ const profileSchema = new mongoose.Schema({
     },
     profileSummary:{
         type:String
+    },
+    empProfileSchema:{
+        type:mongoose.Schema.ObjectId,
+        ref:"empProfileSchema"
     }
 
 })
