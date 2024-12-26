@@ -56,9 +56,7 @@ function Login() {
 
         // Optionally, navigate to a different page after successful login
         navigate('/dashboard'); // Change the route as needed
-      } else {
-        alert("Login failed. Please try again.");
-      }
+      } 
 
     } catch (error) {
       console.error("Login error:", error);

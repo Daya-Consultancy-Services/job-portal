@@ -31,11 +31,12 @@ import ProfileSummery from './ProfileSummery';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { updateDetail } from '../../operations/userAPI';
+import { deleteUser, logout, updateDetail } from '../../operations/userAPI';
 
 import ExtraProfile from './ExtraProfile';
 
 import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
 // import { toast } from 'react-toastify';
 
@@ -43,6 +44,7 @@ import Cookies from 'js-cookie';
 function UserProfile() {
 
     const {user, token} = useSelector((state) => state.user)
+    const navigate = useNavigate();
 
 
     const [profileImage, setProfileImage] = useState(require('../../assets/profile.png'));
@@ -257,6 +259,7 @@ function UserProfile() {
 
    
     const handleDelete = () => {
+        dispatch(deleteUser(token, navigate));
         console.log("Profile deleted");
         setIsModalOpen(false); 
     };
@@ -265,6 +268,11 @@ function UserProfile() {
         console.log("Profile deletion canceled");
         setIsModalOpen(false); 
     };
+
+    const handleLogout = () => {
+        dispatch(logout(navigate));
+        console.log("Profile logged out");
+    }
 
 
     const scrollToDiv = (div) => {
@@ -291,7 +299,7 @@ function UserProfile() {
                             <div className="profile-info w-[65%] h-full  flex ">
                                 <div className="profile h-full w-[30%]  flex items-center justify-center">
                                     <div className="img-div h-[150px] w-[150px]  rounded-full overflow-hidden relative group">
-                                        <img className="h-full w-full object-cover" src={user?.profileImage} alt="Profile" />
+                                        <img className="h-full w-full object-cover" src={user?.profileImage ? user.profileImage : require( "../../assets/default-profile.jpg")}alt="image" />
                                         {/* Overlay for Upload */}
                                         <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                             <label
@@ -345,7 +353,7 @@ function UserProfile() {
                                             </div>
                                             <div className="email flex gap-5 items-center group">
                                                 <CiMail />
-                                                <span className="text-md font-medium text-black">{user?.email}</span>
+                                                <span className="text-md font-medium text-black"> {user?.email?.length > 8 ? `${user.email.slice(0, 8)}...` : user?.email}</span>
                                                 <FaPencilAlt onClick={() => togglePopup('email id')} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </div>
                                         </div>
@@ -394,10 +402,14 @@ function UserProfile() {
                                         <div onClick={() => scrollToDiv('Career-profile')} className="Career-profile flex"><h3>Career profile</h3></div>
                                         <div onClick={() => scrollToDiv('Personal-details')} className="Personal-details flex"><h3>Personal Details</h3></div>
                                     </div>
-                                    <div className="delete-btn mt-5">
+                                    <div className="delete-btn mt-5 flex justify-between items-center">
                                         <button  onClick={() => setIsModalOpen(true)}  className='px-3 py-2 border bg-red-500 text-white rounded-full cursor-pointer font-semibold hover:bg-red-600'>
                                              Delete profile
                                         </button>
+                                     
+                                     <h1 className=' text-blue-500 cursor-pointer' onClick={handleLogout}>logout</h1>
+
+
                                     </div>
                                 </div>
                             </div>
