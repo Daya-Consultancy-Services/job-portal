@@ -28,14 +28,15 @@ const userSchema = new mongoose.Schema({
         enum: ["jobseeker", "company", "admin"],  // Enums will limit the possible roles
         required: true,
     },
+    workstatus: {
+        type:String,
+        enum:["Fresher","Experience"], // essential when going inside to registration 
+        // required:true
+    },
     profile : {
         type:mongoose.Schema.ObjectId,
         required:true,
         ref: "Profile"
-    },
-    image: {
-        type:String,
-        // required:true
     },
     token:{
         type:String,
