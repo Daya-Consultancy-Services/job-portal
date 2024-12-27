@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from "react-hot-toast"
 // import { userPoint } from '../../../services/apis';
@@ -10,7 +10,7 @@ import { signupUser } from '../../../operations/userAPI';
 function Register() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const [userType, setUserType] = useState(USER_TYPE.FRESHER);
+    // const [userType, setUserType] = useState(USER_TYPE.FRESHER);
 
     const [formData, setFormData] = useState({
 
@@ -19,11 +19,75 @@ function Register() {
         email: '',
         password: '',
         role: ROLE_TYPE.JOBSEEKER,
-        status: userType,
+       workstatus:""
         
     
 
     });
+       
+    const handleClick = (status) => {
+        setSelectedStatus(status);
+    
+        // Update userType and formData status based on the selected status
+        if (status === 'experienced') {
+            
+            setFormData((prevData) => ({
+                ...prevData,
+                workstatus: USER_TYPE.EXPERIENCED, // Update status to 'experienced'
+            }));
+        } else {
+        
+            setFormData((prevData) => ({
+                ...prevData,
+                workstatus: USER_TYPE.FRESHER, // Update status to 'fresher'
+            }));
+        }
+    
+        // Reset location and suggestions
+        setLocation('');
+        setSuggestions([]);
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+       dispatch(signupUser(
+        firstName,
+        lastName,
+        email,
+        password,
+        role,
+        workstatus,
+        navigate
+       ));
+        if (validateForm()) {
+            const signupData = { ...formData };
+           console.log( dispatch(setSignupData(signupData)))
+            //for reseting after submiting
+            setFormData({
+                firstName: '',
+                lastName: '',
+                email: '',
+                password: '',
+                role:ROLE_TYPE.JOBSEEKER,
+                workstatus: "",
+            
+                
+            });
+
+            
+
+
+          
+          
+        } else {
+            alert("Form is not valid.");
+        }
+
+       
+    };
+
+
     
     // const [role, setRole] = useState(ROLE_TYPE.JOBSEEKER)
     const [errors, setErrors] = useState({});
@@ -42,33 +106,9 @@ function Register() {
     ]);
 
 
+  
 
-
-    const handleClick = (status) => {
-
-        setSelectedStatus(status);
-
-        setFormData((prevData) => ({
-
-            ...prevData,
-
-            workstatus: userType // Update workstatus in formData
-
-        }));
-      
-        if (status === 'experienced') {
-            
-            setUserType(USER_TYPE.EXPERIENCED)
-        }else{
-            setUserType(USER_TYPE.FRESHER)
-            console.log(status);
-        }
-
-        setLocation('');
-
-        setSuggestions([]);
-
-    };
+ 
 
     // const handleLocationChange = (e) => {
     //     const userInput = e.target.value;
@@ -124,44 +164,7 @@ function Register() {
 
     
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-       dispatch(signupUser(
-        firstName,
-        lastName,
-        email,
-        password,
-        role,
-        workstatus,
-        navigate
-       ));
-        if (validateForm()) {
-            const signupData = { ...formData, ROLE_TYPE };
-           console.log( dispatch(setSignupData(signupData)))
-            //for reseting after submiting
-            setFormData({
-                firstName: '',
-                lastName: '',
-                email: '',
-                password: '',
-                role:ROLE_TYPE.JOBSEEKER,
-                workstatus: selectedStatus,
-            
-                
-            });
-
-            
-
-
-          
-          
-        } else {
-            alert("Form is not valid.");
-        }
-
-       
-    };
+   
     const isFormValid =
         formData.firstName.trim() !== "" &&
         formData.lastName.trim() !== "" &&
@@ -284,7 +287,7 @@ function Register() {
                                             'experienced'
                                         )}`}
                                             onClick={() => handleClick('experienced')}
-                                            value="experienced"
+                                            value="Experienced"
                                             >
                                             <div className="info w-[65%] h-full p-1">
                                                 <h1 className='font-semibold text-md '>I'm Experienced</h1>
@@ -297,7 +300,7 @@ function Register() {
                                             <div className={`fresher h-[80%] w-[45%] flex p-3 justify-between cursor-pointer border-2 rounded-lg ${getBorderClass(
                                                 'fresher')}`}
                                                 onClick={() => handleClick('fresher')}  
-                                                value="fresher"
+                                                value="Fresher"
                                             >
                                                 <div className="info w-[65%] p-1">
                                                     <h1 className='font-semibold text-md '>I'm Fresher</h1>

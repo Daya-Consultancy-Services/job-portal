@@ -6,5 +6,5 @@ export const ROLE_TYPE = {
 
   export const USER_TYPE = {
     FRESHER: "Fresher",
-    EXPERIENCED: "Experienced",
+    EXPERIENCED: "Experience",
   }
