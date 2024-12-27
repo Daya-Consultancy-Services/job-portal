@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, {  useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from "react-hot-toast"
 // import { userPoint } from '../../../services/apis';
@@ -62,7 +62,7 @@ function Register() {
        ));
         if (validateForm()) {
             const signupData = { ...formData };
-           console.log( dispatch(setSignupData(signupData)))
+           dispatch(setSignupData(signupData));
             //for reseting after submiting
             setFormData({
                 firstName: '',
