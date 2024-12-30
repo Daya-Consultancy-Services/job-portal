@@ -153,32 +153,6 @@ export function updateDetail(token, updatedData) {
 
 };
 
-// export function deleteUser(token,navigate){
-//     return async(dispatch) => {
-//         const toastId = toast.loading("Loading...");
-//         dispatch(setLoading(true))
-//         try {
-//             const response = await apiConnector("DELETE", deleteUser_api , null, {
-//                 Authorization: `Bearer ${token}`,
-//               })
-//               console.log("DELETE_API API RESPONSE............", response)
-
-//               if (!response.data.success) {
-//                 throw new Error(response.data.message)
-//               }
-//               toast.success("User Deleted Successfully")
-
-//             //   dispatch(logout())
-//               navigate("/")
-//         } catch (error) {
-//             console.log("Delete_User_API error",error)
-//             toast.error("Could not delete user")
-//         }
-//         toast.dismiss(toastId)
-//         dispatch(setLoading(false))
-//     }
-// }
-
 export function deleteUser(token, navigate) {
     return async (dispatch) => {
         const toastId = toast.loading("Processing...");
