@@ -7,23 +7,25 @@ function ExtraProfile({ token }) {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user); // Get current user info from the Redux store
 
-    const [skills, setSkills] = useState(user.skills || []);
-    const [newSkill, setNewSkill] = useState("");
+    const [langs, setLangs] = useState(user.skills || []);
+    const [newLang, setNewLang] = useState("");
     const [gender, setGender] = useState(user.gender || "");
     const [dob, setDob] = useState(user.dob || "");
-    const [contact, setContact] = useState(user.contact || "");
+    const [martialStatus, setMartialStatus] = useState(user.martialStatus || "");
+    const [permanentAddress, setPermanentAddress] = useState(user.permanentAddress || "");
+    // const [contact, setContact] = useState(user.contact || "");
     const [workStatus, setWorkStatus] = useState(user.workStatus || "");
 
 
-    const addSkill = () => {
-        if (newSkill.trim() && !skills.includes(newSkill)) {
-            setSkills([...skills, newSkill]);
-            setNewSkill("");
+    const addLang = () => {
+        if (newLang.trim() && !langs.includes(newLang)) {
+            setLangs([...langs, newLang]);
+            setNewLang("");
         }
     };
 
-    const removeSkill = (skillToRemove) => {
-        setSkills(skills.filter((skill) => skill !== skillToRemove));
+    const removeLangs = (langToRemove) => {
+        setLangs(langs.filter((lang) => lang !== langToRemove));
     };
 
     const handleSave = async (e) => {
@@ -35,9 +37,11 @@ function ExtraProfile({ token }) {
         const formData = {
             gender,
             dob,
-            contact,
+            martialStatus,
+            // contact,
+            permanentAddress,
             workStatus,
-            skills,
+            langs,
         };
         dispatch(updateDetail(token, formData)); 
 
@@ -72,7 +76,7 @@ function ExtraProfile({ token }) {
                             onChange={(e) => setDob(e.target.value)}
                         />
                     </div>
-                    <div>
+                    {/* <div>
                         <label className="block font-medium mb-1">Contact Number</label>
                         <input
                             type="text"
@@ -81,6 +85,33 @@ function ExtraProfile({ token }) {
                             value={contact}
                             onChange={(e) => setContact(e.target.value)}
                         />
+                    </div> */}
+                   <div>
+                        <label className="block font-medium mb-1">Martial Status</label>
+                        <select
+                            className="w-full px-3 py-2 border rounded"
+                            value={martialStatus}
+                            onChange={(e) => setMartialStatus(e.target.value)}
+                        >
+                            <option value="">Select Martial Status</option>
+                            <option value="male">Married</option>
+                            <option value="female">Unmarried</option>
+                            <option value="other">Student</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block font-medium mb-1">Permanent Address</label>
+                        <textarea
+                            rows={3}
+                            placeholder="Enter permanent address"
+                            className="w-full px-3 py-2 border rounded resize-none"
+                            value={permanentAddress}
+                            onChange={(e) => setPermanentAddress(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <label className="block font-medium mb-1">Pincode</label>
+                        <input type="number" className="w-full px-3 py-2 border rounded" />
                     </div>
                     <div>
                         <label className="block font-medium mb-1">Work Status</label>
@@ -96,41 +127,42 @@ function ExtraProfile({ token }) {
                         </select>
                     </div>
                     <div>
-                        <label className="block font-medium mb-1">Skills</label>
+                        <label className="block font-medium mb-1">Languages</label>
                         <div className="flex gap-2 mb-2">
                             <input
                                 type="text"
-                                value={newSkill}
+                                value={newLang}
                                 placeholder="Enter a skill"
                                 className="flex-1 px-3 py-2 border rounded"
-                                onChange={(e) => setNewSkill(e.target.value)}
+                                onChange={(e) => setNewLang(e.target.value)}
                             />
                             <button
                                 type="button"
                                 className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                                onClick={addSkill}
+                                onClick={addLang}
                             >
                                 Add
                             </button>
                         </div>
                         <div className="flex flex-wrap gap-2">
-                            {skills.map((skill, index) => (
+                            {langs.map((lang, index) => (
                                 <div
                                     key={index}
                                     className="flex items-center gap-2 bg-gray-200 px-3 py-1 rounded-full"
                                 >
-                                    <span>{skill}</span>
+                                    <span>{lang}</span>
                                     <button
                                         type="button"
                                         className="text-red-500 hover:text-red-700"
-                                        onClick={() => removeSkill(skill)}
+                                        onClick={() => removeLangs(lang)}
                                     >
                                         &times;
                                     </button>
                                 </div>
                             ))}
                         </div>
-                    </div>
+                    </div> 
+
                     <div className="flex justify-end gap-3 mt-4">
                         <button
                             type="button"
@@ -141,7 +173,7 @@ function ExtraProfile({ token }) {
                         </button>
                         <button
                             type="submit"
-                            className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600"
+                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-orange-600"
                         >
                             Save
                         </button>

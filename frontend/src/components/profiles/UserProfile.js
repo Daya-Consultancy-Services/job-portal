@@ -378,7 +378,7 @@ function UserProfile() {
                                         <p>Upload Resume</p>
                                         <span className='px-3 py-1 bg-white rounded-full absolute right-1'>2%</span>
                                     </div>
-                                    <button className='px-3 py-2 rounded-full bg-orange-500 text-white ' onClick={() => setShowExtraProfile(true)}>Add missing details</button>
+                                    <button className='px-3 py-2 rounded-full bg-orange-500 text-white ' >Add missing details</button>
                                 </div>
                             </div>
                             {showExtraProfile && <ExtraProfile  token={token}/>}
@@ -571,7 +571,7 @@ function UserProfile() {
                                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Personal-details'>
                                     <div className="head flex w-full justify-between px-4">
                                         <div className="flex justify-between px-2 w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Personal details</h1> <p className='text-green-400'>Add 18%</p></div>
-                                        <h1 className='text-blue-700 font-semibold' >Add personal details</h1>
+                                        <h1 className='text-blue-700 font-semibold cursor-pointer' onClick={() => setShowExtraProfile(true)} >Add personal details</h1>
                                     </div>
                                     <p className='text-zinc-400 px-6'>This information is important for employers to know you better</p>
                                 </div>

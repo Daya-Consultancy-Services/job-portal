@@ -1,27 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const parseJSON = (item) => {
-    if (item === null || item === undefined) {
-        console.warn("Received null or undefined item, returning null.");
-        return null;
-    }
-    try {
-        return JSON.parse(item);
-    } catch (e) {
-        console.error("Error parsing JSON from localStorage", e);
-        return null;
-    }
-};
-
-// Check localStorage and initialize values
-const token = localStorage.getItem("token");
-const user = localStorage.getItem("user");
-
 const initialState = {
     signupData: null,
     loading: false,
-    token: parseJSON(token) || "", // Default to empty string if null or undefined
-    user: parseJSON(user) || {}, // Default to empty object if null or undefined
+    token: localStorage.getItem("token") ? JSON.parse(localStorage.getItem("token")) : null,
+    user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null,
 };
 
 const userSlice = createSlice({
