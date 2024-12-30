@@ -39,17 +39,20 @@ exports.updateProfile = async (req,res) => {
         
 
             const userDetail = await User.findById(Id);
-            const profileDetail = await Profile.findByIdAndUpdate(userDetail.profile)
-  
-            profileDetail.about = about
-            profileDetail.contactNumber = contactNumber   // in profile may be 
-            profileDetail.resume = resume                  // in profile
-            profileDetail.resumeHeadline = resumeHeadline  // in profile
-            profileDetail.profileSummary = profileSummary  // in profile
-            profileDetail.location = location
-            profileDetail.image = image                    // in profile
-
-            
+            const profileDetail = await Profile.findByIdAndUpdate(
+                userDetail.profile._id,
+                {
+                    about : about,
+                    contactNumber : contactNumber,
+                    resume : resume,
+                    resumeHeadline : resumeHeadline,
+                    profileSummary : profileSummary,
+                    location : location,
+                    image : image       
+                },
+                { new: true }
+            )          
+        
             await profileDetail.save();
 
             return res.status(200).json({
