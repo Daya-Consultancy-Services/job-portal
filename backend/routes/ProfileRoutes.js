@@ -30,3 +30,19 @@ module.exports=router
 //     "skills":"js react html",
 //     "coverletter": "Looking for fullstack job"
 // }
+
+// {
+//     "gender":"Male",
+//     "dateOfBirth":"20/06/1999",
+//     "about":"im a fullstack dev",
+//     "address":"Maharastra",
+//     "contactNumber":"852963147",
+//     "education":"Post-graduation",
+//     "empType":"Fulltime",
+//     "skills":["js"],
+//     "resume":"link",
+//     "resumeHeadline":"resumeHeadline",
+//     "profileSummary":"im developer",
+//     "location":"thane",
+//     "image":"link"
+// }

@@ -6,7 +6,7 @@ const empProfileSchema = new mongoose.Schema({
     },
     empType:{
         type:String,
-        enum:["Fulltime","Internship"]
+        enum:["Internship","Fulltime","Contract","Freelance"]  
     },
     totalExp:{
         type:String
@@ -15,6 +15,9 @@ const empProfileSchema = new mongoose.Schema({
         type:String
     },
     joinDate:{
+        type:String
+    },
+    leaveDate:{
         type:String
     },
     currentSalary:{
@@ -29,6 +32,9 @@ const empProfileSchema = new mongoose.Schema({
         type:String
     },
     noticePeriod:{
+        type:String
+    },
+    jobDescription:{
         type:String
     }
 })

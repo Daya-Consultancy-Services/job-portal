@@ -46,9 +46,10 @@ exports.signup = async (req,res) => {
 
     // some profile Detail are save and can be edited in profile controler
     const profileDetail = await Profile.create({
-        gender:null,
-        dateOfBirth:null,
+        about:null,
         contactNumber:null,
+        location:null,
+        image:null
     });
 
     //Create a database entry for the user 
