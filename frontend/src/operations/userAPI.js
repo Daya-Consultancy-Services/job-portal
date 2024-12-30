@@ -16,41 +16,7 @@ const {
 
 } = userPoint
 
-// export function signupUser(firstName, lastName, email, password, role, workstatus,navigate) {
-//     return async (dispatch) => {
-//         const toastId = toast.loading("Loading...");
 
-//         dispatch(setLoading(true)); // Use dispatch directly
-//         try {
-//             console.log(`signupUser ${firstName} ${lastName} ${email} ${role} `)
-//             const response = await apiConnector("POST", signup_api, {
-//                 firstName,
-//                 lastName,
-//                 email,
-//                 password,
-//                 role,
-//                 workstatus
-
-//             });
-
-//             console.log("Signup API response........", response); // Log API response
-
-//             if (!response.data.success) {
-//                 throw new Error(response.data.message);
-//             }
-
-//             toast.success("Signup Successful!!!");
-
-//             navigate("/components/auth/User/login"); // Navigate to login page
-//         } catch (error) {
-//             console.error("Signup Error for user.....", error);
-//             toast.error("Signup Failed, Try again.");
-//         } finally {
-//             dispatch(setLoading(false)); // Stop loading
-//             toast.dismiss(toastId);
-//         }
-//     };
-// }
 
 export function signupUser(firstName, lastName, email, password, role, workstatus, navigate) {
 
@@ -63,7 +29,7 @@ export function signupUser(firstName, lastName, email, password, role, workstatu
 
         try {
 
-            console.log(`signupUser  ${firstName} ${lastName} ${email} ${role} ${workstatus}`);
+           
 
             const response = await apiConnector("POST", signup_api, {
 
