@@ -1,0 +1,114 @@
+import { toast } from 'react-hot-toast'
+
+import { setLoading, setToken } from '../slices/userSlice'
+import { setUser } from '../slices/userSlice'
+import { apiConnector } from '../services/apiConnector'
+import { personalDetail } from './apis'
+import { logout } from './userAPI'
+
+const {
+
+    createPersonaldetail,
+    updatePersonaldetail,
+    deletePersonaldetail
+
+} = personalDetail
+
+
+export function personalDetails(
+        gender,
+        dateOfBirth,
+        martialStatus,
+        permanentAddress,
+        pincode,
+        language,
+        address
+){
+    return async (dispatch) => {
+        const toastId = toast.loading("Loading...");
+        dispatch(setLoading(true));
+        try {
+            const response = await apiConnector("POST",createPersonaldetail,{
+                gender,
+                dateOfBirth,
+                martialStatus,
+                permanentAddress,
+                pincode,
+                language,
+                address
+            });
+        console.log("Created PerosnalDetail Successfully !!!",response);
+
+        if(!response.data.success){
+            throw new Error(response.data.message);
+        }
+        toast.success("PersonalDetail Created Successful!!!");
+        //navigate("");
+        } catch (error) {
+            console.error("PersonalDetail Error for user.....", error);
+            toast.error("PersonalDetail Failed, Try again.");
+        }
+        finally {
+            dispatch(setLoading(false)); 
+            toast.dismiss(toastId);
+        }
+    }
+}
+
+
+// update personal details 
+export function updatePersonaldetails(token,formdata){
+    return async(dispatch) => {
+        const toastId = toast.loading("Loading....")
+        dispatch(setLoading(true));
+    try {
+        const response = await apiConnector("PUT",updatePersonaldetail,formdata,{
+            Authorization: `Bearer ${token}`,
+        })
+        console.log("Updated Personal Details API Response............", response);
+
+        if(!response.data.success){
+            throw new Error(response.data.message);
+        }
+        dispatch(setUser({...response.data.personalDetails}))
+        toast.success("PersonalDetail is updated Successfully")
+
+    } catch (error) {
+        console.log("UPDATE PERSONALUPDATE API ERROR............", error)
+        toast.error("Could Not Update PersonalDetail")
+    }
+        dispatch(setLoading(false))
+        toast.dismiss(toastId)
+    }
+
+}
+
+//delete personal details
+export function deletePersonaldetails(token,navigate){
+    return async(dispatch) => {
+        const toastId = toast.loading("Loading....")
+        dispatch(setLoading(true))
+    try {
+        const response = await apiConnector("PUT", deletePersonaldetail, null, {
+            Authorization: `Bearer ${token}`,
+        });
+        console.log("DELETE_PersonalDetail_API API RESPONSE............", response);
+
+        if (!response.data.success) {
+            throw new Error(response.data.message);
+        }
+
+        toast.success("PersonalDetail deleted Successfully!");
+        // dispatch(logout(navigate));
+
+    } catch (error) {
+        console.error("DeletePersonalDetail_API error:", error);
+        toast.error("Could not delete PersonalDetail.");
+    }
+    finally{
+        toast.dismiss(toastId);
+        dispatch(setLoading(false));
+    }
+    
+    }
+}

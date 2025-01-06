@@ -19,59 +19,31 @@ const {
 
 
 export function signupUser(firstName, lastName, email, password, role, workstatus, navigate) {
-
     return async (dispatch) => {
-
         const toastId = toast.loading("Loading...");
-
-
         dispatch(setLoading(true)); // Use dispatch directly
-
         try {
-
-           
-
             const response = await apiConnector("POST", signup_api, {
-
                 firstName,
-
                 lastName,
-
                 email,
-
                 password,
-
                 role,
-
                 workstatus // Pass workstatus here
-
             });
-
-
             console.log("Signup API response........", response); // Log API response
-
-
             if (!response.data.success) {
 
                 throw new Error(response.data.message);
 
             }
-
-
             toast.success("Signup Successful!!!");
-
             navigate("/components/auth/User/login"); // Navigate to login page
-
         } catch (error) {
-
             console.error("Signup Error for user.....", error);
-
             toast.error("Signup Failed, Try again.");
-
         } finally {
-
             dispatch(setLoading(false)); // Stop loading
-
             toast.dismiss(toastId);
 
         }
@@ -98,7 +70,6 @@ export function login(
             dispatch(setToken(response.data.token))
             dispatch(setUser(response.data.user));
             localStorage.setItem("token", JSON.stringify(response.data.token));
-
 
             if (!response.data.success) {
                 throw new Error(response.data.message);

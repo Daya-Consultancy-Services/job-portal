@@ -23,6 +23,10 @@ const profileSchema = new mongoose.Schema({
     image:{
         type:String // cloudinary image upload
     },
+    personalDetails:{
+        type:mongoose.Schema.ObjectId,
+        ref:"personalDetailSchema"
+    }
  
 })
 
