@@ -1,6 +1,6 @@
 import { toast } from "react-hot-toast"
 
-import { setUser } from "../slices/userSlice"
+import { setUser } from "../slices/userProfileSlice"
 import { apiConnector } from "../services/apiConnector"
 import { profilePoint } from "../operations/apis"
 
@@ -12,8 +12,10 @@ const {
 
 
 export function updateProfile(token,formdata){
+    console.log("token", token, "formdata", formdata);
     return async(dispatch) => {
         const toastId = toast.loading("Loading...")
+        // console.log("profile data : " + {formdata});
     try {
         const response = await apiConnector("PUT",updateProfile_api,formdata,{
             Authorization: `Bearer ${token}`,
@@ -35,3 +37,40 @@ export function updateProfile(token,formdata){
         toast.dismiss(toastId)
     }
 }
+
+
+// export function updateProfile(token, formdata) {
+//     return async (dispatch) => {
+//       const toastId = toast.loading("Loading...");
+//       console.log("Profile data before processing:", formdata);
+  
+//       // Ensure all fields are populated, set missing values to null
+//       const processedFormdata = {
+//         about: formdata.about || "about",
+//         location: formdata.location || "enter your location",
+//         contactNumber: formdata.contactNumber || "enter phone number",
+//         image: formdata.image || "upload image",
+//       };
+  
+//       console.log("Processed profile data:", processedFormdata);
+  
+//       try {
+//         const response = await apiConnector("PUT", updateProfile_api, processedFormdata, {
+//           Authorization: `Bearer ${token}`,
+//         });
+//         console.log("UPDATE_PROFILE_API API RESPONSE............", response);
+  
+//         if (!response.data.success) {
+//           throw new Error(response.data.message);
+//         }
+  
+//         dispatch(setUser({ ...response.data.profileDetail }));
+//         toast.success("Profile updated successfully");
+//       } catch (error) {
+//         console.log("UPDATE_PROFILE_API API ERROR............", error);
+//         toast.error("Could Not Update Profile");
+//       }
+//       toast.dismiss(toastId);
+//     };
+//   }
+  

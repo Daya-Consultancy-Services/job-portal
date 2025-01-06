@@ -156,7 +156,7 @@ exports.updateDetail = async(req,res) => {
             firstName,
             lastName,
             email,
-            workstatus
+            // workstatus
             // password  // have to remove this 
         } = req.body
 
@@ -171,7 +171,7 @@ exports.updateDetail = async(req,res) => {
         }
         
 
-        if(!firstName || !lastName || !email || !workstatus )   // || !password
+        if(!firstName || !lastName || !email  )   // || !password
         {
             return res.status(400).json({
                 success:false,
@@ -186,8 +186,9 @@ exports.updateDetail = async(req,res) => {
             { 
                 firstName: firstName,
                 lastName : lastName,
-                email:email,
-                workstatus:workstatus
+                email : email
+             
+                // workstatus:workstatus
             },
             { new: true }
         )

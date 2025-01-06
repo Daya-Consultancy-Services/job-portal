@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify"; 
-import { updateDetail } from "../../operations/userAPI";
+import { updateProfile } from "../../operations/profileAPI";
+
 
 function ExtraProfile({ token }) {
     const dispatch = useDispatch();
@@ -13,8 +14,10 @@ function ExtraProfile({ token }) {
     const [dob, setDob] = useState(user.dob || "");
     const [martialStatus, setMartialStatus] = useState(user.martialStatus || "");
     const [permanentAddress, setPermanentAddress] = useState(user.permanentAddress || "");
-    // const [contact, setContact] = useState(user.contact || "");
-    const [workStatus, setWorkStatus] = useState(user.workStatus || "");
+    const [pincode, setPincode] = useState(user.pincode || "");
+    const [address, setAddress] = useState(user.address || "");
+    // const [workStatus, setWorkStatus] = useState(user.workStatus || "");
+
 
 
     const addLang = () => {
@@ -40,10 +43,12 @@ function ExtraProfile({ token }) {
             martialStatus,
             // contact,
             permanentAddress,
-            workStatus,
+            pincode,
+       
             langs,
+            address,
         };
-        dispatch(updateDetail(token, formData)); 
+        dispatch( updateProfile(token, formData)); 
 
 
       
@@ -111,9 +116,9 @@ function ExtraProfile({ token }) {
                     </div>
                     <div>
                         <label className="block font-medium mb-1">Pincode</label>
-                        <input type="number" className="w-full px-3 py-2 border rounded" />
+                        <input value={pincode} onChange={(e) => setPincode(e.target.value)} type="number" className="w-full px-3 py-2 border rounded" />
                     </div>
-                    <div>
+                    {/* <div>
                         <label className="block font-medium mb-1">Work Status</label>
                         <select
                             className="w-full px-3 py-2 border rounded"
@@ -125,7 +130,8 @@ function ExtraProfile({ token }) {
                             <option value="student">Student</option>
                             <option value="unemployed">Unemployed</option>
                         </select>
-                    </div>
+                    </div> */}
+                    
                     <div>
                         <label className="block font-medium mb-1">Languages</label>
                         <div className="flex gap-2 mb-2">
@@ -162,6 +168,16 @@ function ExtraProfile({ token }) {
                             ))}
                         </div>
                     </div> 
+                    <div>
+                        <label className="block font-medium mb-1"> Address</label>
+                        <textarea
+                            rows={3}
+                            placeholder="Enter address"
+                            className="w-full px-3 py-2 border rounded resize-none"
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
+                        />
+                    </div>
 
                     <div className="flex justify-end gap-3 mt-4">
                         <button

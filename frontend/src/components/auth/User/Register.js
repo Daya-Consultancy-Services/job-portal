@@ -50,7 +50,6 @@ function Register() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
        dispatch(signupUser(
         firstName,
         lastName,
@@ -74,12 +73,6 @@ function Register() {
             
                 
             });
-
-            
-
-
-          
-          
         } else {
             alert("Form is not valid.");
         }
