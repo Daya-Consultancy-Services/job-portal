@@ -70,6 +70,7 @@ export function login(
             dispatch(setToken(response.data.token))
             dispatch(setUser(response.data.user));
             localStorage.setItem("token", JSON.stringify(response.data.token));
+            localStorage.setItem("user", JSON.stringify(response.data.user));
 
             if (!response.data.success) {
                 throw new Error(response.data.message);
@@ -91,15 +92,17 @@ export function login(
 
 export function updateDetail(token, updatedData) {
     return async (dispatch) => {
-        console.log("updated data", updatedData)
-        console.log("token", token);
+        console.log(updatedData);
 
         const toastId = toast.loading('Updating profile...');
         dispatch(setLoading(true))
         try {
+           
             const response = await apiConnector('PUT', updateUser_api, updatedData, {
                 Authorization: `Bearer ${token}`,
             });
+            console.log("UPDATE_API API RESPONSE............", response);
+
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
@@ -107,6 +110,7 @@ export function updateDetail(token, updatedData) {
             // Update the user in the Redux state
             const updatedUser = { ...response.data.userDetail };
             dispatch(setUser(updatedUser));
+            
 
             // Persist the updated user to localStorage
             localStorage.setItem("user", JSON.stringify(updatedUser));
