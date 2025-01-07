@@ -39,38 +39,5 @@ export function updateProfile(token,formdata){
 }
 
 
-// export function updateProfile(token, formdata) {
-//     return async (dispatch) => {
-//       const toastId = toast.loading("Loading...");
-//       console.log("Profile data before processing:", formdata);
-  
-//       // Ensure all fields are populated, set missing values to null
-//       const processedFormdata = {
-//         about: formdata.about || "about",
-//         location: formdata.location || "enter your location",
-//         contactNumber: formdata.contactNumber || "enter phone number",
-//         image: formdata.image || "upload image",
-//       };
-  
-//       console.log("Processed profile data:", processedFormdata);
-  
-//       try {
-//         const response = await apiConnector("PUT", updateProfile_api, processedFormdata, {
-//           Authorization: `Bearer ${token}`,
-//         });
-//         console.log("UPDATE_PROFILE_API API RESPONSE............", response);
-  
-//         if (!response.data.success) {
-//           throw new Error(response.data.message);
-//         }
-  
-//         dispatch(setUser({ ...response.data.profileDetail }));
-//         toast.success("Profile updated successfully");
-//       } catch (error) {
-//         console.log("UPDATE_PROFILE_API API ERROR............", error);
-//         toast.error("Could Not Update Profile");
-//       }
-//       toast.dismiss(toastId);
-//     };
-//   }
+
   

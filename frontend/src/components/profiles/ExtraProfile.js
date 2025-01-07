@@ -2,16 +2,17 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify"; 
 import { updateProfile } from "../../operations/profileAPI";
+import {  personalDetails } from "../../operations/personaldetailAPI";
 
 
-function ExtraProfile({ token }) {
+
+function ExtraProfile() {
     const dispatch = useDispatch();
-    const user = useSelector((state) => state.user); // Get current user info from the Redux store
-
-    const [langs, setLangs] = useState(user.skills || []);
+    const {user, token} = useSelector((state) => state.profile); // Get current user info from the Redux store
+    const [language, setLangs] = useState(user.skills || []);
     const [newLang, setNewLang] = useState("");
     const [gender, setGender] = useState(user.gender || "");
-    const [dob, setDob] = useState(user.dob || "");
+    const [dateOfBirth, setDateOfBirth] = useState(user.dateOfBirth || "");
     const [martialStatus, setMartialStatus] = useState(user.martialStatus || "");
     const [permanentAddress, setPermanentAddress] = useState(user.permanentAddress || "");
     const [pincode, setPincode] = useState(user.pincode || "");
@@ -21,37 +22,30 @@ function ExtraProfile({ token }) {
 
 
     const addLang = () => {
-        if (newLang.trim() && !langs.includes(newLang)) {
-            setLangs([...langs, newLang]);
+        if (newLang.trim() && !language.includes(newLang)) {
+            setLangs([...language, newLang]);
             setNewLang("");
         }
     };
 
     const removeLangs = (langToRemove) => {
-        setLangs(langs.filter((lang) => lang !== langToRemove));
+        setLangs(language.filter((language) => language !== langToRemove));
     };
 
     const handleSave = async (e) => {
         alert("data is going to be update")
 
         e.preventDefault();
-        console.log(token);
-        
-        const formData = {
+        dispatch(personalDetails(  
+            token,
             gender,
-            dob,
+            dateOfBirth,
             martialStatus,
-            // contact,
             permanentAddress,
             pincode,
-       
-            langs,
-            address,
-        };
-        dispatch( updateProfile(token, formData)); 
-
-
-      
+            language,
+            address
+        )); 
     };
 
     return (
@@ -77,8 +71,8 @@ function ExtraProfile({ token }) {
                         <input
                             type="date"
                             className="w-full px-3 py-2 border rounded"
-                            value={dob}
-                            onChange={(e) => setDob(e.target.value)}
+                            value={dateOfBirth}
+                            onChange={(e) => setDateOfBirth(e.target.value)}
                         />
                     </div>
                     {/* <div>
@@ -151,7 +145,7 @@ function ExtraProfile({ token }) {
                             </button>
                         </div>
                         <div className="flex flex-wrap gap-2">
-                            {langs.map((lang, index) => (
+                            {language.map((lang, index) => (
                                 <div
                                     key={index}
                                     className="flex items-center gap-2 bg-gray-200 px-3 py-1 rounded-full"

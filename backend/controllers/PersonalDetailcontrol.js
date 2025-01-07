@@ -7,7 +7,6 @@ require("dotenv").config();
 exports.createPersonalDetail = async (req,res) =>{
     try {
         const {
-
             gender,
             dateOfBirth,
             martialStatus,

@@ -1,6 +1,5 @@
 import React, {  useRef, useState } from 'react';
 
-
 import Header from '../../pages/home/Header';
 
 import Footer from '../Footer';
@@ -50,8 +49,7 @@ import ProfileForm from './ProfileForm';
 function UserProfile() {
 
     const {user, token} = useSelector((state) => state.user)
-    console.log(`User ${user}`);
-    
+
     const navigate = useNavigate();
 
     const [profileImage, setProfileImage] = useState(require('../../assets/profile.png'));

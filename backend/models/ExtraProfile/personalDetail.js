@@ -14,11 +14,13 @@ const personalDetailSchema = new mongoose.Schema({
         type:String
     },
     pincode:{
-        type:String
+        type:Number
     },
-    language:{
+    language:[
+       {
         type:String
-    },
+       }]
+    ,
     address:{
         type:String,
     }

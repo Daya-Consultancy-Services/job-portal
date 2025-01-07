@@ -1,7 +1,7 @@
 import { toast } from 'react-hot-toast'
 
-import { setLoading, setToken } from '../slices/userSlice'
-import { setUser } from '../slices/userSlice'
+import { setLoading, setToken } from '../slices/userProfileSlice'
+import { setUser } from '../slices/userProfileSlice'
 import { apiConnector } from '../services/apiConnector'
 import { personalDetail } from './apis'
 import { logout } from './userAPI'
@@ -16,19 +16,21 @@ const {
 
 
 export function personalDetails(
-        gender,
-        dateOfBirth,
-        martialStatus,
-        permanentAddress,
-        pincode,
-        language,
-        address
+    token,
+    gender,
+    dateOfBirth,
+    martialStatus,
+    permanentAddress,
+    pincode,
+    language,
+    address
 ){
+    console.log("Token:", token);
     return async (dispatch) => {
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
         try {
-            const response = await apiConnector("POST",createPersonaldetail,{
+            const response = await apiConnector("POST", createPersonaldetail, {
                 gender,
                 dateOfBirth,
                 martialStatus,
@@ -36,25 +38,23 @@ export function personalDetails(
                 pincode,
                 language,
                 address
-            });
-        console.log("Created PerosnalDetail Successfully !!!",response);
+            }, { headers: { Authorization: `Bearer ${token}` } });
 
-        if(!response.data.success){
-            throw new Error(response.data.message);
-        }
-        toast.success("PersonalDetail Created Successful!!!");
-        //navigate("");
+            console.log("Created PersonalDetail Successfully !!!", response);
+
+            if (!response.data.success) {
+                throw new Error(response.data.message);
+            }
+            toast.success("PersonalDetail Created Successfully!!!");
         } catch (error) {
-            console.error("PersonalDetail Error for user.....", error);
-            toast.error("PersonalDetail Failed, Try again.");
-        }
-        finally {
-            dispatch(setLoading(false)); 
+            console.error("Error creating personal detail:", error);
+            toast.error("Failed to create personal detail. Please try again.");
+        } finally {
             toast.dismiss(toastId);
+            dispatch(setLoading(false));
         }
-    }
+    };
 }
-
 
 // update personal details 
 export function updatePersonaldetails(token,formdata){
