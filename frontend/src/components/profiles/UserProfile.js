@@ -223,73 +223,7 @@ function UserProfile() {
 
     
 
-    // const handleSave = () => {
-
-    //     if (newInput.trim()) {
-
-    //         const updatedData = { ...userData };
-
-    //         switch (popupType) {
-
-    //             case 'about':
-
-    //                 updatedData.location = newInput;
-
-    //                 break;
-
-    //             case 'location':
-
-    //                 updatedData.type = newInput;
-
-    //                 break;
-
-    //             case 'image':
-
-    //                 updatedData.join = newInput;
-
-    //                 break;
-
-    //             case 'email':
-
-    //                 updatedData.email = newInput;
-
-
-    //                 break;
-
-    //             default:
-
-    //                 break;
-
-    //         }
-
-    //         setUserData(updatedData);
-    //         console.log(updatedData);
-
-    //         dispatch(updateProfile(token, updatedData)); // Dispatch updated userData
-
-    //     }
-
-    //     setIsPopupOpen(false);
-
-    // };
-
-    // const handleSaveForName = () => {
-
-    //     const updatedData = {
-    //         firstName: newFirstName,
-    //         lastName: newLastName,
-    //         email: email
-    //     };
-
-    //     setUserData(updatedData);
-       
-
-    //     dispatch(updateDetail(token, updatedData)); // Dispatch updated userData
-
-    //     setIsNamePopupOpen(false);
-
-    // };
-
+    
 
    
     const handleDelete = () => {
