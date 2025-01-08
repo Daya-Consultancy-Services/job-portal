@@ -26,6 +26,10 @@ const profileSchema = new mongoose.Schema({
     personalDetails:{
         type:mongoose.Schema.ObjectId,
         ref:"personalDetailSchema"
+    },
+    onlineProfiles:{
+        type:mongoose.Schema.ObjectId,
+        ref:"onlineProfileSchema"
     }
  
 })

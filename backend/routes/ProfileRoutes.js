@@ -17,6 +17,14 @@ const {
 
 } = require("../controllers/PersonalDetailcontrol") 
 
+const {
+
+    createOnlineProfile,
+    updateOnlineProfile,
+    deleteOnlineProfile
+    
+} = require("../controllers/OnlineProfileControl")
+
 const { auth , isJobseeker} = require("../middleware/auth");
 
 router.put("/update",auth,isJobseeker,updateProfile)
@@ -33,7 +41,7 @@ router.put("/update",auth,isJobseeker,updateProfile)
 router.get("/details",auth,getAllDetail)
 
 
-// Personal Details routes
+// Personal Details routes***********************************************************************************************
 router.post("/personaldetail",auth,createPersonalDetail)
 
 router.put("/updatepersonaldetail",auth,updatePersonalDetail)
@@ -49,6 +57,26 @@ router.put("/deletepersonaldetail",auth,deletePeronalDetail)
 //     "language":"english",
 //     "address":"orrisa"
 // }
+
+//Online Profile routes***************************************************************************************************
+router.post("/onlineprofile",auth,isJobseeker,createOnlineProfile)
+
+// {
+//     "instagramLink":"www.instagram.com",
+//     "facebookLink":"www.facebock.com",
+//     "githubLink":"www.github.com",
+//     "linkedinLink":"www.linkedIN.com"
+// }
+
+router.put("/updateonlineprofile",auth,isJobseeker,updateOnlineProfile)
+
+router.put("/deleteonlineprofile",auth,deleteOnlineProfile)
+
+        // the body will have the 
+        // {
+        //     "instagramLink": true,
+        //     "facebookLink": true
+        // }
 
 module.exports=router
 

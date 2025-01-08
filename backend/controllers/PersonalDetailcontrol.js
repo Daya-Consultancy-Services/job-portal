@@ -142,7 +142,8 @@ exports.updatePersonalDetail = async (req,res) => {
                 language : language,
                 address : address
 
-            }
+            },
+            {new:true}
         )
 
         await personalDetails.save();

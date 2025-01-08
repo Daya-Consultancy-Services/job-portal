@@ -11,11 +11,18 @@ export const profilePoint = {
     updateProfile_api : BASE_URL + "/profile/update",
     getAllDetails     : BASE_URL + "/profile/details",
 }
+
 export const personalDetail = {
     createPersonaldetail : BASE_URL + "/profile/personaldetail",
     updatePersonaldetail : BASE_URL + "/profile/updatepersonaldetail",
     deletePersonaldetail : BASE_URL + "/profile/deletepersonaldetail" 
 }
+export const onlineProfile = {
+    createOnlineProfile : BASE_URL + "/profile/onlineprofile",
+    updateOnlineProfile : BASE_URL + "/profile/updateonlineprofile",
+    deleteOnlineProfile : BASE_URL + "/profile/deleteonlineprofile",
+}
+
 
 export const companyPoint = {
     signupCompany_api        : BASE_URL + "/company/signup",

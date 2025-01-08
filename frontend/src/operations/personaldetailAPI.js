@@ -25,7 +25,7 @@ export function personalDetails(
     language,
     address
 ){
-    console.log("Token:", token);
+    //console.log("Token:", token);
     return async (dispatch) => {
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
@@ -38,7 +38,7 @@ export function personalDetails(
                 pincode,
                 language,
                 address
-            }, { headers: { Authorization: `Bearer ${token}` } });
+            }, { Authorization: `Bearer ${token}` });
 
             console.log("Created PersonalDetail Successfully !!!", response);
 
