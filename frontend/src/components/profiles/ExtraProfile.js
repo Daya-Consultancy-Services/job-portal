@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify"; 
-import { updateProfile } from "../../operations/profileAPI";
-import {  personalDetails } from "../../operations/personaldetailAPI";
+
+import {  deletePersonaldetails, personalDetails, updatePersonaldetails } from "../../operations/personaldetailAPI";
 
 
 
 function ExtraProfile() {
     const dispatch = useDispatch();
-    const {user, token} = useSelector((state) => state.profile); // Get current user info from the Redux store
+    const {user} = useSelector((state) => state.profile); // Get current user info from the Redux store
+    const {token} = useSelector((state) => state.profile);
     const [language, setLangs] = useState(user.skills || []);
     const [newLang, setNewLang] = useState("");
     const [gender, setGender] = useState(user.gender || "");
@@ -17,6 +18,7 @@ function ExtraProfile() {
     const [permanentAddress, setPermanentAddress] = useState(user.permanentAddress || "");
     const [pincode, setPincode] = useState(user.pincode || "");
     const [address, setAddress] = useState(user.address || "");
+    const [counter, setCounter] = useState(1); 
     // const [workStatus, setWorkStatus] = useState(user.workStatus || "");
 
 
@@ -32,20 +34,72 @@ function ExtraProfile() {
         setLangs(language.filter((language) => language !== langToRemove));
     };
 
-    const handleSave = async (e) => {
-        alert("data is going to be update")
-
+    const handleSave = (e) => {
         e.preventDefault();
-        dispatch(personalDetails(  
-            token,
+        const personalDetailsData = {
             gender,
             dateOfBirth,
             martialStatus,
             permanentAddress,
             pincode,
             language,
-            address
-        )); 
+            address,
+        };
+
+        try {
+            if (counter == 1) {
+                // Create personal details when counter is 1
+                dispatch(
+                    personalDetails(
+                        token,
+                        gender,
+                        dateOfBirth,
+                        martialStatus,
+                        permanentAddress,
+                        pincode,
+                        language,
+                        address,
+                    )
+                );
+                toast.success("Personal details created successfully!");
+                alert("Details created successfully!");
+            } else {
+                
+                dispatch(
+                    updatePersonaldetails(
+                        token,
+                       personalDetailsData
+                    )
+                );
+                toast.success("Personal details updated successfully!");
+                alert("Details updated successfully!");
+            }
+        } catch (error) {
+            console.error("Update failed", error);
+            toast.error("An error occurred while saving details.");
+        }
+
+        // Increment the counter after handling the form submission
+        setCounter((prev) => prev + 1);
+    };
+
+    const handleReset = () => {
+        try {
+            dispatch(deletePersonaldetails(token));
+            alert("rest successful")
+            toast.success("Personal details reset successfully!");
+            // Reset local state
+            setGender("");
+            setDateOfBirth("");
+            setMartialStatus("");
+            setPermanentAddress("");
+            setPincode("");
+            setLangs([]);
+            setAddress("");
+        } catch (error) {
+            console.error("Reset failed", error);
+            toast.error("An error occurred while resetting details.");
+        }
     };
 
     return (
@@ -59,6 +113,7 @@ function ExtraProfile() {
                             className="w-full px-3 py-2 border rounded"
                             value={gender}
                             onChange={(e) => setGender(e.target.value)}
+                            defaultValue={user?.profile?.personalDetails?.gender}
                         >
                             <option value="">Select Gender</option>
                             <option value="male">Male</option>
@@ -184,8 +239,16 @@ function ExtraProfile() {
                         <button
                             type="submit"
                             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-orange-600"
+                           
                         >
                             Save
+                        </button>
+                        <button
+                            type="button"
+                            className="px-4 py-2 bg-gray-200 text-black rounded hover:bg-red-600"
+                            onClick={handleReset}
+                        >
+                            Reset
                         </button>
                     </div>
                 </form>

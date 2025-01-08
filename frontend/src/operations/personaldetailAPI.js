@@ -25,10 +25,17 @@ export function personalDetails(
     language,
     address
 ){
-    //console.log("Token:", token);
+   
     return async (dispatch) => {
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
+        console.log(token,   gender,
+            dateOfBirth,
+            martialStatus,
+            permanentAddress,
+            pincode,
+            language,
+            address);
         try {
             const response = await apiConnector("POST", createPersonaldetail, {
                 gender,
@@ -38,7 +45,7 @@ export function personalDetails(
                 pincode,
                 language,
                 address
-            }, { Authorization: `Bearer ${token}` });
+            }, {   Authorization: `Bearer ${token}` } );
 
             console.log("Created PersonalDetail Successfully !!!", response);
 
@@ -57,12 +64,15 @@ export function personalDetails(
 }
 
 // update personal details 
-export function updatePersonaldetails(token,formdata){
+export function updatePersonaldetails(token, personalDetailsData){
     return async(dispatch) => {
+     
         const toastId = toast.loading("Loading....")
         dispatch(setLoading(true));
     try {
-        const response = await apiConnector("PUT",updatePersonaldetail,formdata,{
+
+        const response = await apiConnector("PUT",updatePersonaldetail, 
+          personalDetailsData,{
             Authorization: `Bearer ${token}`,
         })
         console.log("Updated Personal Details API Response............", response);
