@@ -25,6 +25,12 @@ const {
     
 } = require("../controllers/OnlineProfileControl")
 
+const {
+    createCertificate,
+    updateCertificate,
+    deleteCertificate
+} = require("../controllers/CertificateControl")
+ 
 const { auth , isJobseeker} = require("../middleware/auth");
 
 router.put("/update",auth,isJobseeker,updateProfile)
@@ -77,6 +83,24 @@ router.put("/deleteonlineprofile",auth,deleteOnlineProfile)
         //     "instagramLink": true,
         //     "facebookLink": true
         // }
+//Certificate Routes ******************************************************************************************************
+router.post("/certificate",auth,isJobseeker,createCertificate)
+// {
+//     "certificateName":"full Stack",
+//     "certificateLink":"link",
+//     "certificateDescription":"MERNStack"
+// }
+router.put("/updatecertificate",auth,isJobseeker,updateCertificate)
+
+router.put("/deletecertificate",auth,isJobseeker,deleteCertificate)
+
+
+
+
+
+
+
+
 
 module.exports=router
 

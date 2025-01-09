@@ -22,7 +22,11 @@ export const onlineProfile = {
     updateOnlineProfile : BASE_URL + "/profile/updateonlineprofile",
     deleteOnlineProfile : BASE_URL + "/profile/deleteonlineprofile",
 }
-
+export const certificate = {
+    createCertificate : BASE_URL + "/profile/certificate",
+    updateCertificate : BASE_URL + "/profile/updatecertificate",
+    deleteCertificate : BASE_URL + "/profile/deletecertificate"
+}
 
 export const companyPoint = {
     signupCompany_api        : BASE_URL + "/company/signup",

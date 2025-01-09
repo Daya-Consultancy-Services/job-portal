@@ -29,13 +29,6 @@ export function personalDetails(
     return async (dispatch) => {
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
-        console.log(token,   gender,
-            dateOfBirth,
-            martialStatus,
-            permanentAddress,
-            pincode,
-            language,
-            address);
         try {
             const response = await apiConnector("POST", createPersonaldetail, {
                 gender,

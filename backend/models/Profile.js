@@ -30,6 +30,10 @@ const profileSchema = new mongoose.Schema({
     onlineProfiles:{
         type:mongoose.Schema.ObjectId,
         ref:"onlineProfileSchema"
+    },
+    certificates:{
+        type:mongoose.Schema.ObjectId,
+        ref:"certificateSchemas"
     }
  
 })
