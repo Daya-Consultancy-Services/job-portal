@@ -84,18 +84,18 @@ exports.updateOnlineProfile = async (req ,res) => {
 
         } = req.body
 
-        if(
-            !instagramLink ||
-            !facebookLink ||
-            !githubLink ||
-            !linkedinLink
-        )
-            {
-                return res.status(403).json({
-                    success:false,
-                    message:"All field are required too be filled"
-                });
-            }
+        // if(
+        //     !instagramLink ||
+        //     !facebookLink ||
+        //     !githubLink ||
+        //     !linkedinLink
+        // )
+        //     {
+        //         return res.status(403).json({
+        //             success:false,
+        //             message:"All field are required too be filled"
+        //         });
+        //     }
         const Id = req.user.id
         const userId = await User.findById(Id);
 
