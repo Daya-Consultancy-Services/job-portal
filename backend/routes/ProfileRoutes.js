@@ -92,7 +92,7 @@ router.post("/certificate",auth,isJobseeker,createCertificate)
 // }
 router.put("/updatecertificate",auth,isJobseeker,updateCertificate)
 
-router.put("/deletecertificate",auth,isJobseeker,deleteCertificate)
+router.delete("/deletecertificate",auth,isJobseeker,deleteCertificate)
 
 
 

@@ -37,13 +37,13 @@ exports.createCertificate = async (req , res) =>{
             })
         }
         
-        const checkcertificate = await certificate.findById(profile.certificates)
-        if(checkcertificate){
-            return res.status(400).json({
-                success: false,
-                message: "User Certificate already exists",
-            });
-        }
+        // const checkcertificate = await certificate.findById(profile.certificates)
+        // if(checkcertificate){
+        //     return res.status(400).json({
+        //         success: false,
+        //         message: "User Certificate already exists",
+        //     });
+        // }
 
         const certificates = await certificate.create({
             certificateName,
@@ -51,7 +51,7 @@ exports.createCertificate = async (req , res) =>{
             certificateDescription
         })
 
-        profile.certificates = certificates.id;
+        profile.certificates.push(certificates.id);
         await profile.save();
 
         return res.status(200).json({
@@ -71,7 +71,7 @@ exports.createCertificate = async (req , res) =>{
 exports.updateCertificate = async (req ,res) => {
     try {
         const {
-
+            certificateId,
             certificateName,
             certificateLink,
             certificateDescription
@@ -79,6 +79,7 @@ exports.updateCertificate = async (req ,res) => {
         } = req.body
 
         if(
+            !certificateId,
             !certificateName ||
             !certificateLink ||
             !certificateDescription
@@ -101,7 +102,7 @@ exports.updateCertificate = async (req ,res) => {
         }
 
         const certificates = await certificate.findByIdAndUpdate(
-            profileId.certificates._id,
+            certificateId,
             {
                 certificateName : certificateName,
                 certificateLink : certificateLink,
@@ -130,6 +131,7 @@ exports.updateCertificate = async (req ,res) => {
 
 exports.deleteCertificate = async(req,res) => {
     try {
+        const { certificateId } = req.body;
         const Id = req.user.id
         
         const userId = await User.findById(Id)
@@ -142,15 +144,12 @@ exports.deleteCertificate = async(req,res) => {
                 message:"Profile don't Exist"
             })
         }
-        const certificates = await certificate.findByIdAndUpdate(
-            profileId.certificates._id,
-            {
-                certificateName : null,
-                certificateLink : null,
-                certificateDescription : null,
-            }
-        )
-        await certificates.save();
+        profileId.certificates = profileId.certificates.filter(
+            (id) => id.toString() !== certificateId
+        );
+        await profileId.save();
+        
+        await certificate.findByIdAndDelete(certificateId);
 
         return res.status(200).json({
             success:true,

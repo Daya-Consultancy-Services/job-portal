@@ -31,10 +31,12 @@ const profileSchema = new mongoose.Schema({
         type:mongoose.Schema.ObjectId,
         ref:"onlineProfileSchema"
     },
-    certificates:{
-        type:mongoose.Schema.ObjectId,
-        ref:"certificateSchemas"
-    }
+    certificates:[
+        {
+            type:mongoose.Schema.ObjectId,
+            ref:"certificateSchemas"
+        }
+    ]
  
 })
 

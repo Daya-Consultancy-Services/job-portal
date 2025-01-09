@@ -35,7 +35,11 @@ export function certificates(
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
+
+            const newCertificateId = response.data.data?._id;
+
             toast.success("Certificate Created Successfully!!!!!!!!");
+
         } catch (error) {
             console.error("Error Creating Certificate:", error);
             toast.error("Failed to create Certificate, Please try again.");
@@ -46,12 +50,13 @@ export function certificates(
     }
 }
 
-export function updateCertificates(token,formdata){
+export function updateCertificates(token,certificateId,formdata){
     return async (dispatch) => {
         const toastId = toast.loading("Loading....")
         dispatch(setLoading(true));
         try {
-            const response = await apiConnector("PUT",updateCertificate,formdata,
+            const updatedData = { ...formdata, certificateId };
+            const response = await apiConnector("PUT",updateCertificate,updatedData,
             {
                   Authorization: `Bearer ${token}`,
             })
@@ -60,7 +65,9 @@ export function updateCertificates(token,formdata){
             if(!response.data.success){
                 throw new Error(response.data.message);
             }
-            dispatch(setUser({...response.data.certificates}))
+            //const updatedCertificate = response.data.certificates;
+            //dispatch(setUser({...response.data.certificates}))
+            dispatch(setUser({ ...response.data.certificates }));
             toast.success("Certificate is updated Successfully")
 
         } catch (error) {
@@ -70,12 +77,12 @@ export function updateCertificates(token,formdata){
     }
 }
 
-export function deleteCertificates(token,navigate){
+export function deleteCertificates(token,certificateId,navigate){
     return async (dispatch) => {
         const toastId = toast.loading("Loading....")
         dispatch(setLoading(true))
         try {
-            const response = await apiConnector("PUT", deleteCertificate, null, {
+            const response = await apiConnector("DELETE", deleteCertificate, {certificateId}, {
                 Authorization: `Bearer ${token}`,
             });
 
@@ -84,6 +91,7 @@ export function deleteCertificates(token,navigate){
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
+            
             toast.success("Certificate deleted Successfully!");
 
         } catch (error) {
