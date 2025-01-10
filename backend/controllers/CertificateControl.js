@@ -63,7 +63,7 @@ exports.createCertificate = async (req , res) =>{
         console.log(error);
         return res.status(500).json({
             success:false,
-            message:"Personal Detail can't register, Try again"
+            message:"Certificate can't register, Try again"
         });
     }
 }

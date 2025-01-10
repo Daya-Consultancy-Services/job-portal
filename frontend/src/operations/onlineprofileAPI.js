@@ -71,9 +71,11 @@ export function updateonlineProfiles(token,formdata){
     } catch (error) {
         console.log("UPDATE onlineProfiles API ERROR............", error)
         toast.error("Could Not Update onlineProfiles")
-    }
+    } finally{
         dispatch(setLoading(false))
         toast.dismiss(toastId)
+    }
+    
     }
 
 }

@@ -36,6 +36,12 @@ const profileSchema = new mongoose.Schema({
             type:mongoose.Schema.ObjectId,
             ref:"certificateSchemas"
         }
+    ],
+    skillsProfile:[
+        {
+            type:mongoose.Schema.ObjectId,
+            ref:"skillSchema"
+        }
     ]
  
 })

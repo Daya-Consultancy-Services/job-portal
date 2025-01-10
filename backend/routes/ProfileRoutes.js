@@ -26,10 +26,20 @@ const {
 } = require("../controllers/OnlineProfileControl")
 
 const {
+
     createCertificate,
     updateCertificate,
     deleteCertificate
+    
 } = require("../controllers/CertificateControl")
+
+const {
+
+    createSkillProfile,
+    updateSkillProfile,
+    deleteSkillProfile
+
+} = require("../controllers/SkillsControl")
  
 const { auth , isJobseeker} = require("../middleware/auth");
 
@@ -94,11 +104,14 @@ router.put("/updatecertificate",auth,isJobseeker,updateCertificate)
 
 router.delete("/deletecertificate",auth,isJobseeker,deleteCertificate)
 
-
-
-
-
-
+//SkillProfile Routes*******************************************************************************************************
+router.post("/skillprofile",auth,isJobseeker,createSkillProfile)
+// {
+//     "skillName":"React",
+//     "experience":"1year"
+// }
+router.put("/updateskillprofile",auth,isJobseeker,updateSkillProfile)
+router.delete("/deleteskillprofile",auth,isJobseeker,deleteSkillProfile)
 
 
 

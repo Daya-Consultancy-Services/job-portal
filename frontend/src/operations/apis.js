@@ -27,6 +27,11 @@ export const certificate = {
     updateCertificate : BASE_URL + "/profile/updatecertificate",
     deleteCertificate : BASE_URL + "/profile/deletecertificate"
 }
+export const skillprofile = {
+    createSkillProfile : BASE_URL + "/profile/skillprofile",
+    updateSkillProfile : BASE_URL + "/profile/updateskillprofile",
+    deleteSkillProfile : BASE_URL + "/profile/deleteskillprofile"
+}
 
 export const companyPoint = {
     signupCompany_api        : BASE_URL + "/company/signup",

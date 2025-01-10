@@ -14,13 +14,13 @@ const {
 
 } = certificate
 
-export function certificates(
+export function createCertificates(
     token,
     certificateName,
     certificateLink,
     certificateDescription
 ){
-    return async (dispatch) =>{
+    return async (dispatch) => {
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
         try {
@@ -36,7 +36,7 @@ export function certificates(
                 throw new Error(response.data.message);
             }
 
-            const newCertificateId = response.data.data?._id;
+            //const newCertificateId = response.data.data?._id;
 
             toast.success("Certificate Created Successfully!!!!!!!!");
 
@@ -73,6 +73,9 @@ export function updateCertificates(token,certificateId,formdata){
         } catch (error) {
             console.log("UPDATE Certificate API ERROR............", error)
             toast.error("Could Not Update Certificate")
+        } finally{
+            toast.dismiss(toastId);
+            dispatch(setLoading(false));
         }
     }
 }
