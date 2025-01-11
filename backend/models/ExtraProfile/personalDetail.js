@@ -18,9 +18,9 @@ const personalDetailSchema = new mongoose.Schema({
     },
     language:[
        {
-        type:String
-       }]
-    ,
+            type:String
+       }
+    ],
     address:{
         type:String,
     }

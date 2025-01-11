@@ -29,13 +29,6 @@ export function personalDetails(
     return async (dispatch) => {
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
-        console.log(token,   gender,
-            dateOfBirth,
-            martialStatus,
-            permanentAddress,
-            pincode,
-            language,
-            address);
         try {
             const response = await apiConnector("POST", createPersonaldetail, {
                 gender,
@@ -86,9 +79,11 @@ export function updatePersonaldetails(token, personalDetailsData){
     } catch (error) {
         console.log("UPDATE PERSONALUPDATE API ERROR............", error)
         toast.error("Could Not Update PersonalDetail")
-    }
+    } finally{
         dispatch(setLoading(false))
         toast.dismiss(toastId)
+    }
+  
     }
 
 }
@@ -114,8 +109,7 @@ export function deletePersonaldetails(token,navigate){
     } catch (error) {
         console.error("DeletePersonalDetail_API error:", error);
         toast.error("Could not delete PersonalDetail.");
-    }
-    finally{
+    } finally{
         toast.dismiss(toastId);
         dispatch(setLoading(false));
     }

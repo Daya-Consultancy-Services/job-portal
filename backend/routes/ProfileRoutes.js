@@ -17,6 +17,39 @@ const {
 
 } = require("../controllers/PersonalDetailcontrol") 
 
+const {
+
+    createOnlineProfile,
+    updateOnlineProfile,
+    deleteOnlineProfile
+    
+} = require("../controllers/OnlineProfileControl")
+
+const {
+
+    createCertificate,
+    updateCertificate,
+    deleteCertificate
+    
+} = require("../controllers/CertificateControl")
+
+const {
+
+    createSkillProfile,
+    updateSkillProfile,
+    deleteSkillProfile
+
+} = require("../controllers/SkillsControl")
+    
+
+const {
+
+    createProject,
+    updateProject,
+    deleteProject
+
+} = require("../controllers/ProjectControl")
+ 
 const { auth , isJobseeker} = require("../middleware/auth");
 
 router.put("/update",auth,isJobseeker,updateProfile)
@@ -33,7 +66,7 @@ router.put("/update",auth,isJobseeker,updateProfile)
 router.get("/details",auth,getAllDetail)
 
 
-// Personal Details routes
+// Personal Details routes***********************************************************************************************
 router.post("/personaldetail",auth,createPersonalDetail)
 
 router.put("/updatepersonaldetail",auth,updatePersonalDetail)
@@ -49,6 +82,57 @@ router.put("/deletepersonaldetail",auth,deletePeronalDetail)
 //     "language":"english",
 //     "address":"orrisa"
 // }
+
+//Online Profile routes***************************************************************************************************
+router.post("/onlineprofile",auth,isJobseeker,createOnlineProfile)
+
+// {
+//     "instagramLink":"www.instagram.com",
+//     "facebookLink":"www.facebock.com",
+//     "githubLink":"www.github.com",
+//     "linkedinLink":"www.linkedIN.com"
+// }
+
+router.put("/updateonlineprofile",auth,isJobseeker,updateOnlineProfile)
+
+router.put("/deleteonlineprofile",auth,deleteOnlineProfile)
+
+        // the body will have the 
+        // {
+        //     "instagramLink": true,
+        //     "facebookLink": true
+        // }
+//Certificate Routes ******************************************************************************************************
+router.post("/certificate",auth,isJobseeker,createCertificate)
+// {
+//     "certificateName":"full Stack",
+//     "certificateLink":"link",
+//     "certificateDescription":"MERNStack"
+// }
+router.put("/updatecertificate",auth,isJobseeker,updateCertificate)
+
+router.delete("/deletecertificate",auth,isJobseeker,deleteCertificate)
+
+//SkillProfile Routes*******************************************************************************************************
+router.post("/skillprofile",auth,isJobseeker,createSkillProfile)
+// {
+//     "skillName":"React",
+//     "experience":"1year"
+// }
+router.put("/updateskillprofile",auth,isJobseeker,updateSkillProfile)
+router.delete("/deleteskillprofile",auth,isJobseeker,deleteSkillProfile)
+
+//ProjectProfile Routes*****************************************************************************************************
+router.post("/project",auth,isJobseeker,createProject)
+// {
+//     "projectTitle":"todo app",
+//     "projectLink":"todo.com",
+//     "projectDescription":"Simple Js app with crud operation",
+//     "projectSkills":["js","mysql"]
+// }
+router.put("/updateproject",auth,isJobseeker,updateProject)
+router.delete("/deleteproject",auth,isJobseeker,deleteProject)
+
 
 module.exports=router
 
@@ -67,4 +151,9 @@ module.exports=router
 //     "profileSummary":"im developer",
 //     "location":"thane",
 //     "image":"link"
+// }
+
+// {
+//     "email":"jane45@gmail.com",
+//     "password":"12345"
 // }

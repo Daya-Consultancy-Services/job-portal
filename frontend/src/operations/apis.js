@@ -11,10 +11,31 @@ export const profilePoint = {
     updateProfile_api : BASE_URL + "/profile/update",
     getAllDetails     : BASE_URL + "/profile/details",
 }
+
 export const personalDetail = {
     createPersonaldetail : BASE_URL + "/profile/personaldetail",
     updatePersonaldetail : BASE_URL + "/profile/updatepersonaldetail",
     deletePersonaldetail : BASE_URL + "/profile/deletepersonaldetail" 
+}
+export const onlineProfile = {
+    createOnlineProfile : BASE_URL + "/profile/onlineprofile",
+    updateOnlineProfile : BASE_URL + "/profile/updateonlineprofile",
+    deleteOnlineProfile : BASE_URL + "/profile/deleteonlineprofile",
+}
+export const certificateProfile = {
+    createCertificate : BASE_URL + "/profile/certificate",
+    updateCertificate : BASE_URL + "/profile/updatecertificate",
+    deleteCertificate : BASE_URL + "/profile/deletecertificate"
+}
+export const skillprofile = {
+    createSkillProfile : BASE_URL + "/profile/skillprofile",
+    updateSkillProfile : BASE_URL + "/profile/updateskillprofile",
+    deleteSkillProfile : BASE_URL + "/profile/deleteskillprofile"
+}
+export const projectProfile = {
+    createProject : BASE_URL + "/profile/project",
+    updateProject : BASE_URL + "/profile/updateproject",
+    deleteProject : BASE_URL + "/profile/deleteproject",
 }
 
 export const companyPoint = {

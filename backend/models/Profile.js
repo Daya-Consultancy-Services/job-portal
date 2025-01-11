@@ -26,7 +26,29 @@ const profileSchema = new mongoose.Schema({
     personalDetails:{
         type:mongoose.Schema.ObjectId,
         ref:"personalDetailSchema"
-    }
+    },
+    onlineProfiles:{
+        type:mongoose.Schema.ObjectId,
+        ref:"onlineProfileSchema"
+    },
+    certificates:[
+        {
+            type:mongoose.Schema.ObjectId,
+            ref:"certificateSchemas"
+        }
+    ],
+    skillsProfile:[
+        {
+            type:mongoose.Schema.ObjectId,
+            ref:"skillSchema"
+        }
+    ],
+    project:[
+        {
+            type:mongoose.Schema.ObjectId,
+            ref:"projectSchema"
+        }
+    ]
  
 })
 
