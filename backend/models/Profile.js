@@ -42,6 +42,12 @@ const profileSchema = new mongoose.Schema({
             type:mongoose.Schema.ObjectId,
             ref:"skillSchema"
         }
+    ],
+    project:[
+        {
+            type:mongoose.Schema.ObjectId,
+            ref:"projectSchema"
+        }
     ]
  
 })

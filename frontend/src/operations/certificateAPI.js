@@ -3,7 +3,7 @@ import { toast } from 'react-hot-toast'
 import { setLoading, setToken } from '../slices/userProfileSlice'
 import { setUser } from '../slices/userProfileSlice'
 import { apiConnector } from '../services/apiConnector'
-import { certificate } from './apis'
+import { certificateProfile } from './apis'
 import { logout } from './userAPI'
 
 const {
@@ -12,7 +12,7 @@ const {
     updateCertificate,
     deleteCertificate
 
-} = certificate
+} = certificateProfile
 
 export function createCertificates(
     token,

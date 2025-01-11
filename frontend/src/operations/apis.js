@@ -22,7 +22,7 @@ export const onlineProfile = {
     updateOnlineProfile : BASE_URL + "/profile/updateonlineprofile",
     deleteOnlineProfile : BASE_URL + "/profile/deleteonlineprofile",
 }
-export const certificate = {
+export const certificateProfile = {
     createCertificate : BASE_URL + "/profile/certificate",
     updateCertificate : BASE_URL + "/profile/updatecertificate",
     deleteCertificate : BASE_URL + "/profile/deletecertificate"
@@ -31,6 +31,11 @@ export const skillprofile = {
     createSkillProfile : BASE_URL + "/profile/skillprofile",
     updateSkillProfile : BASE_URL + "/profile/updateskillprofile",
     deleteSkillProfile : BASE_URL + "/profile/deleteskillprofile"
+}
+export const projectProfile = {
+    createProject : BASE_URL + "/profile/project",
+    updateProject : BASE_URL + "/profile/updateproject",
+    deleteProject : BASE_URL + "/profile/deleteproject",
 }
 
 export const companyPoint = {

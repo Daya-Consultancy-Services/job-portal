@@ -40,6 +40,15 @@ const {
     deleteSkillProfile
 
 } = require("../controllers/SkillsControl")
+    
+
+const {
+
+    createProject,
+    updateProject,
+    deleteProject
+
+} = require("../controllers/ProjectControl")
  
 const { auth , isJobseeker} = require("../middleware/auth");
 
@@ -113,6 +122,16 @@ router.post("/skillprofile",auth,isJobseeker,createSkillProfile)
 router.put("/updateskillprofile",auth,isJobseeker,updateSkillProfile)
 router.delete("/deleteskillprofile",auth,isJobseeker,deleteSkillProfile)
 
+//ProjectProfile Routes*****************************************************************************************************
+router.post("/project",auth,isJobseeker,createProject)
+// {
+//     "projectTitle":"todo app",
+//     "projectLink":"todo.com",
+//     "projectDescription":"Simple Js app with crud operation",
+//     "projectSkills":["js","mysql"]
+// }
+router.put("/updateproject",auth,isJobseeker,updateProject)
+router.delete("/deleteproject",auth,isJobseeker,deleteProject)
 
 
 module.exports=router
@@ -132,4 +151,9 @@ module.exports=router
 //     "profileSummary":"im developer",
 //     "location":"thane",
 //     "image":"link"
+// }
+
+// {
+//     "email":"jane45@gmail.com",
+//     "password":"12345"
 // }
