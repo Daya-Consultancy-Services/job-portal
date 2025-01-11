@@ -24,6 +24,7 @@ export function onlineProfiles(
     linkedinLink
 ){
     return async (dispatch) =>{
+        console.log(instagramLink, facebookLink, githubLink, linkedinLink);
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
         try {

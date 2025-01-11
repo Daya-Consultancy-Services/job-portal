@@ -310,7 +310,8 @@ function UserProfile() {
                     type="url"
                     placeholder="Enter your LinkedIn/portfolio URL"
                 />
-            )
+            ),
+            
         },
         {
             id: 'work-sample',

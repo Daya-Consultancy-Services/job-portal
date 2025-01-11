@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { X } from 'lucide-react';
 
 const FORM_CONFIGS = {
@@ -10,7 +10,7 @@ const FORM_CONFIGS = {
         { name: 'githubLink', label: 'Github URL', type: 'url', placeholder: 'Enter your Github URL' },
         { name: 'linkedinLink', label: 'Linkedin URL', type: 'url', placeholder: 'Enter your LinkedIn URL' }
       ],
-      dispatchType: 'ADD_ONLINE_PROFILE'
+      dispatchType: 'onlineProfiles'
     },
   
     'work-sample': {
@@ -74,7 +74,7 @@ const FORM_CONFIGS = {
   };
   
   // Updated Modal component to handle textarea inputs
-  const renderField = (field) => {
+  const renderField = (field, value, onChange) => {
     if (field.type === 'textarea') {
       return (
         <textarea
@@ -82,24 +82,33 @@ const FORM_CONFIGS = {
           name={field.name}
           placeholder={field.placeholder}
           rows={4}
+          value={value || ''}
+          onChange={(e) => onChange(field.name, e.target.value)}
         />
       );
     }
-    
+  
     return (
       <input
         type={field.type}
         className="mt-1 block w-full rounded-md border border-gray-300 p-2"
         name={field.name}
         placeholder={field.placeholder}
+        value={value || ''}
+        onChange={(e) => onChange(field.name, e.target.value)}
       />
     );
   };
+  
 
 export const ModalComponent = ({ isOpen, onClose, sectionType, title }) => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
+
+     const {token} = useSelector((state) => state.profile);
+
+  
 
   if (!isOpen) return null;
 
@@ -127,11 +136,27 @@ export const ModalComponent = ({ isOpen, onClose, sectionType, title }) => {
   };
 
   const handleSubmit = () => {
+   
     if (validateForm()) {
-      dispatch({
-        type: config.dispatchType,
-        payload: formData
-      });
+        alert(`Data being sent: ${JSON.stringify(
+            {
+              type: config.dispatchType,
+              payload: {
+                token,
+                formData,
+              },
+            },
+            null,
+            2 // Indent with 2 spaces for readability
+          )}`);
+        dispatch(
+             config.dispatchType,
+           
+              token,
+              formData,
+            
+          );
+      
       setFormData({});
       onClose();
     }
@@ -150,18 +175,18 @@ export const ModalComponent = ({ isOpen, onClose, sectionType, title }) => {
         <h2 className="text-xl font-semibold mb-4">{title}</h2>
 
         <form className="space-y-4">
-          {config.fields.map((field) => (
-            <div key={field.name}>
-              <label className="block text-sm font-medium text-gray-700">
-                {field.label}
-              </label>
-              {renderField(field, formData[field.name], handleInputChange)}
-              {errors[field.name] && (
-                <p className="mt-1 text-sm text-red-600">{errors[field.name]}</p>
-              )}
-            </div>
-          ))}
-        </form>
+  {config.fields.map((field) => (
+    <div key={field.name}>
+      <label className="block text-sm font-medium text-gray-700">
+        {field.label}
+      </label>
+      {renderField(field, formData[field.name], handleInputChange)}
+      {errors[field.name] && (
+        <p className="mt-1 text-sm text-red-600">{errors[field.name]}</p>
+      )}
+    </div>
+  ))}
+</form>
 
         <div className="flex justify-end gap-2 mt-6">
           <button
