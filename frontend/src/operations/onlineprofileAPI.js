@@ -16,30 +16,56 @@ const {
 } = onlineProfile
 
 
-export function onlineProfiles(
-    token,
-    instagramLink,
-    facebookLink,
-    githubLink,
-    linkedinLink
-){
+// export function onlineProfiles(
+//     token,
+//     instagramLink,
+//     facebookLink,
+//     githubLink,
+//     linkedinLink
+// ){
+//     return async (dispatch) =>{
+//         const toastId = toast.loading("Loading...");
+//         dispatch(setLoading(true));
+//         try {
+//             const response = await apiConnector("POST",createOnlineProfile,{
+//                 instagramLink,
+//                 facebookLink,
+//                 githubLink,
+//                 linkedinLink
+//             },{ Authorization: `Bearer ${token}` });
+
+//                 console.log("Created OnlineProfile Successfully !!!", response);
+
+//             if (!response.data.success) {
+//                 throw new Error(response.data.message);
+//             }
+
+//             toast.success("OnlineProfile Created Successfully!!!");
+        
+//         } catch (error) {
+//             console.error("Error create OnlineProfile detail:", error);
+//             toast.error("Failed to create OnlineProfile. Please try again.");
+//         } finally {
+//             toast.dismiss(toastId);
+//             dispatch(setLoading(false));
+//         }
+//     }
+// }
+export function onlineProfiles(token,formdata){
     return async (dispatch) =>{
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
         try {
-            const response = await apiConnector("POST",createOnlineProfile,{
-                instagramLink,
-                facebookLink,
-                githubLink,
-                linkedinLink
-            },{ Authorization: `Bearer ${token}` });
-
-                console.log("Created OnlineProfile Successfully !!!", response);
+            const response = await apiConnector("POST",createOnlineProfile,formdata,{
+                Authorization: `Bearer ${token}`,
+            })   
+            console.log("Created OnlineProfile Successfully !!!", response);
 
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
 
+            dispatch(setUser({...response.data.onlineProfiles}))
             toast.success("OnlineProfile Created Successfully!!!");
         
         } catch (error) {
