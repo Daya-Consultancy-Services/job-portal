@@ -49,7 +49,15 @@ const {
     deleteProject
 
 } = require("../controllers/ProjectControl")
- 
+
+const {
+
+    createCareer,
+    updateCareer,
+    deleteCareer
+
+} = require("../controllers/CareerControler")
+
 const { auth , isJobseeker} = require("../middleware/auth");
 
 router.put("/update",auth,isJobseeker,updateProfile)
@@ -133,6 +141,18 @@ router.post("/project",auth,isJobseeker,createProject)
 router.put("/updateproject",auth,isJobseeker,updateProject)
 router.delete("/deleteproject",auth,isJobseeker,deleteProject)
 
+//CareerProfile**************************************************************************************************************
+router.post("/careerprofile",auth,isJobseeker,createCareer)
+// {
+//             "industryType":"IT",
+//             "department":"Software Engineer",
+//             "empType":"Fulltime",
+//             "skills":["java","springboot"],
+//             "jobLocation":"Mumbai",
+//             "salary":"40k"
+// }
+router.put("/updatecareer",auth,isJobseeker,updateCareer)
+router.delete("/deletecareer",auth,isJobseeker,deleteCareer)
 
 module.exports=router
 

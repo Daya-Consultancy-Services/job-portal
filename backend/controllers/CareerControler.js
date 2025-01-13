@@ -1,22 +1,28 @@
 const User = require("../models/User")
 const Profile = require("../models/Profile")
-const certificate = require("../models/ExtraProfile/certificate");
+const career = require("../models/ExtraProfile/careerprofile");
 require("dotenv").config();
 
 
-exports.createCertificate = async (req , res) =>{
+exports.createCareer = async (req , res) => {
     try {
         const {
 
-            certificateName,
-            certificateLink,
-            certificateDescription
+            industryType,
+            department,
+            empType,
+            skills,
+            jobLocation,
+            salary
 
         } = req.body
         if(
-            !certificateName ||
-            !certificateLink ||
-            !certificateDescription
+            !industryType ||
+            !department ||
+            !empType ||
+            !skills ||
+            !jobLocation ||
+            !salary
         )
             {
                 return res.status(403).json({
@@ -36,53 +42,52 @@ exports.createCertificate = async (req , res) =>{
                 message:"Profile don't Exist"
             })
         }
-        
-        // const checkcertificate = await certificate.findById(profile.certificates)
-        // if(checkcertificate){
-        //     return res.status(400).json({
-        //         success: false,
-        //         message: "User Certificate already exists",
-        //     });
-        // }
-
-        const certificates = await certificate.create({
-            certificateName,
-            certificateLink,
-            certificateDescription
+        const careers = await career.create({
+            industryType,
+            department,
+            empType,
+            skills,
+            jobLocation,
+            salary
         })
-
-        profile.certificates.push(certificates.id);
+        profile.careerProfile.push(careers.id)
         await profile.save();
 
         return res.status(200).json({
             success:true,
-            message:"Certificate Created Successfully",
-            data:certificates,
+            message:"CareerProfile Created Successfully",
+            careers,
         })
     } catch (error) {
         console.log(error);
         return res.status(500).json({
             success:false,
-            message:"Certificate can't register, Try again"
+            message:"CareerProfile can't register, Try again"
         });
     }
 }
 
-exports.updateCertificate = async (req ,res) => {
+exports.updateCareer = async (req,res) => {
     try {
         const {
-            certificateId,
-            certificateName,
-            certificateLink,
-            certificateDescription
+
+            careerId,
+            industryType,
+            department,
+            empType,
+            skills,
+            jobLocation,
+            salary
 
         } = req.body
-
         if(
-            !certificateId,
-            !certificateName ||
-            !certificateLink ||
-            !certificateDescription
+            !careerId ||
+            !industryType ||
+            !department ||
+            !empType ||
+            !skills ||
+            !jobLocation ||
+            !salary
         )
             {
                 return res.status(403).json({
@@ -91,51 +96,53 @@ exports.updateCertificate = async (req ,res) => {
                 });
             }
         const Id = req.user.id
-        const userId = await User.findById(Id);
 
-        const profileId = await Profile.findById(userId.profile)
-        if(!profileId){
+        const user = await User.findById(Id)
+
+        const profile = await Profile.findById(user.profile)
+        
+        if(!profile){
             return res.status(400).json({
                 success:false,
                 message:"Profile don't Exist"
             })
         }
-
-        const certificates = await certificate.findByIdAndUpdate(
-            certificateId,
+        const careers = await career.findByIdAndUpdate(
+            careerId,
             {
-                certificateName : certificateName,
-                certificateLink : certificateLink,
-                certificateDescription : certificateDescription
+                industryType : industryType,
+                department   : department,
+                empType      : empType,
+                skills       : skills,
+                jobLocation  : jobLocation,
+                salary       : salary
             },
             {new:true}
         )
-        
-        await certificates.save();
 
+        await careers.save();
         return res.status(200).json({
             success:true,
-            message:"Certificate Updated Successfully !!",
-            certificates,
+            message:"CareerProfile Updated Successfully !!",
+            careers,
         })
-            
 
     } catch (error) {
         console.log(error)
             return res.status(500).json({
                 success:false,
-                message:"Error while updating Certificate"
+                message:"Error while updating CareerProfile"
             })
     }
 }
 
-exports.deleteCertificate = async(req,res) => {
+exports.deleteCareer = async (req,res) => {
     try {
-        const { certificateId } = req.body;
-        if(!certificateId){
+        const { careerId } = req.body
+        if(!careerId){
             return res.status(403).json({
                 success:false,
-                message:"certificateId is required for delete"
+                message:"Career Id is required for delete"
             });
         }
         const Id = req.user.id
@@ -150,18 +157,19 @@ exports.deleteCertificate = async(req,res) => {
                 message:"Profile don't Exist"
             })
         }
-        profileId.certificates = profileId.certificates.filter(
-            (id) => id.toString() !== certificateId
-        );
+
+        profileId.careerProfile = profileId.careerProfile.filter(
+            (id) => id.toString() !== careerId
+        )
         await profileId.save();
-        
-        await certificate.findByIdAndDelete(certificateId);
+
+        await career.findByIdAndDelete(careerId);
 
         return res.status(200).json({
             success:true,
-            message:"Delete Certificate Successfully !!"
+            message:"Delete CareerProfile Successfully !!"
         })
-
+        
     } catch (error) {
         console.log(error)
             return res.status(500).json({

@@ -124,6 +124,12 @@ exports.updateProject = async (req , res) => {
 exports.deleteProject = async (req , res) => {
     try {
         const { projectId } = req.body;
+        if(!projectId){
+            return res.status(403).json({
+                success:false,
+                message:"Project Id is required for delete"
+            });
+        }
         const Id = req.user.id
         
         const userId = await User.findById(Id)

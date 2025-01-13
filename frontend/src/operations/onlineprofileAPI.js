@@ -53,7 +53,7 @@ const {
 // }
 export function onlineProfiles(token,formdata){
     return async (dispatch) =>{
-        console.log(instagramLink, facebookLink, githubLink, linkedinLink);
+        //console.log(instagramLink, facebookLink, githubLink, linkedinLink);
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
         try {

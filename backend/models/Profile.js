@@ -48,6 +48,12 @@ const profileSchema = new mongoose.Schema({
             type:mongoose.Schema.ObjectId,
             ref:"projectSchema"
         }
+    ],
+    careerProfile:[
+        {
+            type:mongoose.Schema.ObjectId,
+            ref:"careerProfileSchema"
+        }
     ]
  
 })
