@@ -21,6 +21,7 @@ export const onlineProfile = {
     createOnlineProfile : BASE_URL + "/profile/onlineprofile",
     updateOnlineProfile : BASE_URL + "/profile/updateonlineprofile",
     deleteOnlineProfile : BASE_URL + "/profile/deleteonlineprofile",
+    getOnlineProfile    : BASE_URL + "/profile/getonlineprofile"
 }
 export const certificateProfile = {
     createCertificate : BASE_URL + "/profile/certificate",

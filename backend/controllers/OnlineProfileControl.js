@@ -213,3 +213,37 @@ exports.deleteOnlineProfile = async (req ,res) => {
             })
     }
 }
+
+exports.getOnlineProfile = async(req , res) => {
+    try {
+        const id = req.user.id;
+        const user = await User.findById(id)
+        if (!user || !user.profile) {
+            return res.status(404).json({
+                success: false,
+                message: "User or profile not found",
+            });
+        }
+        const profile  = await Profile.findById(user.profile).populate("onlineProfiles").exec();
+        if (!profile || !profile.onlineProfiles) {
+            return res.status(404).json({
+                success: false,
+                message: "Online profiles not found",
+            });
+        }
+     
+        return res.status(200).json({
+            success:true,
+            message:"User OnlineProfile Fetched Successfully",
+            onlineprofile:profile.onlineProfiles
+        });
+    
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+           success:false,
+           message:error.message,
+       });
+    }
+  
+}
