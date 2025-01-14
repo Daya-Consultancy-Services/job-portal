@@ -11,31 +11,25 @@ const {
 
     createOnlineProfile,
     updateOnlineProfile,
-    deleteOnlineProfile
+    deleteOnlineProfile: deleteOnlineProfileAPI // Rename here 
 
 } = onlineProfile
 
 
 export function onlineProfiles(
     token,
-    instagramLink,
-    facebookLink,
-    githubLink,
-    linkedinLink
+   formdata
 ){
     return async (dispatch) =>{
-        console.log(instagramLink, facebookLink, githubLink, linkedinLink);
+        
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
         try {
-            const response = await apiConnector("POST",createOnlineProfile,{
-                instagramLink,
-                facebookLink,
-                githubLink,
-                linkedinLink
-            },{ Authorization: `Bearer ${token}` });
+            const response = await apiConnector("POST",createOnlineProfile, formdata,{ 
+                Authorization: `Bearer ${token}` 
+            });
 
-                console.log("Created OnlineProfile Successfully !!!", response);
+                console.log("Created OnlineProfile Successfully !!!", response, formdata);
 
             if (!response.data.success) {
                 throw new Error(response.data.message);

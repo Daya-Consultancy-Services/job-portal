@@ -54,14 +54,15 @@ exports.createOnlineProfile = async (req , res) => {
             githubLink,
             linkedinLink
         })
-
+       
         profile.onlineProfiles = onlineProfiles.id;
         await profile.save();
+        await onlineProfiles.save();
 
         return res.status(200).json({
             success:true,
             message:"OnlineProfile Created Successfully",
-            data:onlineProfiles,
+            onlineProfiles
         })
 
     } catch (error) {
@@ -108,7 +109,7 @@ exports.updateOnlineProfile = async (req ,res) => {
         }
 
         const onlineProfiles = await onlineprofile.findByIdAndUpdate(
-            profileId.onlineProfiles._id,
+            profileId.onlineProfiles.id,
             {
                 instagramLink : instagramLink,
                 facebookLink  : facebookLink,

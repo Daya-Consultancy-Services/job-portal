@@ -42,6 +42,8 @@ import { updateProfile } from '../../operations/profileAPI';
 
 import ProfileForm from './ProfileForm';
 import FORM_CONFIGS, { ModalComponent } from './Accomplishment';
+import { BsPencil, BsTrash } from 'react-icons/bs';
+import { deleteOnlineProfile, updateonlineProfiles } from '../../operations/onlineprofileAPI';
 
 
 
@@ -52,8 +54,8 @@ import FORM_CONFIGS, { ModalComponent } from './Accomplishment';
 
 
 function UserProfile() {
-
-    const { user, token } = useSelector((state) => state.user)
+    const { user } =useSelector((state) => state.profile);
+    const {token } = useSelector((state) => state.user)
 
     const navigate = useNavigate();
 
@@ -83,12 +85,6 @@ function UserProfile() {
 
     const [personalDetails, setPersonalDetails] = useState('');
 
-    const [firstName, setFirstName] = useState('');
-
-    const [lastName, setLastName] = useState('');
-
-    const [email, setEmail] = useState('abcd@.com');
-
     const [showExtraProfile, setShowExtraProfile] = useState(false);
 
     const [isNamePopupOpen, setIsNamePopupOpen] = useState(false);
@@ -104,6 +100,88 @@ function UserProfile() {
         sectionType: null,
         title: ''
     });
+
+    const [sectionData, setSectionData] = useState({});
+
+    const [editModal, setEditModal] = useState({ sectionId: null, itemIndex: null, fieldKey: null, fieldValue: "" }); // Manage edit modal state
+
+    // ---------------------------------- save , edit, delete for online profile---------------------------------------
+
+    const handleSaveData = (sectionType, data) => {
+        setSectionData((prevData) => ({
+            ...prevData,
+            [sectionType]: [...(prevData[sectionType] || []), data],
+        }));
+    };
+
+    const handleEdit = (sectionId, itemIndex, fieldKey, fieldValue) => {
+        setEditModal({ sectionId, itemIndex, fieldKey, fieldValue });
+    };
+
+
+    const handleUpdate = async () => {
+        const { sectionId, itemIndex, fieldKey, fieldValue } = editModal;
+
+        console.log("Edit Modal State:", editModal);
+
+        const selectedItem = sectionData[sectionId]?.[itemIndex];
+
+        console.log("Selected Item:", selectedItem);
+
+        if (!selectedItem) {
+            console.error("Selected item not found");
+            return;
+        }
+
+        const updatedItem = {
+            ...selectedItem,
+            [fieldKey]: fieldValue, // Update the specific field with the new value
+        };
+
+
+
+        try {
+            await dispatch(updateonlineProfiles(token, updatedItem));
+            console.log("Updated Successfully", updatedItem);
+        } catch (error) {
+            console.error("Error updating profile:", error);
+        }
+
+
+    };
+    const handleDeleteForOnlineProfile = (sectionId, itemIndex, fieldKey) => {
+        console.log(`Delete ${fieldKey} in section ${sectionId}, item ${itemIndex}`);
+
+        
+        const dispatchPayload = {
+            [fieldKey]: true
+        };
+        console.log(dispatchPayload);
+
+        // Dispatch the action to update the database
+        dispatch(deleteOnlineProfile(token, dispatchPayload));
+       
+
+        // Update the local state to show the field as empty
+        setSectionData((prev) => {
+            const updatedSection = [...prev[sectionId]];
+            updatedSection[itemIndex] = {
+                ...updatedSection[itemIndex],
+                [fieldKey]: null // Set the field to null instead of deleting it
+            };
+            return {
+                ...prev,
+                [sectionId]: updatedSection,
+            };
+        });
+    };
+
+    const closeModal = () => {
+        setEditModal({ sectionId: null, itemIndex: null, fieldKey: null, fieldValue: "" }); // Reset the modal state
+    };
+
+
+    // -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
@@ -311,7 +389,7 @@ function UserProfile() {
                     placeholder="Enter your LinkedIn/portfolio URL"
                 />
             ),
-            
+
         },
         {
             id: 'work-sample',
@@ -656,7 +734,7 @@ function UserProfile() {
                                     {isPersonalDetailsVisible && (
                                         <ProfileSummery
                                             onSave={handlePersonalDetailsSaved}
-                                            initialDetails={personalDetails} // Pass existing details to the form
+                                            initialDetails={personalDetails}
                                         />
                                     )}
 
@@ -692,14 +770,96 @@ function UserProfile() {
                                                     </button>
                                                 </div>
 
+                                                {sectionData[section.id] && sectionData[section.id].length > 0 && (
+                                                    <div>
+                                                        {sectionData[section.id].map((item, index) => (
+                                                            <div key={index} className="p-4 rounded-md">
+                                                                {Object.entries(item)
+                                                                    .filter(([key, value]) => value !== null) // Filter out fields with null values
+                                                                    .map(([key, value]) => (
+                                                                        <div key={key} className="flex justify-between items-center mt-4">
+                                                                            <div>
+                                                                                <h1 className="font-medium capitalize">{key}:</h1>
+                                                                                <p className="text-sm text-gray-800">{value}</p>
+                                                                            </div>
+                                                                            <div className="flex gap-4">
+                                                                                {/* Pencil Icon for Editing */}
+                                                                                <button
+                                                                                    onClick={() => handleEdit(section.id, index, key, value)}
+                                                                                    className="text-blue-600 hover:text-blue-800"
+                                                                                    aria-label={`Edit ${key}`}
+                                                                                >
+                                                                                    <BsPencil />
+                                                                                </button>
+
+                                                                                {/* Edit Modal */}
+                                                                                {editModal.sectionId !== null && (
+                                                                                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                                                                                        <div className="bg-white rounded-lg w-full max-w-xl p-6 relative">
+                                                                                            <button
+                                                                                                onClick={closeModal}
+                                                                                                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                                                                                            >
+                                                                                                X
+                                                                                            </button>
+                                                                                            <h2 className="text-xl font-semibold mb-4">Edit Field</h2>
+                                                                                            <div>
+                                                                                                <label className="block text-sm font-medium text-gray-700">{editModal.fieldKey}</label>
+                                                                                                <input
+                                                                                                    type="text"
+                                                                                                    className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                                                                                                    value={editModal.fieldValue}
+                                                                                                    onChange={(e) => setEditModal({ ...editModal, fieldValue: e.target.value })}
+                                                                                                />
+                                                                                            </div>
+                                                                                            <div className="flex justify-end gap-2 mt-6">
+                                                                                                <button
+                                                                                                    onClick={closeModal}
+                                                                                                    className="px-4 py-2 border rounded-md hover:bg-gray-50"
+                                                                                                >
+                                                                                                    Cancel
+                                                                                                </button>
+                                                                                                <button
+                                                                                                    onClick={handleUpdate}
+                                                                                                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                                                                                                >
+                                                                                                    Update
+                                                                                                </button>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                )}
+
+                                                                                {/* Trash Icon for Deleting */}
+                                                                                <button
+                                                                                    onClick={() => handleDeleteForOnlineProfile(section.id, index, key)}
+                                                                                    className="text-red-600 hover:text-red-800"
+                                                                                    aria-label={`Delete ${key}`}
+                                                                                >
+                                                                                    <BsTrash />
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    ))}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+
+
                                                 <ModalComponent
                                                     isOpen={openModal === section.id}
                                                     onClose={() => setOpenModal(null)}
                                                     sectionType={section.id}
                                                     title={section.title}
+                                                    onSave={handleSaveData} // Ensure this function is passed
                                                 />
                                             </div>
+
                                         ))}
+
+
+
                                     </div>
                                 </div>
 
