@@ -58,6 +58,13 @@ const {
     deleteCareer
 
 } = require("../controllers/CareerControler")
+const {
+
+    createEducationProfile,
+    updateEducationProfile,
+    deleteEducationProfile
+
+} = require("../controllers/EducationControl")
 
 const { auth , isJobseeker} = require("../middleware/auth");
 
@@ -155,6 +162,20 @@ router.post("/careerprofile",auth,isJobseeker,createCareer)
 // }
 router.put("/updatecareer",auth,isJobseeker,updateCareer)
 router.delete("/deletecareer",auth,isJobseeker,deleteCareer)
+
+router.post("/educationprofile",auth,isJobseeker,createEducationProfile)
+// {
+//     "educationName":"MCA",
+//     "institutionName":"PICA",
+//     "courseName":"Master in Computer Application",
+//     "courseType":"In-person",
+//     "duration":"2year",
+//     "marks":"8.75",
+//     "location":"Gujarat",
+//     "education":"Post-graduation"
+// }
+router.put("/updateeducation",auth,isJobseeker,updateEducationProfile)
+router.delete("/deleteeducation",auth,isJobseeker,deleteEducationProfile)
 
 module.exports=router
 
