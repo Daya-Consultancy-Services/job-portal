@@ -48,7 +48,11 @@ export const educationProfile = {
     updateEducationProfile : BASE_URL+"/profile/updateeducation",
     deleteEducationProfile : BASE_URL+"/profile/deleteeducation",
 }
-
+export const employmentprofile = {
+    createEmploymentProfile : BASE_URL + "/profile/employprofile",
+    updateEmploymentProfile : BASE_URL + "/profile/updateemployprofile",
+    deleteEmploymentProfile : BASE_URL + "/profile/deleteemployprofile",
+}
 export const companyPoint = {
     signupCompany_api        : BASE_URL + "/company/signup",
     loginCompany_api         : BASE_URL + "/company/login",

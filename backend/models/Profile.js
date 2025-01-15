@@ -60,6 +60,12 @@ const profileSchema = new mongoose.Schema({
             type:mongoose.Schema.ObjectId,
             ref:"educationSchema"
         }
+    ],
+    employProfile:[
+        {
+            type:mongoose.Schema.ObjectId,
+            ref:"empProfileSchema"
+        }
     ]
  
 })
