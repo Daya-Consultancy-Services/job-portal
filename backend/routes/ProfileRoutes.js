@@ -111,7 +111,7 @@ router.post("/onlineprofile",auth,isJobseeker,createOnlineProfile)
 
 router.put("/updateonlineprofile",auth,isJobseeker,updateOnlineProfile)
 
-router.put("/deleteonlineprofile",auth,deleteOnlineProfile)
+router.put("/deleteonlineprofile",auth,isJobseeker,deleteOnlineProfile)
 router.get("/getonlineprofile",auth,isJobseeker,getOnlineProfile)
 
         // the body will have the 
