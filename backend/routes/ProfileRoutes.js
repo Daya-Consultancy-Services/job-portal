@@ -66,6 +66,14 @@ const {
 
 } = require("../controllers/EducationControl")
 
+const {
+
+    createEmploymentProfile,
+    updateEmploymentProfile,
+    deleteEmploymentProfile
+
+} = require("../controllers/EmploymentControl")
+
 const { auth , isJobseeker} = require("../middleware/auth");
 
 router.put("/update",auth,isJobseeker,updateProfile)
@@ -163,6 +171,7 @@ router.post("/careerprofile",auth,isJobseeker,createCareer)
 router.put("/updatecareer",auth,isJobseeker,updateCareer)
 router.delete("/deletecareer",auth,isJobseeker,deleteCareer)
 
+//educationProfile***********************************************************************************************************
 router.post("/educationprofile",auth,isJobseeker,createEducationProfile)
 // {
 //     "educationName":"MCA",
@@ -176,6 +185,25 @@ router.post("/educationprofile",auth,isJobseeker,createEducationProfile)
 // }
 router.put("/updateeducation",auth,isJobseeker,updateEducationProfile)
 router.delete("/deleteeducation",auth,isJobseeker,deleteEducationProfile)
+
+//employmentprofile************************************************************************************************************
+router.post("/employprofile",auth,isJobseeker,createEmploymentProfile)
+// {
+//     "isCurrentEmp":"true",
+//     "empType":"Fulltime",
+//     "totalExp":"1year",
+//     "currentJobTitle:"Mern stack",
+//     "joinDate":"12jan",
+//     "leaveDate":"13jan",
+//     "currentSalary":"40k",
+//     "skill":["javascript","Mongo"],
+//     "jobProfile":"IT",
+//     "noticePeriod":"30days",
+//     "jobDescription":"Web developer"
+// }
+router.put("/updateemployprofile",auth,isJobseeker,updateEmploymentProfile)
+router.delete("/deleteemployprofile",auth,isJobseeker,deleteEmploymentProfile)
+
 
 module.exports=router
 
