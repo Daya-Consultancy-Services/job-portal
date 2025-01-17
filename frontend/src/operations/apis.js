@@ -26,7 +26,8 @@ export const onlineProfile = {
 export const certificateProfile = {
     createCertificate : BASE_URL + "/profile/certificate",
     updateCertificate : BASE_URL + "/profile/updatecertificate",
-    deleteCertificate : BASE_URL + "/profile/deletecertificate"
+    deleteCertificate : BASE_URL + "/profile/deletecertificate",
+    getCertificate    : BASE_URL + "/profile/getcertificate"
 }
 export const skillprofile = {
     createSkillProfile : BASE_URL + "/profile/skillprofile",

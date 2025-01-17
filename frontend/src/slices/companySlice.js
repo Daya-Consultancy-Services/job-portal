@@ -3,7 +3,8 @@ import { createSlice } from "@reduxjs/toolkit"
 const initialState = {
     signupData : null,
     loading : false,
-    token : localStorage.getItem("token") ? JSON.parse(localStorage.getItem("token")) : null
+    token : localStorage.getItem("token") ? JSON.parse(localStorage.getItem("token")) : null,
+    company: localStorage.getItem("company") ? JSON.parse(localStorage.getItem("company")) : null,
 };
 
 const companySlice = createSlice({
@@ -18,9 +19,12 @@ const companySlice = createSlice({
         },
         setToken(state, value){
             state.token = value.payload
+        },
+        setCompany(state,value){
+            state.company =  value.payload
         }
     }
 });
 
-export const { setSignupData, setLoading, setToken} = companySlice.actions;
+export const { setSignupData, setLoading, setToken, setCompany} = companySlice.actions;
 export default companySlice.reducer;

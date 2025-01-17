@@ -30,7 +30,8 @@ const {
 
     createCertificate,
     updateCertificate,
-    deleteCertificate
+    deleteCertificate,
+    getCertificates
     
 } = require("../controllers/CertificateControl")
 
@@ -137,6 +138,7 @@ router.post("/certificate",auth,isJobseeker,createCertificate)
 router.put("/updatecertificate",auth,isJobseeker,updateCertificate)
 
 router.delete("/deletecertificate",auth,isJobseeker,deleteCertificate)
+router.get("/getcertificate",auth,isJobseeker,getCertificates);
 
 //SkillProfile Routes*******************************************************************************************************
 router.post("/skillprofile",auth,isJobseeker,createSkillProfile)

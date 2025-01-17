@@ -1,7 +1,7 @@
 import { toast } from 'react-hot-toast'
 
 import { setLoading, setToken } from '../slices/userProfileSlice'
-import { setUser } from '../slices/userProfileSlice'
+import { setUser,setCertificate } from '../slices/userProfileSlice'
 import { apiConnector } from '../services/apiConnector'
 import { certificateProfile } from './apis'
 import { logout } from './userAPI'
@@ -10,7 +10,8 @@ const {
 
     createCertificate,
     updateCertificate,
-    deleteCertificate
+    deleteCertificate,
+    getCertificate
 
 } = certificateProfile
 
@@ -105,4 +106,31 @@ export function deleteCertificates(token,certificateId,navigate){
             dispatch(setLoading(false));
         }
     }
+}
+
+export function fetchCertificates(token) {
+    return async (dispatch) => {
+        dispatch(setLoading(true));
+        try {
+            const response = await apiConnector("GET", getCertificate, null, {
+                Authorization: `Bearer ${token}`,
+            });
+
+            if (!response.data.success) {
+                throw new Error(response.data.message);
+            }
+
+            const certificates = response.data.data;
+
+            // Update Redux state with certificates
+            dispatch(setCertificate({ certificates }));
+
+            toast.success("Certificates fetched successfully");
+        } catch (error) {
+            console.error("Error fetching certificates:", error);
+            toast.error("Failed to fetch certificates");
+        } finally {
+            dispatch(setLoading(false));
+        }
+    };
 }

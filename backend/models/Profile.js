@@ -34,7 +34,7 @@ const profileSchema = new mongoose.Schema({
     certificates:[
         {
             type:mongoose.Schema.ObjectId,
-            ref:"certificateSchemas"
+            ref:"certificateSchema"
         }
     ],
     skillsProfile:[

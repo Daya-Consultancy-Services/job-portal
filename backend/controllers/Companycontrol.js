@@ -186,15 +186,27 @@ exports.updateCompanyDetail = async (req,res) => {
             });
         }
 
-        const comp = await Company.findById(compid);
+        const comp = await Company.findByIdAndUpdate(
+            compid,
+            {
+                name:name,
+                description:description,
+                email:email,
+                website:website,
+                location:location,
+                logo:logo,
+                companyfield:companyfield
+            },
+            {new:true}
+        );
 
-        comp.name = name;
-        comp.description = description;
-        comp.email = email;
-        comp.website = website;
-        comp.location = location;
-        comp.logo = logo;
-        comp.companyfield = companyfield;
+        // comp.name = name;
+        // comp.description = description;
+        // comp.email = email;
+        // comp.website = website;
+        // comp.location = location;
+        // comp.logo = logo;
+        // comp.companyfield = companyfield;
 
         await comp.save();
 
@@ -252,7 +264,7 @@ exports.getAllDetailCompany = async (req,res) => {
     try {
         const id = req.user.id
 
-        const companyDetail = await Company.findById(id);
+        const companyDetail = await Company.findById(id).populate("recruiter").exec();
 
         return res.status(200).json({
             success:true,
