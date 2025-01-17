@@ -21,7 +21,8 @@ const {
 
     createOnlineProfile,
     updateOnlineProfile,
-    deleteOnlineProfile
+    deleteOnlineProfile,
+    getOnlineProfile
     
 } = require("../controllers/OnlineProfileControl")
 
@@ -49,7 +50,22 @@ const {
     deleteProject
 
 } = require("../controllers/ProjectControl")
- 
+
+const {
+
+    createCareer,
+    updateCareer,
+    deleteCareer
+
+} = require("../controllers/CareerControler")
+const {
+
+    createEducationProfile,
+    updateEducationProfile,
+    deleteEducationProfile
+
+} = require("../controllers/EducationControl")
+
 const { auth , isJobseeker} = require("../middleware/auth");
 
 router.put("/update",auth,isJobseeker,updateProfile)
@@ -95,7 +111,8 @@ router.post("/onlineprofile",auth,isJobseeker,createOnlineProfile)
 
 router.put("/updateonlineprofile",auth,isJobseeker,updateOnlineProfile)
 
-router.put("/deleteonlineprofile",auth,deleteOnlineProfile)
+router.put("/deleteonlineprofile",auth, isJobseeker,deleteOnlineProfile)
+// router.get("/getonlineprofile",auth,isJobseeker,getOnlineProfile)
 
         // the body will have the 
         // {
@@ -133,6 +150,32 @@ router.post("/project",auth,isJobseeker,createProject)
 router.put("/updateproject",auth,isJobseeker,updateProject)
 router.delete("/deleteproject",auth,isJobseeker,deleteProject)
 
+//CareerProfile**************************************************************************************************************
+router.post("/careerprofile",auth,isJobseeker,createCareer)
+// {
+//             "industryType":"IT",
+//             "department":"Software Engineer",
+//             "empType":"Fulltime",
+//             "skills":["java","springboot"],
+//             "jobLocation":"Mumbai",
+//             "salary":"40k"
+// }
+router.put("/updatecareer",auth,isJobseeker,updateCareer)
+router.delete("/deletecareer",auth,isJobseeker,deleteCareer)
+
+router.post("/educationprofile",auth,isJobseeker,createEducationProfile)
+// {
+//     "educationName":"MCA",
+//     "institutionName":"PICA",
+//     "courseName":"Master in Computer Application",
+//     "courseType":"In-person",
+//     "duration":"2year",
+//     "marks":"8.75",
+//     "location":"Gujarat",
+//     "education":"Post-graduation"
+// }
+router.put("/updateeducation",auth,isJobseeker,updateEducationProfile)
+router.delete("/deleteeducation",auth,isJobseeker,deleteEducationProfile)
 
 module.exports=router
 

@@ -21,6 +21,7 @@ export const onlineProfile = {
     createOnlineProfile : BASE_URL + "/profile/onlineprofile",
     updateOnlineProfile : BASE_URL + "/profile/updateonlineprofile",
     deleteOnlineProfile : BASE_URL + "/profile/deleteonlineprofile",
+    getOnlineProfile    : BASE_URL + "/profile/getonlineprofile"
 }
 export const certificateProfile = {
     createCertificate : BASE_URL + "/profile/certificate",
@@ -36,6 +37,16 @@ export const projectProfile = {
     createProject : BASE_URL + "/profile/project",
     updateProject : BASE_URL + "/profile/updateproject",
     deleteProject : BASE_URL + "/profile/deleteproject",
+}
+export const careerProfile = {
+    createCareer : BASE_URL + "/profile/careerprofile",
+    updateCareer : BASE_URL + "/profile/updatecareer",
+    deleteCareer : BASE_URL + "/profile/deletecareer",
+}
+export const educationProfile = {
+    createEducationProfile : BASE_URL+"/profile/educationprofile",
+    updateEducationProfile : BASE_URL+"/profile/updateeducation",
+    deleteEducationProfile : BASE_URL+"/profile/deleteeducation",
 }
 
 export const companyPoint = {

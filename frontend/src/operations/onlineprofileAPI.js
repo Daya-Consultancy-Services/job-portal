@@ -5,13 +5,15 @@ import { setUser } from '../slices/userProfileSlice'
 import { apiConnector } from '../services/apiConnector'
 import { onlineProfile } from './apis'
 import { logout } from './userAPI'
+// import { getOnlineProfile } from '../../../backend/controllers/OnlineProfileControl'
 
 
 const {
 
     createOnlineProfile,
     updateOnlineProfile,
-    deleteOnlineProfile: deleteOnlineProfileAPI // Rename here 
+    deleteOnlineProfile,
+    getOnlineProfile
 
 } = onlineProfile
 
@@ -35,6 +37,7 @@ export function onlineProfiles(
                 throw new Error(response.data.message);
             }
 
+            dispatch(setUser({...response.data.onlineProfiles}))
             toast.success("OnlineProfile Created Successfully!!!");
         
         } catch (error) {
@@ -51,6 +54,7 @@ export function updateonlineProfiles(token,formdata){
     return async(dispatch) => {
         const toastId = toast.loading("Loading....")
         dispatch(setLoading(true));
+        console.log("formdata coming", formdata)
     try {
         const response = await apiConnector("PUT",updateOnlineProfile,formdata,{
             Authorization: `Bearer ${token}`,
@@ -76,7 +80,7 @@ export function updateonlineProfiles(token,formdata){
 }
 
 
-export function deleteOnlineProfile(token, formdata) {
+export function deleteOnlineProfiles(token, formdata) {
     return async (dispatch) => {
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
@@ -106,3 +110,27 @@ export function deleteOnlineProfile(token, formdata) {
 //     facebookLink: true,
 // }));
 
+// export function getOnlineProfiles(token,navigate){
+//     return async (dispatch) => {
+//         const toastId = toast.loading("Loading...");
+//         dispatch(setLoading(true));
+//         try {
+//             const response = await apiConnector("GET", getOnlineProfile, null, {
+//                 Authorization: `Bearer ${token}`,
+//             })
+//             console.log("GET_USER_ONLINEPROFILE API RESPONSE............", response)
+
+//             if (!response.data.success) {
+//                 throw new Error(response.data.message)
+//             }
+//             dispatch(setUser({ ...response.data.onlineprofile }));
+//             toast.success("OnlineProfle_GET_API successfully!");
+//         } catch (error) {
+//             console.error("OnlineProfle_GET_API error:", error);
+//             toast.error("Could not get the OnlineProfle_GET_API.");
+//         } finally {
+//             toast.dismiss(toastId);
+//             dispatch(setLoading(false));
+//         }
+//     }
+// }

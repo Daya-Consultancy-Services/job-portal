@@ -16,25 +16,26 @@ const {
 
 export function createCertificates(
     token,
-    certificateName,
-    certificateLink,
-    certificateDescription
+    // certificateName,
+    // certificateLink,
+    // certificateDescription
+    formdata
 ){
     return async (dispatch) => {
+
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
+        console.log(formdata);
         try {
-            const response = await apiConnector("POST",createCertificate,{
-                certificateName,
-                certificateLink,
-                certificateDescription
-            },{Authorization: `Bearer ${token}`});
+            const response = await apiConnector("POST",createCertificate,formdata,{Authorization: `Bearer ${token}`});
 
             console.log("Created Certificate Successfully !!!", response);
 
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
+            const createdCertificate = response.data;
+        return createdCertificate;
 
             //const newCertificateId = response.data.data?._id;
 

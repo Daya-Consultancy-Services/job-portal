@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { X } from 'lucide-react';
-import { onlineProfiles } from '../../operations/onlineprofileAPI';
+import { 
+  onlineProfiles, 
+} from '../../operations/onlineprofileAPI';
+import { createCertificates } from '../../operations/certificateAPI';
+
+const API_DISPATCH_MAP = {
+  'onlineProfiles': onlineProfiles,
+  'createCertificates': createCertificates
+};
 
 const FORM_CONFIGS = {
     'online-profile': {
@@ -13,10 +21,53 @@ const FORM_CONFIGS = {
       ],
       dispatchType: 'onlineProfiles'
     },
-    // Other configurations omitted for brevity
+    'work-sample': {
+      fields: [
+        { name: 'companyName', label: 'Company Name', type: 'text', placeholder: 'Enter your company name' },
+        { name: 'position', label: 'Position', type: 'text', placeholder: 'Enter your position' },
+        { name: 'duration', label: 'Duration', type: 'text', placeholder: 'Enter your duration' },
+        { name: 'description', label: 'Description', type: 'textarea', placeholder: 'Enter your work description' }
+      ],
+      dispatchType: 'workSamples'
+    },
+    'journal-entry': {
+      fields: [
+        { name: 'title', label: 'Title', type: 'text', placeholder: 'Enter your journal entry title' },
+        { name: 'date', label: 'Date', type: 'date', placeholder: 'Enter your journal entry date' },
+        { name: 'content', label: 'Content', type: 'textarea', placeholder: 'Enter your journal entry content' }
+      ],
+      dispatchType: 'journalEntries'
+    },
+    'presentation': {
+      fields: [
+        { name: 'title', label: 'Title', type: 'text', placeholder: 'Enter your presentation title' },
+        { name: 'date', label: 'Date', type: 'date', placeholder: 'Enter your presentation date' },
+        { name: 'location', label: 'Location', type: 'text', placeholder: 'Enter your presentation location' },
+        { name: 'content', label: 'Content', type: 'textarea', placeholder: 'Enter your presentation content' }
+      ],
+      dispatchType: 'presentations'
+    },
+    'patent': {
+      fields: [
+        { name: 'title', label: 'Title', type: 'text', placeholder: 'Enter your patent title' },
+        { name: 'date', label: 'Date', type: 'date', placeholder: 'Enter your patent date' },
+        { name: 'inventor', label: 'Inventor', type: 'text', placeholder: 'Enter your inventor name' },
+        { name: 'description', label: 'Description', type: 'textarea', placeholder: 'Enter your patent description' }
+      ],
+      dispatchType: 'patents'
+    },
+    'certification': {
+      fields: [
+        {name: 'certificateName', label:'Certificate Name', type:'text', placeholder: 'Enter your certificate name'},
+        {name: 'certificateLink', label:'Certificate Link', type:'text', placeholder: 'Enter your certificate link'},
+        {name: 'certificateDescription', label:'Certificate Description', type:'text', placeholder: 'Enter your certificate description'},
+      ],
+      dispatchType: 'createCertificates'
+    }
 };
 
 const renderField = (field, value, onChange) => {
+ 
   if (field.type === 'textarea') {
     return (
       <textarea
@@ -46,6 +97,7 @@ export const ModalComponent = ({ isOpen, onClose, sectionType, title, onSave }) 
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
+  const { user } =useSelector((state) => state.profile);
 
   const { token } = useSelector((state) => state.profile);
 
@@ -63,19 +115,44 @@ export const ModalComponent = ({ isOpen, onClose, sectionType, title, onSave }) 
     }
   };
 
-  const handleSubmit = () => {
-    // Convert empty fields to null
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
     const sanitizedData = Object.fromEntries(
       Object.entries(formData).map(([key, value]) => [key, value || null])
     );
+    
 
     const data = { token, ...sanitizedData };
-
-    dispatch(onlineProfiles(token, sanitizedData)); // Call API (adjust as per your logic)
-    onSave(sectionType, sanitizedData); // Save data locally
-    setFormData({});
-    onClose();
+    const dispatchFunction = API_DISPATCH_MAP[config.dispatchType];
+    
+    if (dispatchFunction) {
+      try {
+        const response = await dispatch(dispatchFunction(token, sanitizedData));
+        
+        // Extract ID from the correct location in the response
+        const objId = user?.profile?.ceritificates?._id;
+        console.log(objId);
+        
+        if (objId) {
+          onSave(sectionType, {
+            ...sanitizedData,
+            _id: objId
+          });
+        } else {
+          console.warn('Object ID not found in response');
+          onSave(sectionType, sanitizedData);
+        }
+        
+        setFormData({});
+        onClose();
+        
+      } catch (error) {
+        console.error('Error in form submission:', error);
+      }
+    }
   };
+  
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

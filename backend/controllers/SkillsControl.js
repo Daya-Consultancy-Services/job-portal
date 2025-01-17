@@ -117,6 +117,12 @@ exports.updateSkillProfile = async (req , res) => {
 exports.deleteSkillProfile = async (req, res) => {
     try {
         const { skillProfileId } = req.body;
+        if(!skillProfileId){
+            return res.status(403).json({
+                success:false,
+                message:"skillProfile Id is required for delete"
+            });
+        }
         const Id = req.user.id
 
         const userId = await User.findById(Id)

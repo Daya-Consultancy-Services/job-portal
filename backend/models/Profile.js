@@ -34,7 +34,7 @@ const profileSchema = new mongoose.Schema({
     certificates:[
         {
             type:mongoose.Schema.ObjectId,
-            ref:"certificateSchemas"
+            ref:"certificateSchema"
         }
     ],
     skillsProfile:[
@@ -47,6 +47,18 @@ const profileSchema = new mongoose.Schema({
         {
             type:mongoose.Schema.ObjectId,
             ref:"projectSchema"
+        }
+    ],
+    careerProfile:[
+        {
+            type:mongoose.Schema.ObjectId,
+            ref:"careerProfileSchema"
+        }
+    ],
+    educationProfile:[
+        {
+            type:mongoose.Schema.ObjectId,
+            ref:"educationSchema"
         }
     ]
  

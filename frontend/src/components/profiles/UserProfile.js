@@ -43,7 +43,9 @@ import { updateProfile } from '../../operations/profileAPI';
 import ProfileForm from './ProfileForm';
 import FORM_CONFIGS, { ModalComponent } from './Accomplishment';
 import { BsPencil, BsTrash } from 'react-icons/bs';
-import { deleteOnlineProfile, updateonlineProfiles } from '../../operations/onlineprofileAPI';
+import { deleteOnlineProfile, deleteOnlineProfiles, updateonlineProfiles } from '../../operations/onlineprofileAPI';
+import { Pencil, Trash2 } from 'lucide-react';
+import { createCertificates, deleteCertificates, updateCertificates } from '../../operations/certificateAPI';
 
 
 
@@ -56,6 +58,7 @@ import { deleteOnlineProfile, updateonlineProfiles } from '../../operations/onli
 function UserProfile() {
     const { user } =useSelector((state) => state.profile);
     const {token } = useSelector((state) => state.user)
+
 
     const navigate = useNavigate();
 
@@ -107,99 +110,241 @@ function UserProfile() {
 
     // ---------------------------------- save , edit, delete for online profile---------------------------------------
 
-    const handleSaveData = (sectionType, data) => {
-        setSectionData((prevData) => ({
-            ...prevData,
-            [sectionType]: [...(prevData[sectionType] || []), data],
+    const handleSaveData = async (sectionType, data) => {
+      try {
+          if (sectionType === 'certification') {
+              // Simulate an API call or get the object ID from the provided data
+              // user?.profile?.certificates?.find(cert=> cert._id === certificateId)
+              const createdCertificateId =data;  // Replace with actual ID if available
+              console.log(createdCertificateId);
+              
+              // Update the local state with the created certificate (including _id)
+              setSectionData((prevData) => ({
+                  ...prevData,
+                  [sectionType]: [
+                      ...(prevData[sectionType] || []),
+                      { ...data, _id: createdCertificateId } // Include the _id from the response
+                  ],
+              }));
+          } else {
+              // Handle other section types normally
+              setSectionData((prevData) => ({
+                  ...prevData,
+                  [sectionType]: [...(prevData[sectionType] || []), data],
+              }));
+          }
+      } catch (error) {
+          console.error('Error saving data:', error);
+      }
+  };
+  
+      const handleCertificateInputChange = (field, value) => {
+        setEditModal(prev => ({
+          ...prev,
+          certificateData: {
+            ...prev.certificateData,
+            [field]: value
+          }
         }));
-    };
-
-    const handleEdit = (sectionId, itemIndex, fieldKey, fieldValue) => {
-        setEditModal({ sectionId, itemIndex, fieldKey, fieldValue });
-    };
-
-
-    const handleUpdate = async () => {
-        const { sectionId, itemIndex, fieldKey, fieldValue } = editModal;
-
-        console.log("Edit Modal State:", editModal);
-
-        const selectedItem = sectionData[sectionId]?.[itemIndex];
-
-        console.log("Selected Item:", selectedItem);
-
-        if (!selectedItem) {
-            console.error("Selected item not found");
-            return;
+      };
+    
+      const handleEdit = (sectionId, itemIndex, fieldKey, fieldValue) => {
+        if (sectionId === 'certification') {
+          // For certificates, store the entire certificate data
+          setEditModal({
+            sectionId,
+            itemIndex,
+            fieldKey: 'certificate',
+            certificateData: {
+              certificateName: fieldValue.certificateName,
+              certificateDescription: fieldValue.certificateDescription,
+              certificateLink: fieldValue.certificateLink
+            }
+          });
+        } else {
+          // Original behavior for online profiles
+          setEditModal({ sectionId, itemIndex, fieldKey, fieldValue });
         }
+      };
 
-        const updatedItem = {
-            ...selectedItem,
-            [fieldKey]: fieldValue, // Update the specific field with the new value
-        };
+    
 
-
-
-        try {
-            await dispatch(updateonlineProfiles(token, updatedItem));
-            console.log("Updated Successfully", updatedItem);
-        } catch (error) {
-            console.error("Error updating profile:", error);
-        }
-
-
-    };
-    const handleDeleteForOnlineProfile = (sectionId, itemIndex, fieldKey) => {
-        console.log(`Delete ${fieldKey} in section ${sectionId}, item ${itemIndex}`);
-
+      const handleUpdate = async () => {
+        const { sectionId, itemIndex, fieldKey, certificateData } = editModal;
         
-        const dispatchPayload = {
-            [fieldKey]: true
-        };
-        console.log(dispatchPayload);
-
-        // Dispatch the action to update the database
-        dispatch(deleteOnlineProfile(token, dispatchPayload));
-       
-
-        // Update the local state to show the field as empty
-        setSectionData((prev) => {
-            const updatedSection = [...prev[sectionId]];
-            updatedSection[itemIndex] = {
-                ...updatedSection[itemIndex],
-                [fieldKey]: null // Set the field to null instead of deleting it
+        if (!sectionData[sectionId]?.[itemIndex]) {
+          console.error("Selected item not found");
+          return;
+        }
+    
+        try {
+          if (sectionId === 'certification') {
+            const currentCertificate = sectionData[sectionId][itemIndex];            
+            const updatedCertificate = {
+              ...sectionData[sectionId][itemIndex],
+              ...certificateData,
+            
             };
-            return {
+            console.log(currentCertificate?._id);
+    
+            await dispatch(updateCertificates(token,  currentCertificate._id  ,updatedCertificate));
+    
+            setSectionData(prev => {
+              const updatedCertificates = [...prev[sectionId]];
+              updatedCertificates[itemIndex] = updatedCertificate;
+              return {
+                ...prev,
+                [sectionId]: updatedCertificates
+              };
+            });
+          } else {
+            // Original update logic for online profiles
+            const selectedItem = sectionData[sectionId][itemIndex];
+            const updatedItem = {
+              ...selectedItem,
+              [fieldKey]: editModal.fieldValue,
+            };
+    
+            await dispatch(updateonlineProfiles(token, updatedItem));
+    
+            setSectionData(prev => ({
+              ...prev,
+              [sectionId]: prev[sectionId].map((item, idx) => 
+                idx === itemIndex ? updatedItem : item
+              )
+            }));
+          }
+    
+          closeModal();
+        } catch (error) {
+          console.error("Error updating item:", error);
+        }
+      };
+    
+      const handleDeletes = async (sectionId, itemIndex, item) => {
+        try {
+          if (sectionId === 'certification') {
+            // Delete for certificates
+            await dispatch(deleteCertificates(token, { certificateId: item.id }));
+            
+            // Update local state
+            setSectionData(prev => ({
+              ...prev,
+              [sectionId]: prev[sectionId].filter((_, idx) => idx !== itemIndex)
+            }));
+          } else {
+            // Original delete logic for online profiles
+            const dispatchPayload = {
+              [item]: true
+            };
+            await dispatch(deleteOnlineProfiles(token, dispatchPayload));
+    
+            setSectionData(prev => {
+              const updatedSection = [...prev[sectionId]];
+              updatedSection[itemIndex] = {
+                ...updatedSection[itemIndex],
+                [item]: null
+              };
+              return {
                 ...prev,
                 [sectionId]: updatedSection,
-            };
+              };
+            });
+          }
+        } catch (error) {
+          console.error("Error deleting item:", error);
+        }
+      };
+    
+      const closeModal = () => {
+        setEditModal({
+          sectionId: null,
+          itemIndex: null,
+          fieldKey: '',
+          fieldValue: '',
+          certificateData: null
         });
-    };
+      };
 
-    const closeModal = () => {
-        setEditModal({ sectionId: null, itemIndex: null, fieldKey: null, fieldValue: "" }); // Reset the modal state
-    };
+   
 
 
-    // -------------------------------------------------------------------------------------------------------------------------------------------------------------
+    // ---------------------------------- Certificate Design ---------------------------------------
 
+    const renderCertificate = (item, index, sectionId) => (
+        <div key={index} className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-4">
+          <div className="flex justify-between">
+            <div className="space-y-2">
+              <h3 className="text-lg font-semibold text-gray-800">
+                {item.certificateName}
+              </h3>
+              <p className="text-sm text-gray-600">
+                {item.certificateDescription}
+              </p>
+              {item.certificateLink && (
+                <a 
+                  href={item.certificateLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 text-sm inline-flex items-center gap-1"
+                >
+                  View Certificate
+                </a>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => handleEdit(sectionId, index, 'certificate', item)}
+                className="text-blue-600 hover:text-blue-800 p-1"
+                aria-label="Edit certificate"
+              >
+                <Pencil size={16} />
+              </button>
+              <button
+                onClick={() => handleDeletes(sectionId, index)}
+                className="text-red-600 hover:text-red-800 p-1"
+                aria-label="Delete certificate"
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    
+    //------------------------------- Oneline Profile Design ---------------------------------------   
+      const renderOnlineProfile = (item, index, sectionId) => (
+        <div key={index} className="p-4 rounded-md">
+          {Object.entries(item)
+            .filter(([key, value]) => value !== null)
+            .map(([key, value]) => (
+              <div key={key} className="flex justify-between items-center mt-4">
+                <div>
+                  <h1 className="font-medium capitalize">{key}:</h1>
+                  <p className="text-sm text-gray-800">{value}</p>
+                </div>
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => handleEdit(sectionId, index, key, value)}
+                    className="text-blue-600 hover:text-blue-800"
+                    aria-label={`Edit ${key}`}
+                  >
+                    <Pencil size={16} />
+                  </button>
+                  <button
+                    onClick={() => handleDeletes(sectionId, index, key)}
+                    className="text-red-600 hover:text-red-800"
+                    aria-label={`Delete ${key}`}
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            ))}
+        </div>
+      );
+    
 
-
-    const handleOpenModal = (section) => {
-        setModalConfig({
-            isOpen: true,
-            sectionType: section.id,
-            title: `Add New ${section.title}`
-        });
-    };
-
-    const handleCloseModal = () => {
-        setModalConfig({
-            isOpen: false,
-            sectionType: null,
-            title: ''
-        });
-    };
 
     const dispatch = useDispatch();
 
@@ -749,119 +894,127 @@ function UserProfile() {
 
 
                                 <div className="p-6 space-y-4 shadow-lg">
-                                    <h2 className="text-xl font-medium">Accomplishments</h2>
-                                    <p className="text-gray-600 mb-4">
-                                        Showcase your credentials by adding relevant certifications, work samples, online profiles, etc.
-                                    </p>
+      <h2 className="text-xl font-medium">Accomplishments</h2>
+      <p className="text-gray-600 mb-4">
+        Showcase your credentials by adding relevant certifications, work samples, online profiles, etc.
+      </p>
 
-                                    <div className="space-y-6">
-                                        {sections.map((section) => (
-                                            <div key={section.id}>
-                                                <div className="flex justify-between items-start">
-                                                    <div>
-                                                        <h3 className="font-medium text-gray-800">{section.title}</h3>
-                                                        <p className="text-gray-600 text-sm mt-1">{section.description}</p>
-                                                    </div>
-                                                    <button
-                                                        className="text-blue-600 font-medium"
-                                                        onClick={() => setOpenModal(section.id)}
-                                                    >
-                                                        Add
-                                                    </button>
-                                                </div>
+      <div className="space-y-6">
+        {sections.map((section) => (
+          <div key={section.id}>
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="font-medium text-gray-800">{section.title}</h3>
+                <p className="text-gray-600 text-sm mt-1">{section.description}</p>
+              </div>
+              <button
+                className="text-blue-600 font-medium"
+                onClick={() => setOpenModal(section.id)}
+              >
+                Add
+              </button>
+            </div>
 
-                                                {sectionData[section.id] && sectionData[section.id].length > 0 && (
-                                                    <div>
-                                                        {sectionData[section.id].map((item, index) => (
-                                                            <div key={index} className="p-4 rounded-md">
-                                                                {Object.entries(item)
-                                                                    .filter(([key, value]) => value !== null) // Filter out fields with null values
-                                                                    .map(([key, value]) => (
-                                                                        <div key={key} className="flex justify-between items-center mt-4">
-                                                                            <div>
-                                                                                <h1 className="font-medium capitalize">{key}:</h1>
-                                                                                <p className="text-sm text-gray-800">{value}</p>
-                                                                            </div>
-                                                                            <div className="flex gap-4">
-                                                                                {/* Pencil Icon for Editing */}
-                                                                                <button
-                                                                                    onClick={() => handleEdit(section.id, index, key, value)}
-                                                                                    className="text-blue-600 hover:text-blue-800"
-                                                                                    aria-label={`Edit ${key}`}
-                                                                                >
-                                                                                    <BsPencil />
-                                                                                </button>
-
-                                                                                {/* Edit Modal */}
-                                                                                {editModal.sectionId !== null && (
-                                                                                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                                                                                        <div className="bg-white rounded-lg w-full max-w-xl p-6 relative">
-                                                                                            <button
-                                                                                                onClick={closeModal}
-                                                                                                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-                                                                                            >
-                                                                                                X
-                                                                                            </button>
-                                                                                            <h2 className="text-xl font-semibold mb-4">Edit Field</h2>
-                                                                                            <div>
-                                                                                                <label className="block text-sm font-medium text-gray-700">{editModal.fieldKey}</label>
-                                                                                                <input
-                                                                                                    type="text"
-                                                                                                    className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-                                                                                                    value={editModal.fieldValue}
-                                                                                                    onChange={(e) => setEditModal({ ...editModal, fieldValue: e.target.value })}
-                                                                                                />
-                                                                                            </div>
-                                                                                            <div className="flex justify-end gap-2 mt-6">
-                                                                                                <button
-                                                                                                    onClick={closeModal}
-                                                                                                    className="px-4 py-2 border rounded-md hover:bg-gray-50"
-                                                                                                >
-                                                                                                    Cancel
-                                                                                                </button>
-                                                                                                <button
-                                                                                                    onClick={handleUpdate}
-                                                                                                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                                                                                                >
-                                                                                                    Update
-                                                                                                </button>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                )}
-
-                                                                                {/* Trash Icon for Deleting */}
-                                                                                <button
-                                                                                    onClick={() => handleDeleteForOnlineProfile(section.id, index, key)}
-                                                                                    className="text-red-600 hover:text-red-800"
-                                                                                    aria-label={`Delete ${key}`}
-                                                                                >
-                                                                                    <BsTrash />
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                    ))}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                )}
-
-
-                                                <ModalComponent
-                                                    isOpen={openModal === section.id}
-                                                    onClose={() => setOpenModal(null)}
-                                                    sectionType={section.id}
-                                                    title={section.title}
-                                                    onSave={handleSaveData} // Ensure this function is passed
-                                                />
-                                            </div>
-
-                                        ))}
-
-
-
-                                    </div>
-                                </div>
+            {sectionData[section.id] && sectionData[section.id].length > 0 && (
+              <div className="mt-4">
+                {sectionData[section.id].map((item, index) => (
+                  section.id === 'certification' 
+                    ? renderCertificate(item, index, section.id)
+                    : renderOnlineProfile(item, index, section.id)
+                ))}
+              </div>
+            )}
+ {editModal.sectionId !== null && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg w-full max-w-xl p-6 relative">
+            <button
+              onClick={closeModal}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+            >
+              X
+            </button>
+            <h2 className="text-xl font-semibold mb-4">
+              {editModal.sectionId === 'certification' ? 'Edit Certificate' : 'Edit Field'}
+            </h2>
+            
+            {editModal.sectionId === 'certification' ? (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Certificate Name
+                  </label>
+                  <input
+                    type="text"
+                    className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                    value={editModal.certificateData.certificateName}
+                    onChange={(e) => handleCertificateInputChange('certificateName', e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Description
+                  </label>
+                  <input
+                    type="text"
+                    className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                    value={editModal.certificateData.certificateDescription}
+                    onChange={(e) => handleCertificateInputChange('certificateDescription', e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Certificate Link
+                  </label>
+                  <input
+                    type="text"
+                    className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                    value={editModal.certificateData.certificateLink}
+                    onChange={(e) => handleCertificateInputChange('certificateLink', e.target.value)}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  {editModal.fieldKey}
+                </label>
+                <input
+                  type="text"
+                  className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                  value={editModal.fieldValue}
+                  onChange={(e) => setEditModal(prev => ({ ...prev, fieldValue: e.target.value }))}
+                />
+              </div>
+            )}
+            
+            <div className="flex justify-end gap-2 mt-6">
+              <button
+                onClick={closeModal}
+                className="px-4 py-2 border rounded-md hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUpdate}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+            <ModalComponent
+              isOpen={openModal === section.id}
+              onClose={() => setOpenModal(null)}
+              sectionType={section.id}
+              title={section.title}
+              onSave={handleSaveData}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
 
 
 
