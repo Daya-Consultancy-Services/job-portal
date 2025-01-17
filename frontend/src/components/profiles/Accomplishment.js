@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { X } from 'lucide-react';
+import { 
+  onlineProfiles, 
+} from '../../operations/onlineprofileAPI';
+import { createCertificates } from '../../operations/certificateAPI';
+
+const API_DISPATCH_MAP = {
+  'onlineProfiles': onlineProfiles,
+  'createCertificates': createCertificates
+};
 
 const FORM_CONFIGS = {
     'online-profile': {
@@ -12,155 +21,138 @@ const FORM_CONFIGS = {
       ],
       dispatchType: 'onlineProfiles'
     },
-  
     'work-sample': {
       fields: [
-        { name: 'projectTitle', label: 'Project Title', type: 'text', placeholder: 'Enter project title' },
-        { name: 'projectUrl', label: 'Project URL', type: 'url', placeholder: 'Enter project URL' },
-        { name: 'description', label: 'Description', type: 'textarea', placeholder: 'Describe your work sample' }
+        { name: 'companyName', label: 'Company Name', type: 'text', placeholder: 'Enter your company name' },
+        { name: 'position', label: 'Position', type: 'text', placeholder: 'Enter your position' },
+        { name: 'duration', label: 'Duration', type: 'text', placeholder: 'Enter your duration' },
+        { name: 'description', label: 'Description', type: 'textarea', placeholder: 'Enter your work description' }
       ],
-      dispatchType: 'ADD_WORK_SAMPLE'
+      dispatchType: 'workSamples'
     },
-  
-    'white-paper': {
+    'journal-entry': {
       fields: [
-        { name: 'publicationTitle', label: 'Publication Title', type: 'text', placeholder: 'Enter publication title' },
-        { name: 'publicationUrl', label: 'Publication URL', type: 'url', placeholder: 'Enter publication URL' },
-        { name: 'authors', label: 'Authors', type: 'text', placeholder: "Enter authors' names" },
-        { name: 'abstract', label: 'Abstract', type: 'textarea', placeholder: 'Enter publication abstract' }
+        { name: 'title', label: 'Title', type: 'text', placeholder: 'Enter your journal entry title' },
+        { name: 'date', label: 'Date', type: 'date', placeholder: 'Enter your journal entry date' },
+        { name: 'content', label: 'Content', type: 'textarea', placeholder: 'Enter your journal entry content' }
       ],
-      dispatchType: 'ADD_WHITE_PAPER'
+      dispatchType: 'journalEntries'
     },
-  
     'presentation': {
       fields: [
-        { name: 'presentationTitle', label: 'Presentation Title', type: 'text', placeholder: 'Enter presentation title' },
-        { name: 'presentationUrl', label: 'Presentation URL', type: 'url', placeholder: 'Enter presentation URL' }
+        { name: 'title', label: 'Title', type: 'text', placeholder: 'Enter your presentation title' },
+        { name: 'date', label: 'Date', type: 'date', placeholder: 'Enter your presentation date' },
+        { name: 'location', label: 'Location', type: 'text', placeholder: 'Enter your presentation location' },
+        { name: 'content', label: 'Content', type: 'textarea', placeholder: 'Enter your presentation content' }
       ],
-      dispatchType: 'ADD_PRESENTATION'
+      dispatchType: 'presentations'
     },
-  
     'patent': {
       fields: [
-        { name: 'patentTitle', label: 'Patent Title', type: 'text', placeholder: 'Enter patent title' },
-        { name: 'patentNumber', label: 'Patent Number', type: 'text', placeholder: 'Enter patent number' },
-        { name: 'filingDate', label: 'Filing Date', type: 'date' },
-        { name: 'description', label: 'Description', type: 'textarea', placeholder: 'Enter patent description' }
+        { name: 'title', label: 'Title', type: 'text', placeholder: 'Enter your patent title' },
+        { name: 'date', label: 'Date', type: 'date', placeholder: 'Enter your patent date' },
+        { name: 'inventor', label: 'Inventor', type: 'text', placeholder: 'Enter your inventor name' },
+        { name: 'description', label: 'Description', type: 'textarea', placeholder: 'Enter your patent description' }
       ],
-      dispatchType: 'ADD_PATENT'
+      dispatchType: 'patents'
     },
-  
     'certification': {
       fields: [
-        { name: 'certName', label: 'Certification Name', type: 'text', placeholder: 'Enter certification name' },
-        { name: 'issuingOrg', label: 'Issuing Organization', type: 'text', placeholder: 'Enter issuing organization' },
-        { name: 'issueDate', label: 'Issue Date', type: 'date' },
-        { name: 'expiryDate', label: 'Expiry Date', type: 'date', placeholder: 'Select expiry date (if applicable)' },
-        { name: 'credentialUrl', label: 'Credential URL', type: 'url', placeholder: 'Enter credential URL' }
+        {name: 'certificateName', label:'Certificate Name', type:'text', placeholder: 'Enter your certificate name'},
+        {name: 'certificateLink', label:'Certificate Link', type:'text', placeholder: 'Enter your certificate link'},
+        {name: 'certificateDescription', label:'Certificate Description', type:'text', placeholder: 'Enter your certificate description'},
       ],
-      dispatchType: 'ADD_CERTIFICATION'
-    },
-  
-    'career-profile': {
-      fields: [
-        { name: 'currentRole', label: 'Current Role', type: 'text', placeholder: 'Enter your current role' },
-        { name: 'preferredRole', label: 'Preferred Role', type: 'text', placeholder: 'Enter your preferred role' },
-        { name: 'industry', label: 'Industry', type: 'text', placeholder: 'Enter your industry' },
-        { name: 'yearsOfExperience', label: 'Years of Experience', type: 'number', placeholder: 'Enter years of experience' },
-        { name: 'careerGoals', label: 'Career Goals', type: 'textarea', placeholder: 'Describe your career goals' }
-      ],
-      dispatchType: 'ADD_CAREER_PROFILE'
+      dispatchType: 'createCertificates'
     }
-  };
-  
-  // Updated Modal component to handle textarea inputs
-  const renderField = (field, value, onChange) => {
-    if (field.type === 'textarea') {
-      return (
-        <textarea
-          className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-          name={field.name}
-          placeholder={field.placeholder}
-          rows={4}
-          value={value || ''}
-          onChange={(e) => onChange(field.name, e.target.value)}
-        />
-      );
-    }
-  
+};
+
+const renderField = (field, value, onChange) => {
+ 
+  if (field.type === 'textarea') {
     return (
-      <input
-        type={field.type}
+      <textarea
         className="mt-1 block w-full rounded-md border border-gray-300 p-2"
         name={field.name}
         placeholder={field.placeholder}
+        rows={4}
         value={value || ''}
         onChange={(e) => onChange(field.name, e.target.value)}
       />
     );
-  };
-  
+  }
 
-export const ModalComponent = ({ isOpen, onClose, sectionType, title }) => {
+  return (
+    <input
+      type={field.type}
+      className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+      name={field.name}
+      placeholder={field.placeholder}
+      value={value || ''}
+      onChange={(e) => onChange(field.name, e.target.value)}
+    />
+  );
+};
+
+export const ModalComponent = ({ isOpen, onClose, sectionType, title, onSave }) => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
+  const { user } =useSelector((state) => state.profile);
 
-     const {token} = useSelector((state) => state.profile);
-
-  
+  const { token } = useSelector((state) => state.profile);
 
   if (!isOpen) return null;
 
   const config = FORM_CONFIGS[sectionType];
 
-  const validateForm = () => {
-    const newErrors = {};
-    config.fields.forEach(field => {
-      if (!formData[field.name]) {
-        newErrors[field.name] = `${field.label} is required`;
-      }
-    });
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const handleInputChange = (name, value) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
+      setErrors((prev) => ({ ...prev, [name]: '' }));
     }
   };
 
-  const handleSubmit = () => {
-   
-    if (validateForm()) {
-        alert(`Data being sent: ${JSON.stringify(
-            {
-              type: config.dispatchType,
-              payload: {
-                token,
-                formData,
-              },
-            },
-            null,
-            2 // Indent with 2 spaces for readability
-          )}`);
-        dispatch(
-             config.dispatchType,
-           
-              token,
-              formData,
-            
-          );
-      
-      setFormData({});
-      onClose();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    const sanitizedData = Object.fromEntries(
+      Object.entries(formData).map(([key, value]) => [key, value || null])
+    );
+    
+
+    const data = { token, ...sanitizedData };
+    const dispatchFunction = API_DISPATCH_MAP[config.dispatchType];
+    
+    if (dispatchFunction) {
+      try {
+        const response = await dispatch(dispatchFunction(token, sanitizedData));
+        
+        // Extract ID from the correct location in the response
+        const objId = user?.profile?.ceritificates?._id;
+        console.log(objId);
+        
+        if (objId) {
+          onSave(sectionType, {
+            ...sanitizedData,
+            _id: objId
+          });
+        } else {
+          console.warn('Object ID not found in response');
+          onSave(sectionType, sanitizedData);
+        }
+        
+        setFormData({});
+        onClose();
+        
+      } catch (error) {
+        console.error('Error in form submission:', error);
+      }
     }
   };
+  
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -175,18 +167,18 @@ export const ModalComponent = ({ isOpen, onClose, sectionType, title }) => {
         <h2 className="text-xl font-semibold mb-4">{title}</h2>
 
         <form className="space-y-4">
-  {config.fields.map((field) => (
-    <div key={field.name}>
-      <label className="block text-sm font-medium text-gray-700">
-        {field.label}
-      </label>
-      {renderField(field, formData[field.name], handleInputChange)}
-      {errors[field.name] && (
-        <p className="mt-1 text-sm text-red-600">{errors[field.name]}</p>
-      )}
-    </div>
-  ))}
-</form>
+          {config.fields.map((field) => (
+            <div key={field.name}>
+              <label className="block text-sm font-medium text-gray-700">
+                {field.label}
+              </label>
+              {renderField(field, formData[field.name], handleInputChange)}
+              {errors[field.name] && (
+                <p className="mt-1 text-sm text-red-600">{errors[field.name]}</p>
+              )}
+            </div>
+          ))}
+        </form>
 
         <div className="flex justify-end gap-2 mt-6">
           <button
@@ -207,4 +199,4 @@ export const ModalComponent = ({ isOpen, onClose, sectionType, title }) => {
   );
 };
 
-export default ModalComponent
+export default ModalComponent;
