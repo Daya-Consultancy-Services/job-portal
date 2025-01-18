@@ -28,16 +28,20 @@ export function createCertificates(
         dispatch(setLoading(true));
         console.log(formdata);
         try {
-            const response = await apiConnector("POST",createCertificate,formdata,{Authorization: `Bearer ${token}`});
+            const response = await apiConnector("POST",createCertificate,formdata,
+            {
+                Authorization: `Bearer ${token}`
+            });
 
             console.log("Created Certificate Successfully !!!", response);
 
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
-            const createdCertificate = response.data;
-        return createdCertificate;
+            // const createdCertificate = response.data;
+            // return createdCertificate;
 
+            dispatch(setUser({...response.data.certificates}))
             //const newCertificateId = response.data.data?._id;
 
             toast.success("Certificate Created Successfully!!!!!!!!");
