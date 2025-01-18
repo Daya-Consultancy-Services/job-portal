@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import Header from '../../pages/home/Header';
 
@@ -45,21 +45,16 @@ import FORM_CONFIGS, { ModalComponent } from './Accomplishment';
 import { BsPencil, BsTrash } from 'react-icons/bs';
 import { deleteOnlineProfile, deleteOnlineProfiles, updateonlineProfiles } from '../../operations/onlineprofileAPI';
 import { Pencil, Trash2 } from 'lucide-react';
-import { createCertificates, deleteCertificates, updateCertificates } from '../../operations/certificateAPI';
-
-
-
-
-
-
+import { createCertificates, deleteCertificates, fetchCertificates, updateCertificates } from '../../operations/certificateAPI';
 
 
 
 function UserProfile() {
     const { user } =useSelector((state) => state.profile);
-    const {token } = useSelector((state) => state.user)
-
-
+    const { token } = useSelector((state) => state.user);
+    // const {token } = useSelector((state) => state.profile.token);
+    const { certificates } = useSelector((state) => state.profile);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const [profileImage, setProfileImage] = useState(require('../../assets/profile.png'));
@@ -98,43 +93,60 @@ function UserProfile() {
 
     const [openModal, setOpenModal] = useState(null);
 
-    const [modalConfig, setModalConfig] = useState({
-        isOpen: false,
-        sectionType: null,
-        title: ''
-    });
+    // const [modalConfig, setModalConfig] = useState({
+    //     isOpen: false,
+    //     sectionType: null,
+    //     title: ''
+    // });
 
     const [sectionData, setSectionData] = useState({});
 
     const [editModal, setEditModal] = useState({ sectionId: null, itemIndex: null, fieldKey: null, fieldValue: "" }); // Manage edit modal state
+
+
+  //   useEffect(() => {
+  //     const fetchData = async () => {
+  //         if (token) {
+            
+  //             try {
+  //                 await dispatch(fetchCertificates(token));
+  //             } catch (error) {
+  //                 console.error("Error fetching certificates:", error);
+  //             }
+  //         } else {
+  //             console.warn("Token not available.");
+  //         }
+  //     };
+  
+  //     fetchData();
+  // }, [dispatch,token]);
 
     // ---------------------------------- save , edit, delete for online profile---------------------------------------
 
     const handleSaveData = async (sectionType, data) => {
       try {
           if (sectionType === 'certification') {
-              // Simulate an API call or get the object ID from the provided data
-              // user?.profile?.certificates?.find(cert=> cert._id === certificateId)
-              const createdCertificateId =data;  // Replace with actual ID if available
-              console.log(createdCertificateId);
+              // setIsLoading(true);
+              await dispatch(fetchCertificates(token));
               
-              // Update the local state with the created certificate (including _id)
+              // Wait a bit for the state to update
+              await new Promise(resolve => setTimeout(resolve, 100));
+
+              
+              
               setSectionData((prevData) => ({
                   ...prevData,
                   [sectionType]: [
                       ...(prevData[sectionType] || []),
-                      { ...data, _id: createdCertificateId } // Include the _id from the response
+                      ...certificates
                   ],
               }));
-          } else {
-              // Handle other section types normally
-              setSectionData((prevData) => ({
-                  ...prevData,
-                  [sectionType]: [...(prevData[sectionType] || []), data],
-              }));
+              console.log(certificates);
+              // setIsLoading(false);
           }
       } catch (error) {
           console.error('Error saving data:', error);
+          // setIsLoading(false);
       }
   };
   
@@ -346,7 +358,7 @@ function UserProfile() {
     
 
 
-    const dispatch = useDispatch();
+
 
     const { register, handleSubmit, reset, watch } = useForm({
 

@@ -130,19 +130,9 @@ export const ModalComponent = ({ isOpen, onClose, sectionType, title, onSave }) 
       try {
         const response = await dispatch(dispatchFunction(token, sanitizedData));
         
-        // Extract ID from the correct location in the response
-        const objId = user?.profile?.ceritificates?._id;
-        console.log(objId);
-        
-        if (objId) {
-          onSave(sectionType, {
-            ...sanitizedData,
-            _id: objId
-          });
-        } else {
-          console.warn('Object ID not found in response');
+      
           onSave(sectionType, sanitizedData);
-        }
+        
         
         setFormData({});
         onClose();

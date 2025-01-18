@@ -20,7 +20,7 @@ const profileSlice = createSlice({
         setLoading(state, value){
             state.loading = value.payload
         },
-        setCertificate(state,value){
+        setCertificate(state,action){
             state.certificates = action.payload.certificates || state.certificates;
         }
     },

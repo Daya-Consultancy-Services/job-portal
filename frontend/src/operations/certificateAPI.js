@@ -38,6 +38,8 @@ export function createCertificates(
             const createdCertificate = response.data;
         return createdCertificate;
 
+        dispatch(setUser({...response.data.certificates}));
+
             //const newCertificateId = response.data.data?._id;
 
             toast.success("Certificate Created Successfully!!!!!!!!");
@@ -122,9 +124,11 @@ export function fetchCertificates(token) {
             }
 
             const certificates = response.data.data;
+            
 
             // Update Redux state with certificates
             dispatch(setCertificate({ certificates }));
+            console.log(certificates);
 
             toast.success("Certificates fetched successfully");
         } catch (error) {
