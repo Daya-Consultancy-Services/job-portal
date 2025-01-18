@@ -53,9 +53,19 @@ function UserProfile() {
     const { user } =useSelector((state) => state.profile);
     const { token } = useSelector((state) => state.user);
     // const {token } = useSelector((state) => state.profile.token);
-    const { certificates } = useSelector((state) => state.profile);
+    // const certificates  = useSelector((state) => state.profile.certificates);
+    // console.log(certificates)
+    const certificates =  useSelector((state) => state.profile.certificates);
+    console.log(certificates);
+   
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    useEffect(() => {
+      if (token) {
+          dispatch(fetchCertificates(token));
+      }
+  }, [dispatch, token]);
 
     const [profileImage, setProfileImage] = useState(require('../../assets/profile.png'));
 
@@ -105,50 +115,77 @@ function UserProfile() {
 
 
   //   useEffect(() => {
-  //     const fetchData = async () => {
-  //         if (token) {
-            
+  //     if (token) {
+  //         const fetchCertificates = async () => {
+  //             dispatch(setLoading(true));
   //             try {
-  //                 await dispatch(fetchCertificates(token));
+  //                 const response = await apiConnector("GET",certificateProfile.getCertificate, null, {
+  //                     Authorization: `Bearer ${token}`,
+  //                 });
+
+  //                 if (!response.data.success) {
+  //                     throw new Error(response.data.message);
+  //                 }
+
+  //                 // Update certificates in Redux
+  //                 dispatch(setCertificate({ ...response.data.data }));
+                  
+  //                 //toast.success("Certificates fetched successfully");
   //             } catch (error) {
   //                 console.error("Error fetching certificates:", error);
+  //                 //toast.error("Failed to fetch certificates");
+  //             } finally {
+  //                 dispatch(setLoading(false));
   //             }
-  //         } else {
-  //             console.warn("Token not available.");
-  //         }
-  //     };
+  //         };
+
+  //         fetchCertificates();
+  //     }
+  // }, [dispatch, token]);
+
+  // if (loading) {
+  //     return <div>Loading certificates...</div>;
+  // }
+
+
+
+
+ 
+      
+        
   
-  //     fetchData();
-  // }, [dispatch,token]);
 
     // ---------------------------------- save , edit, delete for online profile---------------------------------------
 
     const handleSaveData = async (sectionType, data) => {
       try {
           if (sectionType === 'certification') {
-              // setIsLoading(true);
-              await dispatch(fetchCertificates(token));
-              
+              // loading(true)
+              // const certificate = dispatch(fetchCertificates(token));
+              //dispatch(fetchCertificates(token));
+              // console.log(certificate);
+              // loading(false)
               // Wait a bit for the state to update
-              await new Promise(resolve => setTimeout(resolve, 100));
+              // await new Promise(resolve => setTimeout(resolve, 100));
 
               
               
-              setSectionData((prevData) => ({
-                  ...prevData,
-                  [sectionType]: [
-                      ...(prevData[sectionType] || []),
-                      ...certificates
-                  ],
-              }));
-              console.log(certificates);
-              // setIsLoading(false);
+              // setSectionData((prevData) => ({
+              //     ...prevData,
+              //     [sectionType]: [
+              //         ...(prevData[sectionType] || []),
+              //         ...certificates
+              //     ],
+              // }));
+              
+              // // setIsLoading(false);
           }
       } catch (error) {
           console.error('Error saving data:', error);
           // setIsLoading(false);
       }
   };
+ 
   
       const handleCertificateInputChange = (field, value) => {
         setEditModal(prev => ({

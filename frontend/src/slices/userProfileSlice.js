@@ -21,7 +21,7 @@ const profileSlice = createSlice({
             state.loading = value.payload
         },
         setCertificate(state,action){
-            state.certificates = action.payload.certificates || state.certificates;
+            state.certificates = action.payload
         }
     },
 });

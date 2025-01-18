@@ -37,13 +37,6 @@ exports.createCertificate = async (req , res) =>{
             })
         }
         
-        // const checkcertificate = await certificate.findById(profile.certificates)
-        // if(checkcertificate){
-        //     return res.status(400).json({
-        //         success: false,
-        //         message: "User Certificate already exists",
-        //     });
-        // }
 
         const certificates = await certificate.create({
             certificateName,
