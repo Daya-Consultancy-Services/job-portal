@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import Header from '../../pages/home/Header';
 
@@ -50,20 +50,22 @@ import { createCertificates, deleteCertificates, fetchCertificates, updateCertif
 
 
 function UserProfile() {
-    const { user } =useSelector((state) => state.profile);
-    const { token } = useSelector((state) => state.user);
-    // const {token } = useSelector((state) => state.profile.token);
-    // const certificates  = useSelector((state) => state.profile.certificates);
-    // console.log(certificates)
-    const certificates =  useSelector((state) => state.profile.certificates);
-    console.log(certificates);
+ const selectors = useMemo(() => ({
+  selectUser: (state) => state.profile.user,
+  selectToken: (state) => state.user.token,
+  selectCertificates: (state) => state.profile.certificates
+}), []);
+
+const user = useSelector(selectors.selectUser);
+const token = useSelector(selectors.selectToken);
+const certificates = useSelector(selectors.selectCertificates);
    
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     useEffect(() => {
       if (token) {
-          dispatch(fetchCertificates(token));
+          console.log(dispatch(fetchCertificates(token)));
       }
   }, [dispatch, token]);
 
@@ -155,30 +157,21 @@ function UserProfile() {
         
   
 
-    // ---------------------------------- save , edit, delete for online profile---------------------------------------
+    // ---------------------------------- save , edit, delete ---------------------------------------
 
     const handleSaveData = async (sectionType, data) => {
       try {
           if (sectionType === 'certification') {
-              // loading(true)
-              // const certificate = dispatch(fetchCertificates(token));
-              //dispatch(fetchCertificates(token));
-              // console.log(certificate);
-              // loading(false)
-              // Wait a bit for the state to update
-              // await new Promise(resolve => setTimeout(resolve, 100));
 
+              setSectionData((prevData) => ({
+                  ...prevData,
+                  [sectionType]: [
+                      ...(prevData[sectionType] || []),
+                      ...certificates
+                  ],
+              }));
               
-              
-              // setSectionData((prevData) => ({
-              //     ...prevData,
-              //     [sectionType]: [
-              //         ...(prevData[sectionType] || []),
-              //         ...certificates
-              //     ],
-              // }));
-              
-              // // setIsLoading(false);
+      
           }
       } catch (error) {
           console.error('Error saving data:', error);
@@ -397,11 +390,10 @@ function UserProfile() {
 
 
 
-    const { register, handleSubmit, reset, watch } = useForm({
+    const { register, handleSubmit } = useForm({
 
     });
 
-    const watchFields = watch();
 
     const handleSaveForName = (updatedData) => {
 
