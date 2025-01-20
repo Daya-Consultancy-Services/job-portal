@@ -189,3 +189,34 @@ exports.getCertificates = async (req, res) => {
         });
     }
 }
+// exports.getCertificates = async (req, res) => {
+//     try {
+//         const userId = req.user.id;
+//         const user = await User.findById(userId).populate('profile');
+//         const profile = await Profile.findById(user.profile).populate({
+//             path: 'certificates',
+//             select: '_id', // Only select the '_id' field from certificates
+//         });
+
+//         if (!profile) {
+//             return res.status(404).json({
+//                 success: false,
+//                 message: "Profile not found",
+//             });
+//         }
+
+//         // Extract only the IDs of the certificates
+//         const certificateIds = profile.certificates.map(cert => cert._id);
+
+//         return res.status(200).json({
+//             success: true,
+//             data: certificateIds, // Return only the array of certificate IDs
+//         });
+//     } catch (error) {
+//         console.error(error);
+//         return res.status(500).json({
+//             success: false,
+//             message: "Failed to fetch certificates",
+//         });
+//     }
+// };
