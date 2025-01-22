@@ -1,6 +1,6 @@
 import { toast } from 'react-hot-toast'
 
-import { setLoading, setToken } from '../slices/userProfileSlice'
+import { setLoading, setOnlineprofile, setToken } from '../slices/userProfileSlice'
 import { setUser } from '../slices/userProfileSlice'
 import { apiConnector } from '../services/apiConnector'
 import { onlineProfile } from './apis'
@@ -38,9 +38,9 @@ export function onlineProfiles(
             }
             
 
-            dispatch(setUser({...response.data.onlineProfiles}))
+            //dispatch(setUser({...response.data.onlineProfiles}))
             toast.success("OnlineProfile Created Successfully!!!");
-        
+            dispatch(getOnlineProfiles(token))
         } catch (error) {
             console.error("Error create OnlineProfile detail:", error);
             toast.error("Failed to create OnlineProfile. Please try again.");
@@ -111,27 +111,28 @@ export function deleteOnlineProfiles(token, formdata) {
 //     facebookLink: true,
 // }));
 
-// export function getOnlineProfiles(token,navigate){
-//     return async (dispatch) => {
-//         const toastId = toast.loading("Loading...");
-//         dispatch(setLoading(true));
-//         try {
-//             const response = await apiConnector("GET", getOnlineProfile, null, {
-//                 Authorization: `Bearer ${token}`,
-//             })
-//             console.log("GET_USER_ONLINEPROFILE API RESPONSE............", response)
+export function getOnlineProfiles(token,navigate){
+    return async (dispatch) => {
+        const toastId = toast.loading("Loading...");
+        dispatch(setLoading(true));
+        try {
+            const response = await apiConnector("GET", getOnlineProfile, null, {
+                Authorization: `Bearer ${token}`,
+            })    
+            console.log("GET_USER_ONLINEPROFILE API RESPONSE............",response)
+            if (!response.data.success) {
+                throw new Error(response.data.message)
+            }
+            dispatch(setOnlineprofile(response.data.data));
 
-//             if (!response.data.success) {
-//                 throw new Error(response.data.message)
-//             }
-//             dispatch(setUser({ ...response.data.onlineprofile }));
-//             toast.success("OnlineProfle_GET_API successfully!");
-//         } catch (error) {
-//             console.error("OnlineProfle_GET_API error:", error);
-//             toast.error("Could not get the OnlineProfle_GET_API.");
-//         } finally {
-//             toast.dismiss(toastId);
-//             dispatch(setLoading(false));
-//         }
-//     }
-// }
+            //dispatch(setUser({ ...response.data.onlineprofile }));
+            toast.success("OnlineProfle_GET_API successfully!");
+        } catch (error) {
+            console.error("OnlineProfle_GET_API error:", error);
+            toast.error("Could not get the OnlineProfle_GET_API.");
+        } finally {
+            toast.dismiss(toastId);
+            dispatch(setLoading(false));
+        }
+    }
+}
