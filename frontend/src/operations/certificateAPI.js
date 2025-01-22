@@ -42,13 +42,13 @@ export function createCertificates(
             // const createdCertificate = response.data;
             // return createdCertificate;
 
-            dispatch(setUser({...response.data.certificates}))
+            // dispatch(setUser({...response.data.certificates}))
        
             //newCertificateId = response.data.data?._id;
 
             toast.success("Certificate Created Successfully!!!!!!!!");
 
-            //dispatch(fetchCertificates(token));
+            dispatch(fetchCertificates(token));
             // console.log(newCertificateId)
 
         } catch (error) {
@@ -78,7 +78,9 @@ export function updateCertificates(token,certificateId,formdata){
             }
             //const updatedCertificate = response.data.certificates;
             //dispatch(setUser({...response.data.certificates}))
-            dispatch(setUser({ ...response.data.certificates }));
+            // dispatch(setUser({ ...response.data.certificates }));
+            dispatch(fetchCertificates(token));
+
             toast.success("Certificate is updated Successfully")
 
         } catch (error) {
@@ -105,6 +107,8 @@ export function deleteCertificates(token,certificateId,navigate){
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
+            dispatch(fetchCertificates(token));
+
             
             toast.success("Certificate deleted Successfully!");
 

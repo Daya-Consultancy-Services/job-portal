@@ -122,17 +122,15 @@ export const ModalComponent = ({ isOpen, onClose, sectionType, title, onSave }) 
       Object.entries(formData).map(([key, value]) => [key, value || null])
     );
     
-
-    const data = { token, ...sanitizedData };
     const dispatchFunction = API_DISPATCH_MAP[config.dispatchType];
     
     if (dispatchFunction) {
       try {
         const response = await dispatch(dispatchFunction(token, sanitizedData));
         
-      
-          onSave(sectionType, sanitizedData);
-        
+        if (response?.payload?.data) {
+          onSave(sectionType, response.payload.data);
+        }
         
         setFormData({});
         onClose();
