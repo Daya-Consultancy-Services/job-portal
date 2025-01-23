@@ -5,7 +5,6 @@ import { setUser } from '../slices/userProfileSlice'
 import { apiConnector } from '../services/apiConnector'
 import { onlineProfile } from './apis'
 import { logout } from './userAPI'
-// import { getOnlineProfile } from '../../../backend/controllers/OnlineProfileControl'
 
 
 const {
@@ -38,7 +37,8 @@ export function onlineProfiles(
             }
             
 
-            //dispatch(setUser({...response.data.onlineProfiles}))
+            dispatch(setUser({...response.data.onlineProfiles}))
+            // dispatch(getOnlineProfiles(token));
             toast.success("OnlineProfile Created Successfully!!!");
             dispatch(getOnlineProfiles(token))
         } catch (error) {
