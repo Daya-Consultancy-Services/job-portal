@@ -76,7 +76,7 @@ function UserProfile() {
     }
   }, [dispatch, token]);
 
-  useEffect(() => {
+  // useEffect(() => {
     // console.log("Raw online profile data:", Onlineprofile);
     
     // // Check the actual structure of Onlineprofile
@@ -86,12 +86,20 @@ function UserProfile() {
     //   console.log("Onlineprofile content:", JSON.stringify(Onlineprofile, null, 2));
     // }
   
-    if (Onlineprofile && Object.keys(Onlineprofile).length > 0) {
+  //   if (Onlineprofile && Object.keys(Onlineprofile).length > 0) {
+  //     setSectionData(prevData => ({
+  //       ...prevData,
+  //       onlineprofile: [Onlineprofile]
+  //     }));
+  //     console.log("online profile", Onlineprofile);
+  //   }
+  // }, [Onlineprofile]);
+  useEffect(() => {
+    if (Onlineprofile) {
       setSectionData(prevData => ({
         ...prevData,
         onlineprofile: [Onlineprofile]
       }));
-      console.log("online profile", Onlineprofile);
     }
   }, [Onlineprofile]);
 
@@ -234,7 +242,7 @@ function UserProfile() {
 
 
   const handleUpdate = async () => {
-    const { sectionId, itemIndex, fieldKey, certificateData } = editModal;
+    const { sectionId, itemIndex, fieldKey, certificateData, fieldValue } = editModal;
 
     if (!sectionData[sectionId]?.[itemIndex]) {
       console.error("Selected item not found");
@@ -274,7 +282,38 @@ function UserProfile() {
           // Optionally refetch certificates to ensure sync
           dispatch(fetchCertificates(token));
         }
-      }
+      }else if (sectionId === 'onlineprofile') {
+        // New logic for online profiles
+        const currentProfile = sectionData[sectionId][itemIndex];
+        
+        // Create an object with the updated field
+        const updatePayload = {
+          [fieldKey]: fieldValue
+        };
+  
+        const response = await dispatch(updateonlineProfiles(token, updatePayload));
+
+        if (response && response.data) {
+          setSectionData(prev => {
+            const updatedProfiles = [...prev[sectionId]];
+            updatedProfiles[itemIndex] = {
+              ...updatedProfiles[itemIndex],
+              [fieldKey]: fieldValue
+            };
+            return {
+              ...prev,
+              [sectionId]: updatedProfiles
+            };
+          });
+        
+        
+        }
+  
+          // Refetch online profiles to ensure sync
+          dispatch(getOnlineProfiles(token));
+        }
+      
+      
 
       // Close the modal after successful update
       closeModal();
