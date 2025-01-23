@@ -38,8 +38,7 @@ export function onlineProfiles(
             }
             
 
-            dispatch(setUser({...response.data.onlineProfiles}))
-            // dispatch(getOnlineProfiles(token));
+            //dispatch(setUser({...response.data.onlineProfiles}))
             toast.success("OnlineProfile Created Successfully!!!");
             dispatch(getOnlineProfiles(token))
         } catch (error) {
@@ -66,7 +65,8 @@ export function updateonlineProfiles(token,formdata){
         if(!response.data.success){
             throw new Error(response.data.message);
         }
-        dispatch(setUser({...response.data.data}))
+        dispatch(getOnlineProfiles(token))
+        //dispatch(setUser({...response.data.data}))
         toast.success("onlineProfiles is updated Successfully")
 
     } catch (error) {
@@ -96,7 +96,7 @@ export function deleteOnlineProfiles(token, formdata) {
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
-
+            dispatch(getOnlineProfiles(token))
             toast.success("Selected online profile links deleted successfully!");
         } catch (error) {
             console.error("DELETE_OnlineProfile_API error:", error);
@@ -114,7 +114,6 @@ export function deleteOnlineProfiles(token, formdata) {
 
 export function getOnlineProfiles(token,navigate){
     return async (dispatch) => {
-        const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
         try {
             const response = await apiConnector("GET", getOnlineProfile, null, {
@@ -132,8 +131,43 @@ export function getOnlineProfiles(token,navigate){
             console.error("OnlineProfle_GET_API error:", error);
             toast.error("Could not get the OnlineProfle_GET_API.");
         } finally {
-            toast.dismiss(toastId);
             dispatch(setLoading(false));
         }
     }
 }
+
+// export function getOnlineProfiles(token, navigate) {
+//     return async (dispatch, getState) => {
+//         const { Onlineprofile } = getState(); // Assuming your state slice has `onlineProfile`
+
+//         // If token exists and data is already loaded, do not fetch again
+//         if (token && Onlineprofile) {
+//             console.log("Data already exists, no need to fetch again.");
+//             return;
+//         }
+
+//         dispatch(setLoading(true));
+
+//         try {
+//             const response = await apiConnector("GET", getOnlineProfile, null, {
+//                 Authorization: `Bearer ${token}`,
+//             });
+
+//             if (!response.data.success) {
+//                 throw new Error(response.data.message);
+//             }
+
+//             if (response.data.data) {
+//                 dispatch(setOnlineprofile(response.data.data));
+//                 toast.success("OnlineProfle_GET_API successfully!");
+//             } else {
+//                 console.log("No online profile data found.");
+//             }
+//         } catch (error) {
+//             console.error("OnlineProfle_GET_API error:", error);
+//             toast.error("Could not get the OnlineProfle_GET_API.");
+//         } finally {
+//             dispatch(setLoading(false));
+//         }
+//     };
+// }

@@ -6,7 +6,7 @@ const initialState = {
     certificates: [],
     skillprofiles: [],
     loading: false,
-    Onlineprofile : null
+    Onlineprofile : null,
 }
 
 const profileSlice = createSlice({

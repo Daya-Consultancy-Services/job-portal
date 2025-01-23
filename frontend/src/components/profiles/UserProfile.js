@@ -71,7 +71,7 @@ function UserProfile() {
   useEffect(() => {
     if (token) {
       dispatch(fetchCertificates(token));
-      dispatch(getOnlineProfiles(token));
+      //dispatch(getOnlineProfiles(token));
 
     }
   }, [dispatch, token]);
@@ -95,7 +95,7 @@ function UserProfile() {
   //   }
   // }, [Onlineprofile]);
   useEffect(() => {
-    if (Onlineprofile) {
+    if (Onlineprofile &&  Object.keys(Onlineprofile).length > 0) {
       setSectionData(prevData => ({
         ...prevData,
         onlineprofile: [Onlineprofile]
@@ -179,14 +179,14 @@ function UserProfile() {
         }));
 
         // Refresh certificates from the server
-        dispatch(fetchCertificates(token));
+        //dispatch(fetchCertificates(token));
 
       } else if (sectionType === 'onlineprofile') {
         setSectionData((prevData) => ({
           ...prevData,
           onlineprofile: [...(prevData.onlineprofile || []),data,],
         }));
-        dispatch(getOnlineProfiles(token));
+        //dispatch(getOnlineProfiles(token));
       }
 
 
@@ -280,7 +280,7 @@ function UserProfile() {
           });
 
           // Optionally refetch certificates to ensure sync
-          dispatch(fetchCertificates(token));
+          //dispatch(fetchCertificates(token));
         }
       }else if (sectionId === 'onlineprofile') {
         // New logic for online profiles
@@ -310,7 +310,7 @@ function UserProfile() {
         }
   
           // Refetch online profiles to ensure sync
-          dispatch(getOnlineProfiles(token));
+          //dispatch(getOnlineProfiles(token));
         }
       
       

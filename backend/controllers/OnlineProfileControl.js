@@ -4,74 +4,141 @@ const onlineprofile = require("../models/ExtraProfile/onlineProfile");
 require("dotenv").config();
 
 
-exports.createOnlineProfile = async (req , res) => {
-    try {
-        const {
+// exports.createOnlineProfile = async (req , res) => {
+//     try {
+//         const {
 
-            instagramLink,
-            facebookLink,
-            githubLink,
-            linkedinLink
+//             instagramLink,
+//             facebookLink,
+//             githubLink,
+//             linkedinLink
 
-        } = req.body
+//         } = req.body
 
-        // if(
-        //     !instagramLink ||
-        //     !facebookLink ||
-        //     !githubLink ||
-        //     !linkedinLink
-        // )
-        //     {
-        //         return res.status(403).json({
-        //             success:false,
-        //             message:"All field are required too be filled"
-        //         });
-        //     }
-        const Id = req.user.id
+//         const Id = req.user.id
 
-        const user = await User.findById(Id)
+//         const user = await User.findById(Id)
 
-        const profile = await Profile.findById(user.profile)
+//         const profile = await Profile.findById(user.profile)
         
-        if(!profile){
-            return res.status(400).json({
-                success:false,
-                message:"Profile don't Exist"
-            })
-        }
+//         if(!profile){
+//             return res.status(400).json({
+//                 success:false,
+//                 message:"Profile don't Exist"
+//             })
+//         }
 
-        const checkonlineprofile = await onlineprofile.findById(profile.onlineProfiles)
-        if (checkonlineprofile) {
-            return res.status(400).json({
+//         let onlineProfile = await onlineprofile.findById(profile.onlineProfiles);
+
+//         if (onlineProfile) {
+//             // Update existing fields if they are empty
+//             if (!onlineProfile.instagramLink && instagramLink) {
+//                 onlineProfile.instagramLink = instagramLink;
+//             }
+//             if (!onlineProfile.facebookLink && facebookLink) {
+//                 onlineProfile.facebookLink = facebookLink;
+//             }
+//             if (!onlineProfile.githubLink && githubLink) {
+//                 onlineProfile.githubLink = githubLink;
+//             }
+//             if (!onlineProfile.linkedinLink && linkedinLink) {
+//                 onlineProfile.linkedinLink = linkedinLink;
+//             }
+
+//             await onlineProfile.save();
+
+//             return res.status(200).json({
+//                 success: true,
+//                 message: "Online profile updated successfully",
+//                 data: onlineProfile,
+//             });
+//         } else {
+//             // Create a new onlineProfile if it does not exist
+//             onlineProfile = await onlineprofile.create({
+//                 instagramLink,
+//                 facebookLink,
+//                 githubLink,
+//                 linkedinLink,
+//             });
+//         }
+//         profile.onlineProfiles = onlineProfiles.id;
+//         await profile.save();
+
+//         return res.status(200).json({
+//             success:true,
+//             message:"OnlineProfile Created Successfully",
+//             data:onlineProfiles,
+//         })
+
+//     } catch (error) {
+//         console.log(error);
+//         return res.status(500).json({
+//             success:false,
+//             message:"Personal Detail can't register, Try again"
+//         });
+//     }
+// }
+exports.createOnlineProfile = async (req, res) => {
+    try {
+        const inputFields = req.body; // Input data dynamically from the request body
+        const userId = req.user.id;
+
+        // Find the user and their profile
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
                 success: false,
-                message: "User OnlineProfile already exists",
+                message: "User not found",
             });
         }
 
-        const onlineProfiles = await onlineprofile.create({
-            instagramLink,
-            facebookLink,
-            githubLink,
-            linkedinLink
-        })
-       
-        profile.onlineProfiles = onlineProfiles.id;
-        await profile.save();
+        const profile = await Profile.findById(user.profile);
+        if (!profile) {
+            return res.status(400).json({
+                success: false,
+                message: "Profile does not exist",
+            });
+        }
 
-        return res.status(200).json({
-            success:true,
-            message:"OnlineProfile Created Successfully",
-            data:onlineProfiles,
-        })
+        // Check if onlineProfile exists
+        let onlineProfile = await onlineprofile.findById(profile.onlineProfiles);
 
+        if (onlineProfile) {
+            // Update only empty fields dynamically
+            Object.keys(inputFields).forEach((key) => {
+                if (!onlineProfile[key] && inputFields[key]) {
+                    onlineProfile[key] = inputFields[key];
+                }
+            });
+
+            await onlineProfile.save();
+
+            return res.status(200).json({
+                success: true,
+                message: "Online profile updated successfully",
+                data: onlineProfile,
+            });
+        } else {
+            // Create a new onlineProfile if none exists
+            onlineProfile = await onlineprofile.create(inputFields);
+            profile.onlineProfiles = onlineProfile.id;
+            await profile.save();
+
+            return res.status(200).json({
+                success: true,
+                message: "Online profile created successfully",
+                data: onlineProfile,
+            });
+        }
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return res.status(500).json({
-            success:false,
-            message:"Personal Detail can't register, Try again"
+            success: false,
+            message: "Error while processing online profile",
         });
     }
-}
+};
+
 
 exports.updateOnlineProfile = async (req ,res) => {
     try {
@@ -84,18 +151,6 @@ exports.updateOnlineProfile = async (req ,res) => {
 
         } = req.body
 
-        // if(
-        //     !instagramLink ||
-        //     !facebookLink ||
-        //     !githubLink ||
-        //     !linkedinLink
-        // )
-        //     {
-        //         return res.status(403).json({
-        //             success:false,
-        //             message:"All field are required too be filled"
-        //         });
-        //     }
         const Id = req.user.id
         const userId = await User.findById(Id);
 
