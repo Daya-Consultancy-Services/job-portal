@@ -43,7 +43,7 @@ import { updateProfile } from '../../operations/profileAPI';
 import ProfileForm from './ProfileForm';
 import FORM_CONFIGS, { ModalComponent } from './Accomplishment';
 import { BsPencil, BsTrash } from 'react-icons/bs';
-import {  deleteOnlineProfiles, onlineProfiles, updateonlineProfiles } from '../../operations/onlineprofileAPI';
+import {  deleteOnlineProfiles, getOnlineProfiles, onlineProfiles, updateonlineProfiles } from '../../operations/onlineprofileAPI';
 import { Pencil, Trash2 } from 'lucide-react';
 import {  deleteCertificates, fetchCertificates, updateCertificates } from '../../operations/certificateAPI';
 
@@ -79,6 +79,23 @@ function UserProfile() {
       dispatch(fetchCertificates(token));
     }
   }, [dispatch, token]);
+//  Fetch Online profiles on component mount
+  // useEffect(() => {
+  //   if (token) {
+  //     // dispatch(getOnlineProfiles(token))
+  //       .then(response => {
+  //         if (response.payload?.data) {
+  //           setSectionData(prevData => ({
+  //             ...prevData,
+  //             'online-profile': [response.payload.data]
+  //           }));
+  //         }
+  //       })
+  //       .catch(error => {
+  //         console.error("Error fetching online profiles:", error);
+  //       });
+  //   }
+  // }, [dispatch, token]);
 
   const [profileImage, setProfileImage] = useState(require('../../assets/profile.png'));
 
@@ -140,19 +157,17 @@ function UserProfile() {
         // Refresh certificates from the server
         dispatch(fetchCertificates(token));
       
-      } else if(sectionType === 'online-profile'){
-        setSectionData((prevData) => ({
+      } else if (sectionType === 'online-profile') {
+        // Update the section data with the new online profile
+        setSectionData(prevData => ({
           ...prevData,
-          [sectionType]: [
-            ...(prevData[sectionType] || []),
-            data,
-          ],
+          [sectionType]: [{
+            ...prevData[sectionType]?.[0],
+            ...data
+          }]
         }));
       }
-
-      
-     
-    } catch (error) {
+    }  catch (error) {
       console.error("Error saving data:", error);
     }
   };
@@ -349,36 +364,58 @@ const handleCertificateInputChange = (field, value) => {
     );
   };
   //------------------------------- Oneline Profile Design ---------------------------------------   
-  const renderOnlineProfile = (item, index, sectionId) => (
-    <div key={index} className="p-4 rounded-md">
-      {Object.entries(item)
-        .filter(([key, value]) => value !== null)
-        .map(([key, value]) => (
-          <div key={key} className="flex justify-between items-center mt-4">
-            <div>
-              <h1 className="font-medium capitalize">{key}:</h1>
-              <p className="text-sm text-gray-800">{value}</p>
+  const renderOnlineProfile = (item, index, sectionId) => {
+    if (!item) return null;
+    
+    // Define which fields to display and their labels
+    const profileFields = {
+      instagramLink: "Instagram",
+      facebookLink: "Facebook",
+      githubLink: "GitHub",
+      linkedinLink: "LinkedIn"
+    };
+
+    return (
+      <div key={index} className="p-4 rounded-md bg-white shadow-sm">
+        {Object.entries(item)
+          .filter(([key, value]) => 
+            profileFields[key] && value && value !== null && value !== ""
+          )
+          .map(([key, value]) => (
+            <div key={key} className="flex justify-between items-center mt-4">
+              <div>
+                <h1 className="font-medium">{profileFields[key]}</h1>
+                <a 
+                  href={value} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-sm text-blue-600 hover:text-blue-800"
+                >
+                  {value}
+                </a>
+              </div>
+              <div className="flex gap-4">
+                <button
+                  onClick={() => handleEdit(sectionId, index, key, value)}
+                  className="text-blue-600 hover:text-blue-800"
+                  aria-label={`Edit ${profileFields[key]}`}
+                >
+                  <Pencil size={16} />
+                </button>
+                <button
+                  onClick={() => handleDeletes(sectionId, index, key)}
+                  className="text-red-600 hover:text-red-800"
+                  aria-label={`Delete ${profileFields[key]}`}
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
             </div>
-            <div className="flex gap-4">
-              <button
-                onClick={() => handleEdit(sectionId, index, key, value)}
-                className="text-blue-600 hover:text-blue-800"
-                aria-label={`Edit ${key}`}
-              >
-                <Pencil size={16} />
-              </button>
-              <button
-                onClick={() => handleDeletes(sectionId, index, key)}
-                className="text-red-600 hover:text-red-800"
-                aria-label={`Delete ${key}`}
-              >
-                <Trash2 size={16} />
-              </button>
-            </div>
-          </div>
-        ))}
-    </div>
-  );
+          ))}
+      </div>
+    );
+  };
+
 
 
 

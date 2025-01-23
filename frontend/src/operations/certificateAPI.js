@@ -17,9 +17,6 @@ const {
 
 export function createCertificates(
     token,
-    // certificateName,
-    // certificateLink,
-    // certificateDescription
     formdata
 ){
     return async (dispatch) => {
@@ -27,7 +24,6 @@ export function createCertificates(
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
         console.log(formdata);
-        // let newCertificateId = [null]
         try {
             const response = await apiConnector("POST",createCertificate,formdata,
             {
@@ -39,17 +35,12 @@ export function createCertificates(
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
-            // const createdCertificate = response.data;
-            // return createdCertificate;
 
-            // dispatch(setUser({...response.data.certificates}))
-       
-            //newCertificateId = response.data.data?._id;
 
             toast.success("Certificate Created Successfully!!!!!!!!");
 
             dispatch(fetchCertificates(token));
-            // console.log(newCertificateId)
+     
 
         } catch (error) {
             console.error("Error Creating Certificate:", error);
@@ -76,9 +67,6 @@ export function updateCertificates(token,certificateId,formdata){
             if(!response.data.success){
                 throw new Error(response.data.message);
             }
-            //const updatedCertificate = response.data.certificates;
-            //dispatch(setUser({...response.data.certificates}))
-            // dispatch(setUser({ ...response.data.certificates }));
             dispatch(fetchCertificates(token));
 
             toast.success("Certificate is updated Successfully")
@@ -148,47 +136,3 @@ export function fetchCertificates(token) {
     };
 }
 
-// export function updateCertificates(token, certificateId, formdata) {
-//     return async (dispatch, getState) => {
-//         const toastId = toast.loading("Loading....");
-//         dispatch(setLoading(true));
-
-//         try {
-//             // Fetch the current certificates from Redux state
-//             const certificates = getState().profile.certificates;
-
-//             // Find the certificate in the list by matching the certificateId
-//             const certificateToUpdate = certificates.find(
-//                 (certificate) => certificate._id === certificateId
-//             );
-
-//             // If certificate is not found, return an error
-//             if (!certificateToUpdate) {
-//                 throw new Error("Certificate not found");
-//             }
-
-//             // Proceed with the update API call
-//             const updatedData = { ...formdata, certificateId };
-//             const response = await apiConnector("PUT", updateCertificate, updatedData, {
-//                 Authorization: `Bearer ${token}`,
-//             });
-
-//             console.log("Updated Certificate API Response:", response);
-
-//             if (!response.data.success) {
-//                 throw new Error(response.data.message);
-//             }
-
-//             // Dispatch action to update the certificate in Redux state
-//             dispatch(setCertificate({ ...response.data.certificates }));
-//             toast.success("Certificate updated successfully");
-
-//         } catch (error) {
-//             console.log("UPDATE Certificate API ERROR:", error);
-//             toast.error("Could not update certificate");
-//         } finally {
-//             toast.dismiss(toastId);
-//             dispatch(setLoading(false));
-//         }
-//     };
-// }
