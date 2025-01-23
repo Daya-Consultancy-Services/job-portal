@@ -57,7 +57,6 @@ exports.createOnlineProfile = async (req , res) => {
        
         profile.onlineProfiles = onlineProfiles.id;
         await profile.save();
-        await onlineProfiles.save();
 
         return res.status(200).json({
             success:true,

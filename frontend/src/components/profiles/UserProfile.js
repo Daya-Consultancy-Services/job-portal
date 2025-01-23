@@ -43,7 +43,7 @@ import { updateProfile } from '../../operations/profileAPI';
 import ProfileForm from './ProfileForm';
 import FORM_CONFIGS, { ModalComponent } from './Accomplishment';
 import { BsPencil, BsTrash } from 'react-icons/bs';
-import {  deleteOnlineProfiles, getOnlineProfiles, onlineProfiles, updateonlineProfiles } from '../../operations/onlineprofileAPI';
+import {  deleteOnlineProfiles, onlineProfiles, updateonlineProfiles,getOnlineProfiles } from '../../operations/onlineprofileAPI';
 import { Pencil, Trash2 } from 'lucide-react';
 import {  deleteCertificates, fetchCertificates, updateCertificates } from '../../operations/certificateAPI';
 
@@ -53,15 +53,32 @@ function UserProfile() {
   const selectors = useMemo(() => ({
     selectUser: (state) => state.profile.user,
     selectToken: (state) => state.user.token,
-    selectCertificates: (state) => state.profile.certificates
+    selectCertificates: (state) => state.profile.certificates,
+    selectOnlineProfiles: (state)=> state.profile.Onlineprofile
   }), []);
 
   const user = useSelector(selectors.selectUser);
   const token = useSelector(selectors.selectToken);
   const certificates = useSelector(selectors.selectCertificates);
+  const Onlineprofile = useSelector(selectors.selectOnlineProfiles);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (Onlineprofile && Onlineprofile.length > 0) {
+      setSectionData(prevData => ({
+        ...prevData,
+        onlineprofile: Onlineprofile
+      }));
+    }
+  }, [Onlineprofile]);
+
+  useEffect(() => {
+    if (token) {
+      dispatch(getOnlineProfiles(token));
+    }
+  }, [dispatch, token]);
 
    // Update sectionData when certificates change in Redux
    useEffect(() => {
@@ -157,17 +174,19 @@ function UserProfile() {
         // Refresh certificates from the server
         dispatch(fetchCertificates(token));
       
-      } else if (sectionType === 'online-profile') {
-        // Update the section data with the new online profile
-        setSectionData(prevData => ({
+      } else if(sectionType === 'online-profile'){
+        setSectionData((prevData) => ({
           ...prevData,
-          [sectionType]: [{
-            ...prevData[sectionType]?.[0],
-            ...data
-          }]
+          [sectionType]: [
+            ...(prevData[sectionType] || []),
+            data,
+          ],
         }));
       }
-    }  catch (error) {
+
+      
+     
+    } catch (error) {
       console.error("Error saving data:", error);
     }
   };
@@ -420,7 +439,6 @@ const handleCertificateInputChange = (field, value) => {
 
 
 
-
   const { register, handleSubmit } = useForm({
 
   });
@@ -589,7 +607,7 @@ const handleCertificateInputChange = (field, value) => {
 
   const sections = [
     {
-      id: 'online-profile',
+      id: 'onlineprofile',
       title: "Online profile",
       description: "Add link to online professional profiles (e.g. LinkedIn, etc.)",
       form: (

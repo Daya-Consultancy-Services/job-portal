@@ -4,7 +4,8 @@ const initialState = {
     user : localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null,
     token : localStorage.getItem("token") ? JSON.parse(localStorage.getItem("token")) : null,
     certificates: [],
-    loading: false
+    loading: false,
+    Onlineprofile : null
 }
 
 const profileSlice = createSlice({
@@ -22,10 +23,13 @@ const profileSlice = createSlice({
         },
         setCertificate(state,action){
             state.certificates = action.payload
+        },
+        setOnlineprofile(state,action){
+            state.Onlineprofile = action.payload
         }
     },
 });
 
 // added setToken because there is an import of setToken in profileDetailAPI 
-export const { setUser, setLoading, setToken,setCertificate} = profileSlice.actions;
+export const { setUser, setLoading, setToken,setCertificate,setOnlineprofile} = profileSlice.actions;
 export default profileSlice.reducer;

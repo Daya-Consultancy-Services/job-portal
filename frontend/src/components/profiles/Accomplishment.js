@@ -12,7 +12,7 @@ const API_DISPATCH_MAP = {
 };
 
 const FORM_CONFIGS = {
-    'online-profile': {
+    'onlineprofile': {
       fields: [
         { name: 'instagramLink', label: 'Instagram URL', type: 'url', placeholder: 'Enter your Instagram URL' },
         { name: 'facebookLink', label: 'Facebook URL', type: 'url', placeholder: 'Enter your Facebook URL' },
