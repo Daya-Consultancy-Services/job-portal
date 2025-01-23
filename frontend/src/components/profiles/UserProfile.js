@@ -43,9 +43,10 @@ import { updateProfile } from '../../operations/profileAPI';
 import ProfileForm from './ProfileForm';
 import FORM_CONFIGS, { ModalComponent } from './Accomplishment';
 import { BsPencil, BsTrash } from 'react-icons/bs';
-import {  deleteOnlineProfiles, onlineProfiles, updateonlineProfiles,getOnlineProfiles } from '../../operations/onlineprofileAPI';
+import { deleteOnlineProfiles, onlineProfiles, updateonlineProfiles, getOnlineProfiles } from '../../operations/onlineprofileAPI';
+// import {  deleteOnlineProfiles, getOnlineProfiles, onlineProfiles, updateonlineProfiles } from '../../operations/onlineprofileAPI';
 import { Pencil, Trash2 } from 'lucide-react';
-import {  deleteCertificates, fetchCertificates, updateCertificates } from '../../operations/certificateAPI';
+import { deleteCertificates, fetchCertificates, updateCertificates } from '../../operations/certificateAPI';
 
 
 
@@ -54,65 +55,63 @@ function UserProfile() {
     selectUser: (state) => state.profile.user,
     selectToken: (state) => state.user.token,
     selectCertificates: (state) => state.profile.certificates,
-    selectOnlineProfiles: (state)=> state.profile.Onlineprofile
+    selectOnlineProfiles: (state) => state.profile.Onlineprofile
   }), []);
 
   const user = useSelector(selectors.selectUser);
   const token = useSelector(selectors.selectToken);
   const certificates = useSelector(selectors.selectCertificates);
   const Onlineprofile = useSelector(selectors.selectOnlineProfiles);
+ 
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (Onlineprofile && Onlineprofile.length > 0) {
-      setSectionData(prevData => ({
-        ...prevData,
-        onlineprofile: Onlineprofile
-      }));
-    }
-  }, [Onlineprofile]);
-
+    // Fetch certificates on component mount
   useEffect(() => {
     if (token) {
+      dispatch(fetchCertificates(token));
       dispatch(getOnlineProfiles(token));
+
     }
   }, [dispatch, token]);
 
-   // Update sectionData when certificates change in Redux
-   useEffect(() => {
+  useEffect(() => {
+    // console.log("Raw online profile data:", Onlineprofile);
+    
+    // // Check the actual structure of Onlineprofile
+    // if (Onlineprofile) {
+    //   console.log("Onlineprofile type:", typeof Onlineprofile);
+    //   console.log("Onlineprofile keys:", Object.keys(Onlineprofile));
+    //   console.log("Onlineprofile content:", JSON.stringify(Onlineprofile, null, 2));
+    // }
+  
+    if (Onlineprofile && Object.keys(Onlineprofile).length > 0) {
+      setSectionData(prevData => ({
+        ...prevData,
+        onlineprofile: [Onlineprofile]
+      }));
+      console.log("online profile", Onlineprofile);
+    }
+  }, [Onlineprofile]);
+
+
+
+  // Update sectionData when certificates change in Redux
+  useEffect(() => {
     if (certificates && certificates.length > 0) {
       setSectionData(prevData => ({
         ...prevData,
         certification: certificates
       }));
+      console.log("certificates", setSectionData);
     }
   }, [certificates]);
 
-  // Fetch certificates on component mount
-  useEffect(() => {
-    if (token) {
-      dispatch(fetchCertificates(token));
-    }
-  }, [dispatch, token]);
-//  Fetch Online profiles on component mount
-  // useEffect(() => {
-  //   if (token) {
-  //     // dispatch(getOnlineProfiles(token))
-  //       .then(response => {
-  //         if (response.payload?.data) {
-  //           setSectionData(prevData => ({
-  //             ...prevData,
-  //             'online-profile': [response.payload.data]
-  //           }));
-  //         }
-  //       })
-  //       .catch(error => {
-  //         console.error("Error fetching online profiles:", error);
-  //       });
-  //   }
-  // }, [dispatch, token]);
+
+
+
+
 
   const [profileImage, setProfileImage] = useState(require('../../assets/profile.png'));
 
@@ -170,29 +169,27 @@ function UserProfile() {
           ...prevData,
           certification: [...(prevData.certification || []), data]
         }));
-        
+
         // Refresh certificates from the server
         dispatch(fetchCertificates(token));
-      
-      } else if(sectionType === 'online-profile'){
+
+      } else if (sectionType === 'onlineprofile') {
         setSectionData((prevData) => ({
           ...prevData,
-          [sectionType]: [
-            ...(prevData[sectionType] || []),
-            data,
-          ],
+          onlineprofile: [...(prevData.onlineprofile || []),data,],
         }));
+        dispatch(getOnlineProfiles(token));
       }
 
-      
-     
+
+
     } catch (error) {
       console.error("Error saving data:", error);
     }
   };
 
 
-  
+
 
 
   const handleSaveForProfile = (updatedData) => {
@@ -204,16 +201,16 @@ function UserProfile() {
   };
 
 
-  
-const handleCertificateInputChange = (field, value) => {
-  setEditModal(prev => ({
-    ...prev,
-    certificateData: {
-      ...prev.certificateData,
-      [field]: value
-    }
-  }));
-};
+
+  const handleCertificateInputChange = (field, value) => {
+    setEditModal(prev => ({
+      ...prev,
+      certificateData: {
+        ...prev.certificateData,
+        [field]: value
+      }
+    }));
+  };
 
   const handleEdit = (sectionId, itemIndex, fieldKey, fieldValue) => {
     if (sectionId === 'certification') {
@@ -247,22 +244,22 @@ const handleCertificateInputChange = (field, value) => {
     try {
       if (sectionId === 'certification') {
         const currentCertificate = sectionData[sectionId][itemIndex];
-        
+
         // Ensure all required fields are present
         const updatedCertificate = {
           certificateName: certificateData.certificateName,
           certificateDescription: certificateData.certificateDescription,
           certificateLink: certificateData.certificateLink,
         };
-  
+
         // Make sure we have the certificate ID
         if (!currentCertificate._id) {
           throw new Error('Certificate ID is missing');
         }
-  
+
         // Dispatch the update action and wait for the response
         const response = await dispatch(updateCertificates(token, currentCertificate._id, updatedCertificate))
-  
+
         if (response && response.data) {
           // Update the local state with the response data
           setSectionData(prev => {
@@ -273,16 +270,16 @@ const handleCertificateInputChange = (field, value) => {
               [sectionId]: updatedCertificates
             };
           });
-  
+
           // Optionally refetch certificates to ensure sync
           dispatch(fetchCertificates(token));
         }
       }
-  
+
       // Close the modal after successful update
       closeModal();
-  
-    }catch (error) {
+
+    } catch (error) {
       console.error("Error updating item:", error);
     }
   };
@@ -340,7 +337,7 @@ const handleCertificateInputChange = (field, value) => {
 
   const renderCertificate = (item, index, sectionId) => {
     if (!item) return null;
-    
+
     return (
       <div key={index} className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-4">
         <div className="flex justify-between">
@@ -385,7 +382,7 @@ const handleCertificateInputChange = (field, value) => {
   //------------------------------- Oneline Profile Design ---------------------------------------   
   const renderOnlineProfile = (item, index, sectionId) => {
     if (!item) return null;
-    
+  
     // Define which fields to display and their labels
     const profileFields = {
       instagramLink: "Instagram",
@@ -393,27 +390,26 @@ const handleCertificateInputChange = (field, value) => {
       githubLink: "GitHub",
       linkedinLink: "LinkedIn"
     };
-
+  
     return (
       <div key={index} className="p-4 rounded-md bg-white shadow-sm">
         {Object.entries(item)
-          .filter(([key, value]) => 
+          .filter(([key, value]) =>
             profileFields[key] && value && value !== null && value !== ""
           )
           .map(([key, value]) => (
             <div key={key} className="flex justify-between items-center mt-4">
               <div>
                 <h1 className="font-medium">{profileFields[key]}</h1>
-                <a 
-                  href={value} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="text-sm text-blue-600 hover:text-blue-800"
+
+              <a  href={value}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-blue-600 hover:text-blue-800"
                 >
-                  {value}
-                </a>
-              </div>
-              <div className="flex gap-4">
+                {value}
+              </a>
+            </div><div className="flex gap-4">
                 <button
                   onClick={() => handleEdit(sectionId, index, key, value)}
                   className="text-blue-600 hover:text-blue-800"

@@ -26,6 +26,7 @@ export function onlineProfiles(
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
         try {
+            console.log(  "formdata",formdata, "in api token" ,token);
             const response = await apiConnector("POST",createOnlineProfile, formdata,{ 
                 Authorization: `Bearer ${token}` 
             });
@@ -119,7 +120,7 @@ export function getOnlineProfiles(token,navigate){
             const response = await apiConnector("GET", getOnlineProfile, null, {
                 Authorization: `Bearer ${token}`,
             })    
-            console.log("GET_USER_ONLINEPROFILE API RESPONSE............",response)
+            // console.log("GET_USER_ONLINEPROFILE API RESPONSE............",response)
             if (!response.data.success) {
                 throw new Error(response.data.message)
             }

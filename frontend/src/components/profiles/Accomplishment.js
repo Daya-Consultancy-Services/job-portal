@@ -7,7 +7,7 @@ import {
 import { createCertificates } from '../../operations/certificateAPI';
 
 const API_DISPATCH_MAP = {
-  'onlineProfiles': onlineProfiles,
+  'createonlineProfiles': onlineProfiles,
   'createCertificates': createCertificates
 };
 
@@ -19,7 +19,7 @@ const FORM_CONFIGS = {
         { name: 'githubLink', label: 'Github URL', type: 'url', placeholder: 'Enter your Github URL' },
         { name: 'linkedinLink', label: 'Linkedin URL', type: 'url', placeholder: 'Enter your LinkedIn URL' }
       ],
-      dispatchType: 'onlineProfiles'
+      dispatchType: 'createonlineProfiles'
     },
     'work-sample': {
       fields: [
@@ -115,9 +115,17 @@ export const ModalComponent = ({ isOpen, onClose, sectionType, title, onSave }) 
     }
   };
 
-  const handleSubmit = async (e) => {
+
+  
+const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Add more validation before dispatch
+    if (!token) {
+        console.error('No authentication token');
+        return;
+    }
+
     const sanitizedData = Object.fromEntries(
       Object.entries(formData).map(([key, value]) => [key, value || null])
     );
@@ -128,20 +136,19 @@ export const ModalComponent = ({ isOpen, onClose, sectionType, title, onSave }) 
       try {
         const response = await dispatch(dispatchFunction(token, sanitizedData));
         
-        if (response?.payload?.data) {
-          onSave(sectionType, response.payload.data);
-        }
+        console.log('Full Response:', response); // Log full response
         
-        setFormData({});
-        onClose();
+       
         
       } catch (error) {
-        console.error('Error in form submission:', error);
+        console.error('Detailed Error:', {
+          message: error.message,
+          stack: error.stack
+        });
       }
     }
-  };
-  
-
+    onClose();
+};
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg w-full max-w-xl p-6 relative">

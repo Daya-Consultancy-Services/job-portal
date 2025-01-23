@@ -26,6 +26,7 @@ const profileSlice = createSlice({
         },
         setOnlineprofile(state,action){
             state.Onlineprofile = action.payload
+         
         }
     },
 });
