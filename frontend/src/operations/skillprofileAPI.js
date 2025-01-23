@@ -1,7 +1,7 @@
 import { toast } from 'react-hot-toast'
 
 import { setLoading, setToken } from '../slices/userProfileSlice'
-import { setUser } from '../slices/userProfileSlice'
+import { setUser,setskillprofiles } from '../slices/userProfileSlice'
 import { apiConnector } from '../services/apiConnector'
 import { skillprofile } from './apis'
 import { logout } from './userAPI'
@@ -10,7 +10,8 @@ const {
 
     createSkillProfile,
     updateSkillProfile,
-    deleteSkillProfile
+    deleteSkillProfile,
+    getSkillProfile
 
 } = skillprofile
 
@@ -33,7 +34,7 @@ export function createSkillProfiles(
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
-
+            dispatch(fetchSkillProfiles(token));
             toast.success("SkillProfile Created Successfully!!!!!!!!");
         } catch (error) {
             console.error("Error Creating SkillProfile:", error);
@@ -62,7 +63,7 @@ export function updateSkillProfiles(token,skillProfileId,formdata){
                 throw new Error(response.data.message);
             }
 
-            dispatch(setUser({ ...response.data.skillProfiles }));
+            dispatch(fetchSkillProfiles(token));
             toast.success("SkillProfile is Updated Successfully")
 
         } catch (error) {
@@ -90,9 +91,9 @@ export function deleteSkillProfiles(token,skillProfileId,navigate){
                 throw new Error(response.data.message);
             }
             
+            dispatch(fetchSkillProfiles(token));
+
             toast.success("SkillsProfile deleted Successfully!");
-
-
 
         } catch (error) {
             console.error("Certificate_API error:", error);
@@ -102,4 +103,30 @@ export function deleteSkillProfiles(token,skillProfileId,navigate){
             dispatch(setLoading(false));
         }
     }
+}
+
+export function fetchSkillProfiles(token) {
+    return async (dispatch) => {
+        dispatch(setLoading(true));
+        try {
+            const response = await apiConnector("GET", getSkillProfile, null, {
+                Authorization: `Bearer ${token}`,
+            });
+
+            if (!response.data.success) {
+                throw new Error(response.data.message);
+            }
+
+
+            // Update Redux state with certificates
+            dispatch(setskillprofiles(response.data.data));
+
+            toast.success("Certificates fetched successfully");
+        } catch (error) {
+            console.error("Error fetching certificates:", error);
+            toast.error("Failed to fetch certificates");
+        } finally {
+            dispatch(setLoading(false));
+        }
+    };
 }

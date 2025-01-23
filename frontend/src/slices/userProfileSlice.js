@@ -4,6 +4,7 @@ const initialState = {
     user : localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null,
     token : localStorage.getItem("token") ? JSON.parse(localStorage.getItem("token")) : null,
     certificates: [],
+    skillprofiles: [],
     loading: false,
     Onlineprofile : null
 }
@@ -26,10 +27,22 @@ const profileSlice = createSlice({
         },
         setOnlineprofile(state,action){
             state.Onlineprofile = action.payload
+        },
+        setskillprofiles(state,action){
+            state.skillprofiles = action.payload
         }
     },
 });
 
 // added setToken because there is an import of setToken in profileDetailAPI 
-export const { setUser, setLoading, setToken,setCertificate,setOnlineprofile} = profileSlice.actions;
+export const {
+
+    setUser, 
+    setLoading, 
+    setToken, 
+    setCertificate, 
+    setOnlineprofile, 
+    setskillprofiles
+
+} = profileSlice.actions;
 export default profileSlice.reducer;

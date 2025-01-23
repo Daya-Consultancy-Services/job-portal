@@ -39,7 +39,8 @@ const {
 
     createSkillProfile,
     updateSkillProfile,
-    deleteSkillProfile
+    deleteSkillProfile,
+    getSkillProfile
 
 } = require("../controllers/SkillsControl")
     
@@ -148,6 +149,7 @@ router.post("/skillprofile",auth,isJobseeker,createSkillProfile)
 // }
 router.put("/updateskillprofile",auth,isJobseeker,updateSkillProfile)
 router.delete("/deleteskillprofile",auth,isJobseeker,deleteSkillProfile)
+router.get("/getskillprofile",auth,isJobseeker,getSkillProfile)
 
 //ProjectProfile Routes*****************************************************************************************************
 router.post("/project",auth,isJobseeker,createProject)

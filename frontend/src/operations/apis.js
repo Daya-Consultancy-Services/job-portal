@@ -32,7 +32,8 @@ export const certificateProfile = {
 export const skillprofile = {
     createSkillProfile : BASE_URL + "/profile/skillprofile",
     updateSkillProfile : BASE_URL + "/profile/updateskillprofile",
-    deleteSkillProfile : BASE_URL + "/profile/deleteskillprofile"
+    deleteSkillProfile : BASE_URL + "/profile/deleteskillprofile",
+    getSkillProfile    : BASE_URL + "/profile/getskillprofile"
 }
 export const projectProfile = {
     createProject : BASE_URL + "/profile/project",
