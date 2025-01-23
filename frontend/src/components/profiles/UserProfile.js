@@ -71,7 +71,7 @@ function UserProfile() {
   useEffect(() => {
     if (token) {
       dispatch(fetchCertificates(token));
-      //dispatch(getOnlineProfiles(token));
+      dispatch(getOnlineProfiles(token));
 
     }
   }, [dispatch, token]);
@@ -112,7 +112,6 @@ function UserProfile() {
         ...prevData,
         certification: certificates
       }));
-      console.log("certificates", setSectionData);
     }
   }, [certificates]);
 
