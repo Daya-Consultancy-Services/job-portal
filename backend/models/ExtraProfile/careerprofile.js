@@ -11,11 +11,9 @@ const careerProfileSchema = new mongoose.Schema({
         type:String,
         enum:["Fulltime","Internship","Contract","Freelance"]
     },
-    skills:[
-        {
-            type:String
-        }
-    ],
+    skills:{
+        type:String
+    },
     jobLocation:{
         type:String
     },
