@@ -44,6 +44,7 @@ export const careerProfile = {
     createCareer : BASE_URL + "/profile/careerprofile",
     updateCareer : BASE_URL + "/profile/updatecareer",
     deleteCareer : BASE_URL + "/profile/deletecareer",
+    getCareer    : BASE_URL + "/profile/getcareer"
 }
 export const educationProfile = {
     createEducationProfile : BASE_URL+"/profile/educationprofile",
