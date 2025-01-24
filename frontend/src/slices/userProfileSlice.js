@@ -31,6 +31,7 @@ const profileSlice = createSlice({
         },
         setskillprofiles(state,action){
             state.skillprofiles = action.payload
+     
         }
     },
 });

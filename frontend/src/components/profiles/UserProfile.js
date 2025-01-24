@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
+
 import Header from '../../pages/home/Header';
 
 import Footer from '../Footer';
@@ -47,6 +48,8 @@ import { deleteOnlineProfiles, onlineProfiles, updateonlineProfiles, getOnlinePr
 // import {  deleteOnlineProfiles, getOnlineProfiles, onlineProfiles, updateonlineProfiles } from '../../operations/onlineprofileAPI';
 import { Pencil, Trash2 } from 'lucide-react';
 import { deleteCertificates, fetchCertificates, updateCertificates } from '../../operations/certificateAPI';
+import { deleteSkillProfiles, fetchSkillProfiles } from '../../operations/skillprofileAPI';
+import { onlineProfile } from '../../operations/apis';
 
 
 
@@ -55,47 +58,34 @@ function UserProfile() {
     selectUser: (state) => state.profile.user,
     selectToken: (state) => state.user.token,
     selectCertificates: (state) => state.profile.certificates,
-    selectOnlineProfiles: (state) => state.profile.Onlineprofile
+    selectOnlineProfiles: (state) => state.profile.Onlineprofile,
+
   }), []);
 
   const user = useSelector(selectors.selectUser);
   const token = useSelector(selectors.selectToken);
   const certificates = useSelector(selectors.selectCertificates);
   const Onlineprofile = useSelector(selectors.selectOnlineProfiles);
- 
+  const skillProfiles = useSelector((state) => state.profile.skillprofiles);
+
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-    // Fetch certificates on component mount
+  // Fetch certificates on component mount
   useEffect(() => {
     if (token) {
       dispatch(fetchCertificates(token));
       dispatch(getOnlineProfiles(token));
-
+      dispatch(fetchSkillProfiles(token))
     }
   }, [dispatch, token]);
 
-  // useEffect(() => {
-    // console.log("Raw online profile data:", Onlineprofile);
-    
-    // // Check the actual structure of Onlineprofile
-    // if (Onlineprofile) {
-    //   console.log("Onlineprofile type:", typeof Onlineprofile);
-    //   console.log("Onlineprofile keys:", Object.keys(Onlineprofile));
-    //   console.log("Onlineprofile content:", JSON.stringify(Onlineprofile, null, 2));
-    // }
-  
-  //   if (Onlineprofile && Object.keys(Onlineprofile).length > 0) {
-  //     setSectionData(prevData => ({
-  //       ...prevData,
-  //       onlineprofile: [Onlineprofile]
-  //     }));
-  //     console.log("online profile", Onlineprofile);
-  //   }
-  // }, [Onlineprofile]);
+  // Update sectionData when onlineProfile change in Redux
+
   useEffect(() => {
-    if (Onlineprofile &&  Object.keys(Onlineprofile).length > 0) {
+    if (Onlineprofile && Object.keys(Onlineprofile).length > 0) {
+      console.log(Onlineprofile)
       setSectionData(prevData => ({
         ...prevData,
         onlineprofile: [Onlineprofile]
@@ -103,11 +93,10 @@ function UserProfile() {
     }
   }, [Onlineprofile]);
 
-
-
   // Update sectionData when certificates change in Redux
   useEffect(() => {
     if (certificates && certificates.length > 0) {
+      console.log(certificates)
       setSectionData(prevData => ({
         ...prevData,
         certification: certificates
@@ -115,59 +104,70 @@ function UserProfile() {
     }
   }, [certificates]);
 
-
-
-
+  useEffect(() => {
+    if (skillProfiles && skillProfiles.length > 0) {
+      setSkillsData(skillProfiles);
+    }
+  }, [skillProfiles]);
 
 
   const [profileImage, setProfileImage] = useState(require('../../assets/profile.png'));
-
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-
   const [popupType, setPopupType] = useState('');
-
   const [newInput, setNewInput] = useState('');
-
   const [activeLink, setActiveLink] = useState('resume');
-
   const [isEducationVisible, setEducationVisible] = useState(false);
-
   const [educationData, setEducationData] = useState(null);
-
   const [isSkillsVisible, setSkillsVisible] = useState(false);
-
   const [skillsData, setSkillsData] = useState([]);
-
   const [isProjectVisible, setProjectVisible] = useState(false);
-
   const [projectsData, setProjectsData] = useState([]);
-
   const [isPersonalDetailsVisible, setPersonalDetailsVisible] = useState(false);
-
   const [personalDetails, setPersonalDetails] = useState('');
-
   const [showExtraProfile, setShowExtraProfile] = useState(false);
-
   const [isNamePopupOpen, setIsNamePopupOpen] = useState(false);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [initialValue, setInitialValue] = useState("");
-
   const [openModal, setOpenModal] = useState(null);
 
-  // const [modalConfig, setModalConfig] = useState({
-  //     isOpen: false,
-  //     sectionType: null,
-  //     title: ''
-  // });
+
+
+  // -------------------------------------skillprofile update and deletion------------------------------------
 
   const [sectionData, setSectionData] = useState({});
 
   const [editModal, setEditModal] = useState({ sectionId: null, itemIndex: null, fieldKey: null, fieldValue: "" }); // Manage edit modal state
 
+  const [editingSkill, setEditingSkill] = useState(null);
+
+
+
+
+  const handleSkillEditClick = (skill, index) => {
+console.log(skill._id);
+    setEditingSkill({ ...skill, index });
+
+
+  };
+ 
+
+  const handleDeleteSkill = (token, skillId) => {
+    dispatch(deleteSkillProfiles(token, skillId)).then(() => {
+      setSkillsData(prevSkills => prevSkills.filter(skill => skill._id !== skillId));
+    }).catch(error => {
+      console.error("Error deleting skill:", error);
+    });
+  };
+
+  const handleCloseEditModal = () => {
+    setEditingSkill(null);
+  };
+
+  // -------------------------------------------------------------------------------------------------------------
+
   // ---------------------------------- save , edit, delete ---------------------------------------
 
+  console.log("skills data", skillsData);
   const handleSaveData = async (sectionType, data) => {
     try {
       if (sectionType === 'certification') {
@@ -183,7 +183,7 @@ function UserProfile() {
       } else if (sectionType === 'onlineprofile') {
         setSectionData((prevData) => ({
           ...prevData,
-          onlineprofile: [...(prevData.onlineprofile || []),data,],
+          onlineprofile: [...(prevData.onlineprofile || []), data,],
         }));
         //dispatch(getOnlineProfiles(token));
       }
@@ -281,15 +281,15 @@ function UserProfile() {
           // Optionally refetch certificates to ensure sync
           //dispatch(fetchCertificates(token));
         }
-      }else if (sectionId === 'onlineprofile') {
+      } else if (sectionId === 'onlineprofile') {
         // New logic for online profiles
         const currentProfile = sectionData[sectionId][itemIndex];
-        
+
         // Create an object with the updated field
         const updatePayload = {
           [fieldKey]: fieldValue
         };
-  
+
         const response = await dispatch(updateonlineProfiles(token, updatePayload));
 
         if (response && response.data) {
@@ -304,15 +304,15 @@ function UserProfile() {
               [sectionId]: updatedProfiles
             };
           });
-        
-        
+
+
         }
-  
-          // Refetch online profiles to ensure sync
-          //dispatch(getOnlineProfiles(token));
-        }
-      
-      
+
+        // Refetch online profiles to ensure sync
+        //dispatch(getOnlineProfiles(token));
+      }
+
+
 
       // Close the modal after successful update
       closeModal();
@@ -420,7 +420,7 @@ function UserProfile() {
   //------------------------------- Oneline Profile Design ---------------------------------------   
   const renderOnlineProfile = (item, index, sectionId) => {
     if (!item) return null;
-  
+
     // Define which fields to display and their labels
     const profileFields = {
       instagramLink: "Instagram",
@@ -428,7 +428,7 @@ function UserProfile() {
       githubLink: "GitHub",
       linkedinLink: "LinkedIn"
     };
-  
+
     return (
       <div key={index} className="p-4 rounded-md bg-white shadow-sm">
         {Object.entries(item)
@@ -440,14 +440,14 @@ function UserProfile() {
               <div>
                 <h1 className="font-medium">{profileFields[key]}</h1>
 
-              <a  href={value}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-blue-600 hover:text-blue-800"
+                <a href={value}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-blue-600 hover:text-blue-800"
                 >
-                {value}
-              </a>
-            </div><div className="flex gap-4">
+                  {value}
+                </a>
+              </div><div className="flex gap-4">
                 <button
                   onClick={() => handleEdit(sectionId, index, key, value)}
                   className="text-blue-600 hover:text-blue-800"
@@ -941,18 +941,50 @@ function UserProfile() {
                     <SkillsForm onSave={handleSkillsSaved} />
                   )}
 
-                  <div className="skills-list mt-6 p-4">
+                  <div className="space-y-4">
                     {skillsData.length > 0 ? (
                       skillsData.map((skill, index) => (
-                        <div key={index} className="skill-entry flex justify-between p-2 border-b">
-                          <p><strong>Skill Name:</strong> {skill.skillName}</p>
-                          <p><strong>Experience:</strong> {skill.experienceYears} Years, {skill.experienceMonths} Months</p>
+                        <div
+                          key={index}
+                          className="flex justify-between items-center border p-3 mt-3 rounded-lg bg-white shadow-sm"
+                        >
+                          <div>
+                            <div className="font-semibold text-gray-800">
+                              <strong>Skill Name:</strong> {skill.skillName}
+                            </div>
+                            <div className="text-gray-800 font-semibold">
+                              <strong>Experience:</strong> {skill.experience} Years
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-4">
+                            <button
+                              onClick={() => handleSkillEditClick(skill, index)}
+                              className="text-blue-500 hover:text-blue-700"
+                            >
+                              <Pencil size={20} />
+                            </button>
+                            <button
+  onClick={() => handleDeleteSkill(token, skill._id)}
+  className="text-red-500 hover:text-red-700"
+                            >
+                              <Trash2 size={20} />
+                            </button>
+                          </div>
                         </div>
                       ))
                     ) : (
-                      <p></p>
+                      <div className="text-center text-gray-500">No skills added yet</div>
                     )}
+                        {editingSkill && (
+        <SkillsForm
+          editMode={true}
+          initialSkill={editingSkill}
+          onSave={handleCloseEditModal}
+          skillId={editingSkill._id}
+        />
+      )}
                   </div>
+
                 </div>
 
 

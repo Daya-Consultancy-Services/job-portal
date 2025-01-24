@@ -17,19 +17,15 @@ const {
 
 export function createSkillProfiles(
     token,
-    skillName,
-    experience
+    formdata
 ){
     return async (dispatch) => {
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
         try {
-            const response = await apiConnector("POST",createSkillProfile,{
-                skillName,
-                experience
-            },{Authorization: `Bearer ${token}`})
+            const response = await apiConnector("POST",createSkillProfile,formdata,{Authorization: `Bearer ${token}`})
 
-            console.log("Created SkillProfile Successfully !!!", response);
+            console.log("Created SkillProfile Successfully !!!", response, formdata);
 
             if (!response.data.success) {
                 throw new Error(response.data.message);
@@ -76,7 +72,8 @@ export function updateSkillProfiles(token,skillProfileId,formdata){
     }
 }
 
-export function deleteSkillProfiles(token,skillProfileId,navigate){
+export function deleteSkillProfiles(token,skillProfileId){
+    console.log("token", token, "skillProfileId", skillProfileId);
     return async (dispatch) => {
         const toastId = toast.loading("Loading....")
         dispatch(setLoading(true))
@@ -108,6 +105,7 @@ export function deleteSkillProfiles(token,skillProfileId,navigate){
 export function fetchSkillProfiles(token) {
     return async (dispatch) => {
         dispatch(setLoading(true));
+        console.log(" fetch token",token);
         try {
             const response = await apiConnector("GET", getSkillProfile, null, {
                 Authorization: `Bearer ${token}`,
