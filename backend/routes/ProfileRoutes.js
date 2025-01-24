@@ -57,7 +57,8 @@ const {
 
     createCareer,
     updateCareer,
-    deleteCareer
+    deleteCareer,
+    getCareer
 
 } = require("../controllers/CareerControler")
 const {
@@ -174,6 +175,7 @@ router.post("/careerprofile",auth,isJobseeker,createCareer)
 // }
 router.put("/updatecareer",auth,isJobseeker,updateCareer)
 router.delete("/deletecareer",auth,isJobseeker,deleteCareer)
+router.get("/getcareer",auth,isJobseeker,getCareer)
 
 //educationProfile***********************************************************************************************************
 router.post("/educationprofile",auth,isJobseeker,createEducationProfile)

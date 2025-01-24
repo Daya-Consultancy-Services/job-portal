@@ -5,6 +5,7 @@ const initialState = {
     token : localStorage.getItem("token") ? JSON.parse(localStorage.getItem("token")) : null,
     certificates: [],
     skillprofiles: [],
+    careers: [],
     loading: false,
     Onlineprofile : null,
 }
@@ -32,6 +33,9 @@ const profileSlice = createSlice({
         setskillprofiles(state,action){
             state.skillprofiles = action.payload
      
+        },
+        setCareers(state,action){
+            state.careers = action.payload
         }
     },
 });
@@ -44,7 +48,8 @@ export const {
     setToken, 
     setCertificate, 
     setOnlineprofile, 
-    setskillprofiles
+    setskillprofiles,
+    setCareers
 
 } = profileSlice.actions;
 export default profileSlice.reducer;
