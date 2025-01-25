@@ -105,7 +105,6 @@ export function deleteSkillProfiles(token,skillProfileId){
 export function fetchSkillProfiles(token) {
     return async (dispatch) => {
         dispatch(setLoading(true));
-        console.log(" fetch token",token);
         try {
             const response = await apiConnector("GET", getSkillProfile, null, {
                 Authorization: `Bearer ${token}`,
