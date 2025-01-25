@@ -51,6 +51,7 @@ import { deleteCertificates, fetchCertificates, updateCertificates } from '../..
 import { deleteSkillProfiles, fetchSkillProfiles } from '../../operations/skillprofileAPI';
 import { onlineProfile } from '../../operations/apis';
 import CareerProfileModal from './CareerProfileModal';
+import { deleteCareers, fetchCareers } from '../../operations/careerAPI';
 
 
 
@@ -60,6 +61,7 @@ function UserProfile() {
     selectToken: (state) => state.user.token,
     selectCertificates: (state) => state.profile.certificates,
     selectOnlineProfiles: (state) => state.profile.Onlineprofile,
+    selectCareerProfiles: (state) => state.profile.careers,
 
   }), []);
 
@@ -68,6 +70,7 @@ function UserProfile() {
   const certificates = useSelector(selectors.selectCertificates);
   const Onlineprofile = useSelector(selectors.selectOnlineProfiles);
   const skillProfiles = useSelector((state) => state.profile.skillprofiles);
+  const careerProfiles = useSelector(selectors.selectCareerProfiles);
 
 
   const dispatch = useDispatch();
@@ -86,6 +89,10 @@ function UserProfile() {
       }
       if (skillProfiles && skillProfiles.length === 0) {
         dispatch(fetchSkillProfiles(token));
+        console.log("skillprofiles fetching")
+      }
+      if (careerProfiles && careerProfiles.length === 0) {
+        dispatch(fetchCareers(token));
         console.log("skillprofiles fetching")
       }
     }
@@ -315,8 +322,7 @@ function UserProfile() {
 
         }
 
-        // Refetch online profiles to ensure sync
-        //dispatch(getOnlineProfiles(token));
+      
       }
 
 
@@ -477,7 +483,36 @@ function UserProfile() {
   };
 
 
+// ---------------------------------------------------------------------------------------------------------------------
 
+// ------------------------------- update and delete of career profile ---------------------------------------------
+
+const [currentProfile, setCurrentProfile] = useState(null);
+const handleAddProfile = () => {
+  // Reset current profile to null when adding a new profile
+  setCurrentProfile(null);
+  setIsModalOpen(true);
+};
+
+const updateCareersProfile = (profile) => {
+  // Set the current profile for editing
+  setCurrentProfile(profile);
+  setIsModalOpen(true);
+};
+
+const handleSubmitForCareerProfile = (submitData) => {
+  // This function can be used for both creating and updating
+  // The CareerProfileModal will handle the dispatch based on whether initialData exists
+  setIsModalOpen(false);
+};
+
+const handleDeleteForCareerProfile = (profileId) => {
+  // Implement your delete logic here
+  // Typically this would dispatch an action to remove the profile
+  dispatch(deleteCareers(token, profileId));
+};
+
+// --------------------------------------------------------------------------------------------------------------------
 
 
   const { register, handleSubmit } = useForm({
@@ -1158,17 +1193,65 @@ function UserProfile() {
 
 
                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Career-profile'>
-                  <div className="head flex w-full justify-between px-4">
-                    <div className="flex justify-between px-2 w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Career Profile</h1> <p className='text-green-400'>Add 18%</p></div>
-                    <h1 className='text-blue-700 font-semibold cursor-pointer' onClick={() => setIsModalOpen(true)}>Add Career profile</h1>
-                  </div>
-                  <p className='text-zinc-400 px-6'>Add details about your current and preferred career profile. This helps us personalise your job recommendations.</p>
-                  <CareerProfileModal 
+      <div className="head flex w-full justify-between px-4">
+        <div className="flex justify-between px-2 w-fit gap-5 items-center ">
+          <h1 className='font-semibold text-2xl'>Career Profile</h1> 
+          <p className='text-green-400'>Add 18%</p>
+        </div>
+        <h1 
+          className='text-blue-700 font-semibold cursor-pointer' 
+                 onClick={handleAddProfile}
+        
+        >
+          Add Career Profile
+        </h1>
+      </div>
+
+      {careerProfiles && careerProfiles.length > 0 ? (
+        <div className="mt-4 px-6">
+          <div className="p-4 rounded-lg border">
+            {careerProfiles.map((career, index) => (
+              <div key={index} className="mb-4 pb-4 border-b last:border-b-0 relative">
+                <div className="absolute right-0 top-0 flex space-x-2">
+                  <Pencil
+                    className="text-blue-500 cursor-pointer hover:text-blue-700"
+                    size={20}
+                    onClick={() => updateCareersProfile(career)}
+                  />
+                  <Trash2
+                    className="text-red-500 cursor-pointer hover:text-red-700"
+                    size={20}
+                    onClick={() => handleDeleteForCareerProfile(career._id)}
+                  />
+                </div>
+                {Object.entries(career).map(([key, value]) =>
+                  value && key !== '_id' ? (
+                    <div key={key} className="flex mt-2">
+                      <span className="font-medium mr-2 capitalize">
+                        {key.replace(/([A-Z])/g, ' $1').toLowerCase()}:
+                      </span>
+                      <span>{value}</span>
+                    </div>
+                  ) : null
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <p className='text-zinc-400 px-6'>
+          Add details about your current and preferred career profile. 
+          This helps us personalise your job recommendations.
+        </p>
+      )}
+
+      <CareerProfileModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmitForCareerProfile}
+        initialData={currentProfile}
       />
-                </div>
+    </div>
 
 
 
