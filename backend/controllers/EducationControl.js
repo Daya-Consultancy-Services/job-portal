@@ -190,3 +190,29 @@ exports.deleteEducationProfile =  async (req , res) => {
         })
     }
 }
+
+exports.getEducationProfile = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const user = await User.findById(userId).populate('profile');
+        const profile = await Profile.findById(user.profile).populate('educationProfile');
+
+        if (!profile) {
+            return res.status(404).json({
+                success: false,
+                message: "Profile not found",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: profile.educationProfile, // Return the array of educationProfile
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to fetch educationProfile",
+        });
+    }
+}

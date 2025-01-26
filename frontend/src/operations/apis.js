@@ -50,6 +50,7 @@ export const educationProfile = {
     createEducationProfile : BASE_URL+"/profile/educationprofile",
     updateEducationProfile : BASE_URL+"/profile/updateeducation",
     deleteEducationProfile : BASE_URL+"/profile/deleteeducation",
+    getEducationProfile    : BASE_URL+"/profile/geteducation"
 }
 export const employmentprofile = {
     createEmploymentProfile : BASE_URL + "/profile/employprofile",

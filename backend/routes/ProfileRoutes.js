@@ -65,7 +65,8 @@ const {
 
     createEducationProfile,
     updateEducationProfile,
-    deleteEducationProfile
+    deleteEducationProfile,
+    getEducationProfile
 
 } = require("../controllers/EducationControl")
 
@@ -191,7 +192,7 @@ router.post("/educationprofile",auth,isJobseeker,createEducationProfile)
 // }
 router.put("/updateeducation",auth,isJobseeker,updateEducationProfile)
 router.delete("/deleteeducation",auth,isJobseeker,deleteEducationProfile)
-
+router.get("/geteducation",auth,isJobseeker,getEducationProfile)
 //employmentprofile************************************************************************************************************
 router.post("/employprofile",auth,isJobseeker,createEmploymentProfile)
 // {
