@@ -75,7 +75,8 @@ const {
 
     createEmploymentProfile,
     updateEmploymentProfile,
-    deleteEmploymentProfile
+    deleteEmploymentProfile,
+    getEmploymentProfile
 
 } = require("../controllers/EmploymentControl")
 
@@ -212,6 +213,7 @@ router.post("/employprofile",auth,isJobseeker,createEmploymentProfile)
 // }
 router.put("/updateemployprofile",auth,isJobseeker,updateEmploymentProfile)
 router.delete("/deleteemployprofile",auth,isJobseeker,deleteEmploymentProfile)
+router.get("/getemployprofile",auth,isJobseeker,getEmploymentProfile)
 
 
 module.exports=router

@@ -1,6 +1,6 @@
 import { toast } from 'react-hot-toast'
 
-import { setLoading, setToken } from '../slices/userProfileSlice'
+import { setLoading, setToken, setEmpProfile } from '../slices/userProfileSlice'
 import { setUser } from '../slices/userProfileSlice'
 import { apiConnector } from '../services/apiConnector'
 import { employmentprofile } from './apis'
@@ -10,41 +10,34 @@ const {
 
     createEmploymentProfile,
     updateEmploymentProfile,
-    deleteEmploymentProfile
+    deleteEmploymentProfile,
+    getEmploymentProfile
 
 } = employmentprofile
 
-export function createEducationProfiles (
+export function createEmploymentProfiles (
     token,
-    isCurrentEmp,
-    empType,
-    totalExp,
-    currentJobTitle,
-    joinDate,
-    leaveDate,
-    currentSalary,
-    skill,
-    jobProfile,
-    noticePeriod,
-    jobDescription
+    // isCurrentEmp,
+    // empType,
+    // totalExp,
+    // currentJobTitle,
+    // joinDate,
+    // leaveDate,
+    // currentSalary,
+    // skill,
+    // jobProfile,
+    // noticePeriod,
+    // jobDescription
+    formdata
 ){
     return async (dispatch) => {
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
         try {
-            const response = await apiConnector("POST",createEmploymentProfile,{
-                isCurrentEmp,
-                empType,
-                totalExp,
-                currentJobTitle,
-                joinDate,
-                leaveDate,
-                currentSalary,
-                skill,
-                jobProfile,
-                noticePeriod,
-                jobDescription
-            },{Authorization: `Bearer ${token}`});
+            const response = await apiConnector("POST",createEmploymentProfile,formdata,
+            {
+                Authorization: `Bearer ${token}`
+            });
             console.log("Created EmploymentProfile Successfully !!!", response);
 
             if (!response.data.success) {
@@ -52,7 +45,7 @@ export function createEducationProfiles (
             }
             //EmploymentProfile
             toast.success("EmploymentProfile Created Successfully!!!!!!!!");
-
+            dispatch(fetchEmploymentProfile(token))
         } catch (error) {
             console.error("Error Creating EmploymentProfile:", error);
             toast.error("Failed to create EmploymentProfile, Please try again.");
@@ -63,7 +56,7 @@ export function createEducationProfiles (
     }
 }
 
-export function updateEducationProfiles(token,empId,formdata){
+export function updateEmploymentProfile(token,empId,formdata){
     return async (dispatch) => {
         const toastId = toast.loading("Loading....")
         dispatch(setLoading(true));
@@ -79,9 +72,9 @@ export function updateEducationProfiles(token,empId,formdata){
                 throw new Error(response.data.message);
             }
         
-            dispatch(setUser({ ...response.data.employprofile }));
+           
             toast.success("EmploymentProfile is updated Successfully")
-
+            dispatch(fetchEmploymentProfile(token))
         } catch (error) {
             console.log("UPDATE EmploymentProfile API ERROR............", error)
             toast.error("Could Not Update EmploymentProfile")
@@ -92,7 +85,7 @@ export function updateEducationProfiles(token,empId,formdata){
     }
 }
 
-export function deleteEducationProfiles(token,empId,navigate){
+export function deleteEmploymentProfiles(token,empId,navigate){
     return async (dispatch) => {
         const toastId = toast.loading("Loading....")
         dispatch(setLoading(true))
@@ -108,7 +101,7 @@ export function deleteEducationProfiles(token,empId,navigate){
             }
             
             toast.success("EmploymentProfile deleted Successfully!");
-
+            dispatch(fetchEmploymentProfile(token))
         } catch (error) {
             console.error("EmploymentProfile_API error:", error);
             toast.error("Could not delete EmploymentProfile.");
@@ -117,4 +110,28 @@ export function deleteEducationProfiles(token,empId,navigate){
             dispatch(setLoading(false));
         }
     }
+}
+
+export function fetchEmploymentProfile(token) {
+    return async (dispatch) => {
+        dispatch(setLoading(true));
+        try {
+            const response = await apiConnector("GET", getEmploymentProfile, null, {
+                Authorization: `Bearer ${token}`,
+            });
+
+            if (!response.data.success) {
+                throw new Error(response.data.message);
+            }
+
+            dispatch(setEmpProfile(response.data.data));
+
+            toast.success("EmploymentProfile fetched successfully");
+        } catch (error) {
+            console.error("Error fetching EmploymentProfile:", error);
+            toast.error("Failed to fetch EmploymentProfile");
+        } finally {
+            dispatch(setLoading(false));
+        }
+    };
 }
