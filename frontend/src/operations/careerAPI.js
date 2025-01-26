@@ -17,25 +17,19 @@ const {
 
 export function createCareers(
     token,
-    industryType,
-    department,
-    empType,
-    skills,
-    jobLocation,
-    salary
+    // industryType,
+    // department,
+    // empType,
+    // skills,
+    // jobLocation,
+    // salary
+    formdata
 ){
     return async (dispatch) => {
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
         try {
-            const response = await apiConnector("POST",createCareer,{
-                industryType,
-                department,
-                empType,
-                skills,
-                jobLocation,
-                salary
-            },{Authorization: `Bearer ${token}`});
+            const response = await apiConnector("POST",createCareer,formdata,{Authorization: `Bearer ${token}`});
 
             console.log("Created Career Successfully !!!", response);
 

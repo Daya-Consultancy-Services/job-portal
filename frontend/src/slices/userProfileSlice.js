@@ -29,11 +29,9 @@ const profileSlice = createSlice({
         },
         setOnlineprofile(state,action){
             state.Onlineprofile = action.payload
-         
         },
         setskillprofiles(state,action){
             state.skillprofiles = action.payload
-     
         },
         setCareers(state,action){
             state.careers = action.payload

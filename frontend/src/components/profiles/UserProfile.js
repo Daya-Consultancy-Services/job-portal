@@ -50,6 +50,8 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { deleteCertificates, fetchCertificates, updateCertificates } from '../../operations/certificateAPI';
 import { deleteSkillProfiles, fetchSkillProfiles } from '../../operations/skillprofileAPI';
 import { onlineProfile } from '../../operations/apis';
+import CareerProfileModal from './CareerProfileModal';
+import { deleteCareers, fetchCareers } from '../../operations/careerAPI';
 
 
 
@@ -59,6 +61,7 @@ function UserProfile() {
     selectToken: (state) => state.user.token,
     selectCertificates: (state) => state.profile.certificates,
     selectOnlineProfiles: (state) => state.profile.Onlineprofile,
+    selectCareerProfiles: (state) => state.profile.careers,
 
   }), []);
 
@@ -67,6 +70,7 @@ function UserProfile() {
   const certificates = useSelector(selectors.selectCertificates);
   const Onlineprofile = useSelector(selectors.selectOnlineProfiles);
   const skillProfiles = useSelector((state) => state.profile.skillprofiles);
+  const careerProfiles = useSelector(selectors.selectCareerProfiles);
 
 
   const dispatch = useDispatch();
@@ -74,10 +78,23 @@ function UserProfile() {
 
   // Fetch certificates on component mount
   useEffect(() => {
-    if (token) {
-      dispatch(fetchCertificates(token));
-      dispatch(getOnlineProfiles(token));
-      dispatch(fetchSkillProfiles(token))
+    if (token && user) {
+      if (certificates && certificates.length === 0) {
+        dispatch(fetchCertificates(token));
+        console.log("cirtificate fetching")
+      }
+      if (!Onlineprofile || Object.keys(Onlineprofile).length === 0) {
+        dispatch(getOnlineProfiles(token));
+        console.log("onlineprofile fetching")
+      }
+      if (skillProfiles && skillProfiles.length === 0) {
+        dispatch(fetchSkillProfiles(token));
+        console.log("skillprofiles fetching")
+      }
+      if (careerProfiles && careerProfiles.length === 0) {
+        dispatch(fetchCareers(token));
+        console.log("skillprofiles fetching")
+      }
     }
   }, [dispatch, token]);
 
@@ -85,7 +102,6 @@ function UserProfile() {
 
   useEffect(() => {
     if (Onlineprofile && Object.keys(Onlineprofile).length > 0) {
-      console.log(Onlineprofile)
       setSectionData(prevData => ({
         ...prevData,
         onlineprofile: [Onlineprofile]
@@ -96,7 +112,6 @@ function UserProfile() {
   // Update sectionData when certificates change in Redux
   useEffect(() => {
     if (certificates && certificates.length > 0) {
-      console.log(certificates)
       setSectionData(prevData => ({
         ...prevData,
         certification: certificates
@@ -144,12 +159,12 @@ function UserProfile() {
 
 
   const handleSkillEditClick = (skill, index) => {
-console.log(skill._id);
+    console.log(skill._id);
     setEditingSkill({ ...skill, index });
 
 
   };
- 
+
 
   const handleDeleteSkill = (token, skillId) => {
     dispatch(deleteSkillProfiles(token, skillId)).then(() => {
@@ -167,7 +182,6 @@ console.log(skill._id);
 
   // ---------------------------------- save , edit, delete ---------------------------------------
 
-  console.log("skills data", skillsData);
   const handleSaveData = async (sectionType, data) => {
     try {
       if (sectionType === 'certification') {
@@ -308,8 +322,7 @@ console.log(skill._id);
 
         }
 
-        // Refetch online profiles to ensure sync
-        //dispatch(getOnlineProfiles(token));
+      
       }
 
 
@@ -470,7 +483,36 @@ console.log(skill._id);
   };
 
 
+// ---------------------------------------------------------------------------------------------------------------------
 
+// ------------------------------- update and delete of career profile ---------------------------------------------
+
+const [currentProfile, setCurrentProfile] = useState(null);
+const handleAddProfile = () => {
+  // Reset current profile to null when adding a new profile
+  setCurrentProfile(null);
+  setIsModalOpen(true);
+};
+
+const updateCareersProfile = (profile) => {
+  // Set the current profile for editing
+  setCurrentProfile(profile);
+  setIsModalOpen(true);
+};
+
+const handleSubmitForCareerProfile = (submitData) => {
+  // This function can be used for both creating and updating
+  // The CareerProfileModal will handle the dispatch based on whether initialData exists
+  setIsModalOpen(false);
+};
+
+const handleDeleteForCareerProfile = (profileId) => {
+  // Implement your delete logic here
+  // Typically this would dispatch an action to remove the profile
+  dispatch(deleteCareers(token, profileId));
+};
+
+// --------------------------------------------------------------------------------------------------------------------
 
 
   const { register, handleSubmit } = useForm({
@@ -716,20 +758,7 @@ console.log(skill._id);
         </>
       )
     },
-    {
-      id: 'career-profile',
-      title: "Career profile",
-      description: "Add details about your current and preferred career profile. This helps us personalise your job recommendations.",
-      form: (
-        <>
-          <TextInput label="Current Role" placeholder="Enter your current role" />
-          <TextInput label="Preferred Role" placeholder="Enter your preferred role" />
-          <TextInput label="Industry" placeholder="Enter your industry" />
-          <TextInput label="Years of Experience" type="number" placeholder="Enter years of experience" />
-          <TextArea label="Career Goals" placeholder="Describe your career goals" />
-        </>
-      )
-    }
+
   ];
 
 
@@ -964,8 +993,8 @@ console.log(skill._id);
                               <Pencil size={20} />
                             </button>
                             <button
-  onClick={() => handleDeleteSkill(token, skill._id)}
-  className="text-red-500 hover:text-red-700"
+                              onClick={() => handleDeleteSkill(token, skill._id)}
+                              className="text-red-500 hover:text-red-700"
                             >
                               <Trash2 size={20} />
                             </button>
@@ -973,22 +1002,18 @@ console.log(skill._id);
                         </div>
                       ))
                     ) : (
-                      <div className="text-center text-gray-500">No skills added yet</div>
+                      <div></div>
                     )}
-                        {editingSkill && (
-        <SkillsForm
-          editMode={true}
-          initialSkill={editingSkill}
-          onSave={handleCloseEditModal}
-          skillId={editingSkill._id}
-        />
-      )}
+                    {editingSkill && (
+                      <SkillsForm
+                        editMode={true}
+                        initialSkill={editingSkill}
+                        onSave={handleCloseEditModal}
+                        skillId={editingSkill._id}
+                      />
+                    )}
                   </div>
-
                 </div>
-
-
-
                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Projects'>
                   <div className="head flex w-full justify-between px-4">
                     <div className="flex justify-between px-2 w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Projects</h1> <p className='text-green-400'>Add 8%</p></div>
@@ -1031,6 +1056,7 @@ console.log(skill._id);
                       initialDetails={personalDetails}
                     />
                   )}
+
 
                   {personalDetails && (
                     <div className="personal-details-display mt-6 px-4">
@@ -1166,14 +1192,66 @@ console.log(skill._id);
                 </div>
 
 
-
                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Career-profile'>
-                  <div className="head flex w-full justify-between px-4">
-                    <div className="flex justify-between px-2 w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Career Profile</h1> <p className='text-green-400'>Add 18%</p></div>
-                    <h1 className='text-blue-700 font-semibold'>Add Career profile</h1>
-                  </div>
-                  <p className='text-zinc-400 px-6'>Add details about your current and preferred career profile. This helps us personalise your job recommendations.</p>
+      <div className="head flex w-full justify-between px-4">
+        <div className="flex justify-between px-2 w-fit gap-5 items-center ">
+          <h1 className='font-semibold text-2xl'>Career Profile</h1> 
+          <p className='text-green-400'>Add 18%</p>
+        </div>
+        <h1 
+          className='text-blue-700 font-semibold cursor-pointer' 
+                 onClick={handleAddProfile}
+        
+        >
+          Add Career Profile
+        </h1>
+      </div>
+
+      {careerProfiles && careerProfiles.length > 0 ? (
+        <div className="mt-4 px-6">
+          <div className="p-4 rounded-lg border">
+            {careerProfiles.map((career, index) => (
+              <div key={index} className="mb-4 pb-4 border-b last:border-b-0 relative">
+                <div className="absolute right-0 top-0 flex space-x-2">
+                  <Pencil
+                    className="text-blue-500 cursor-pointer hover:text-blue-700"
+                    size={20}
+                    onClick={() => updateCareersProfile(career)}
+                  />
+                  <Trash2
+                    className="text-red-500 cursor-pointer hover:text-red-700"
+                    size={20}
+                    onClick={() => handleDeleteForCareerProfile(career._id)}
+                  />
                 </div>
+                {Object.entries(career).map(([key, value]) =>
+                  value && key !== '_id' ? (
+                    <div key={key} className="flex mt-2">
+                      <span className="font-medium mr-2 capitalize">
+                        {key.replace(/([A-Z])/g, ' $1').toLowerCase()}:
+                      </span>
+                      <span>{value}</span>
+                    </div>
+                  ) : null
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <p className='text-zinc-400 px-6'>
+          Add details about your current and preferred career profile. 
+          This helps us personalise your job recommendations.
+        </p>
+      )}
+
+      <CareerProfileModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleSubmitForCareerProfile}
+        initialData={currentProfile}
+      />
+    </div>
 
 
 
