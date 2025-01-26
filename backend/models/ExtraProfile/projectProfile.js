@@ -10,11 +10,10 @@ const projectSchema = new mongoose.Schema({
     projectDescription:{
         type:String
     },
-    projectSkills:[
-        {
-            type:String
-        }
-    ]
+    projectSkills:{
+        type:String
+    }
+    
 
 })
 

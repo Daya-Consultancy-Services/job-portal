@@ -39,6 +39,7 @@ export const projectProfile = {
     createProject : BASE_URL + "/profile/project",
     updateProject : BASE_URL + "/profile/updateproject",
     deleteProject : BASE_URL + "/profile/deleteproject",
+    getProject    : BASE_URL + "/profile/getproject"
 }
 export const careerProfile = {
     createCareer : BASE_URL + "/profile/careerprofile",

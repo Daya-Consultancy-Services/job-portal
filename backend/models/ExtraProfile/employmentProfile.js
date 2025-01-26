@@ -23,11 +23,9 @@ const empProfileSchema = new mongoose.Schema({
     currentSalary:{
         type:String
     },
-    skill:[
-        {
-            type:String
-        }
-    ],
+    skill:{
+        type:String
+    },
     jobProfile:{
         type:String
     },

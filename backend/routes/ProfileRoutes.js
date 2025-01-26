@@ -49,7 +49,8 @@ const {
 
     createProject,
     updateProject,
-    deleteProject
+    deleteProject,
+    getProject
 
 } = require("../controllers/ProjectControl")
 
@@ -163,6 +164,7 @@ router.post("/project",auth,isJobseeker,createProject)
 // }
 router.put("/updateproject",auth,isJobseeker,updateProject)
 router.delete("/deleteproject",auth,isJobseeker,deleteProject)
+router.get("/getproject",auth,isJobseeker,getProject)
 
 //CareerProfile**************************************************************************************************************
 router.post("/careerprofile",auth,isJobseeker,createCareer)

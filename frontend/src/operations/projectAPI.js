@@ -1,6 +1,6 @@
 import { toast } from 'react-hot-toast'
 
-import { setLoading, setToken } from '../slices/userProfileSlice'
+import { setLoading, setToken, setProject } from '../slices/userProfileSlice'
 import { setUser } from '../slices/userProfileSlice'
 import { apiConnector } from '../services/apiConnector'
 import { projectProfile } from './apis'
@@ -10,27 +10,27 @@ const {
 
     createProject,
     updateProject,
-    deleteProject
+    deleteProject,
+    getProject
 
 } = projectProfile
 
 export function createProjects(
     token,
-    projectTitle,
-    projectLink,
-    projectDescription,
-    projectSkills
+    // projectTitle,
+    // projectLink,
+    // projectDescription,
+    // projectSkills
+    fordata
 ){
     return async (dispatch) => {
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
         try {
-            const response = await apiConnector("POST",createProject,{
-                projectTitle,
-                projectLink,
-                projectDescription,
-                projectSkills
-            },{Authorization: `Bearer ${token}`})
+            const response = await apiConnector("POST",createProject,fordata,
+            {
+                Authorization: `Bearer ${token}`
+            })
 
             console.log("Created ProjectProfile Successfully !!!", response);
 
@@ -38,6 +38,7 @@ export function createProjects(
                 throw new Error(response.data.message);
             }
             toast.success("ProjectProfile Created Successfully!!!!!!!!");
+            dispatch(fetchProject(token));
         } catch (error) {
             console.error("Error Creating ProjectProfile:", error);
             toast.error("Failed to create ProjectProfile, Please try again.")
@@ -63,7 +64,7 @@ export function updateProjects(token,projectId,formdata){
             if(!response.data.success){
                 throw new Error(response.data.message);
             }
-            dispatch(setUser({ ...response.data.projects }));
+            dispatch(fetchProject(token));
             toast.success("ProjectProfile is updated Successfully")
         } catch (error) {
             console.log("UPDATE ProjectProfile API ERROR............", error)
@@ -88,7 +89,7 @@ export function deleteProject(token,projectId,navigate){
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
-            
+            dispatch(fetchProject(token));
             toast.success("Project deleted Successfully!");
         } catch (error) {
             console.error("ProjectProfile_delete_API error:", error);
@@ -98,4 +99,26 @@ export function deleteProject(token,projectId,navigate){
             dispatch(setLoading(false));
         }
     }
+}
+
+export function fetchProject(token) {
+    return async (dispatch) => {
+        dispatch(setLoading(true));
+        try {
+            const response = await apiConnector("GET", getProject, null, {
+                Authorization: `Bearer ${token}`,
+            });
+
+            if (!response.data.success) {
+                throw new Error(response.data.message);
+            }
+            dispatch(setProject(response.data.data))
+            toast.success("Project fetched successfully");
+        } catch (error) {
+            console.error("Error fetching Project :", error);
+            toast.error("Failed to fetch Project");
+        } finally {
+            dispatch(setLoading(false));
+        }
+    };
 }

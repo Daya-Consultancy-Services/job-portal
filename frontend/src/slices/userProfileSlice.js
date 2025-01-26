@@ -7,6 +7,7 @@ const initialState = {
     skillprofiles: [],
     careers: [],
     education: [],
+    projects : [],
     loading: false,
     Onlineprofile : null,
 }
@@ -38,6 +39,9 @@ const profileSlice = createSlice({
         },
         setEducation(state,action){
             state.education = action.payload
+        },
+        setProject(state,action){
+            state.projects = action.payload
         }
     },
 });
@@ -52,7 +56,8 @@ export const {
     setOnlineprofile, 
     setskillprofiles,
     setCareers,
-    setEducation
+    setEducation,
+    setProject
 
 } = profileSlice.actions;
 export default profileSlice.reducer;
