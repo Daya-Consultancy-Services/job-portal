@@ -9,7 +9,7 @@ const profileSchema = new mongoose.Schema({
         type:Number,
     },
     resume:{
-        type:String
+        type:Buffer // type:Buffer
     },
     resumeHeadline:{
         type:String

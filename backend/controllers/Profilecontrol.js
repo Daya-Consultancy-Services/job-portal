@@ -3,25 +3,20 @@ const Profile = require("../models/Profile")
 require("dotenv").config();
 
 
-
 exports.updateProfile = async (req,res) => {
         try {
             const {
                 about,
                 contactNumber,
-                resume,
                 resumeHeadline,
                 profileSummary,
                 location,
                 image 
-                // links
-                // certificate left
             } = req.body
 
             if( 
                 !about || 
                 !contactNumber || 
-                !resume ||
                 !resumeHeadline ||
                 !profileSummary ||
                 !location || 
@@ -35,29 +30,48 @@ exports.updateProfile = async (req,res) => {
                 }
             
             const Id = req.user.id
-            
-        
-
             const userDetail = await User.findById(Id);
-            const profileDetail = await Profile.findByIdAndUpdate(
-                userDetail.profile._id,
-                {
-                    about : about,
-                    contactNumber : contactNumber,
-                    resume : resume,
-                    resumeHeadline : resumeHeadline,
-                    profileSummary : profileSummary,
-                    location : location,
-                    image : image       
-                },
-                { new: true }
-            )          
+            if (!userDetail) {
+                return res.status(404).json({
+                    success: false,
+                    message: "User not found",
+                });
+            }
+
+            const profileId = userDetail.profile._id;
+            if (!profileId) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Profile not found",
+                });
+            }
+
+            const updatedProfile = {
+                about,
+                contactNumber,
+                resumeHeadline,
+                profileSummary,
+                location,
+                image,
+            };
+            if (req.file) {
+                updatedProfile.resume = req.file.buffer;  // Assuming file is uploaded as buffer
+            }
+
+            const profileDetail = await Profile.findByIdAndUpdate(profileId,updatedProfile,{new:true}) 
+
+            if (!profileDetail) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Profile not found or could not be updated",
+                });
+            }         
         
             await profileDetail.save();
 
             return res.status(200).json({
                 success:true,
-                message:"Updated Profile Successfully !!",
+                message:"Profile Updated Successfully !!",
                 profileDetail,
             })
 
@@ -81,7 +95,7 @@ exports.getAllDetail = async (req,res) => {
         return res.status(200).json({
             success:true,
             message:"User Detail Fetched Successfully",
-            userDetail : userDetail.profile
+            data : userDetail.profile
         });
 
     } catch (error) {
@@ -92,3 +106,135 @@ exports.getAllDetail = async (req,res) => {
         });
     }
 }
+
+// Upload Resume Function
+exports.uploadResume = async (req, res) => {
+    try {
+        const id = req.user.id; // Extract user ID from authenticated request
+
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: "No file uploaded",
+            });
+        }
+
+        const userDetail = await User.findById(id);
+
+        if (!userDetail) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        const profileDetail = await Profile.findById(userDetail.profile._id);
+
+        if (!profileDetail) {
+            return res.status(404).json({
+                success: false,
+                message: "Profile not found",
+            });
+        }
+
+        // Update resume field
+        profileDetail.resume = req.file.buffer; // Store file as Buffer
+        await profileDetail.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Resume uploaded successfully!",
+            data: profileDetail.resume,
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Error while uploading resume",
+        });
+    }
+};
+
+exports.deleteResume = async (req, res) => {
+    try {
+        const id = req.user.id; // Extract user ID from authenticated request
+
+        const userDetail = await User.findById(id);
+
+        if (!userDetail) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        const profileDetail = await Profile.findById(userDetail.profile._id);
+
+        if (!profileDetail) {
+            return res.status(404).json({
+                success: false,
+                message: "Profile not found",
+            });
+        }
+
+        // Delete the resume field
+        profileDetail.resume = undefined; // Remove the file
+        await profileDetail.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Resume deleted successfully!",
+            data:profileDetail.resume,
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Error while deleting resume",
+        });
+    }
+};
+
+exports.downloadResume = async (req, res) => {
+    try {
+        const id = req.user.id; // Extract user ID from authenticated request
+
+        const userDetail = await User.findById(id);
+
+        if (!userDetail) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        const profileDetail = await Profile.findById(userDetail.profile._id);
+
+        if (!profileDetail || !profileDetail.resume) {
+            return res.status(404).json({
+                success: false,
+                message: "Resume not found",
+            });
+        }
+
+        // Set the file name and type for the response
+        const fileName = 'resume.pdf'; // Change as necessary based on the file type
+        const fileBuffer = profileDetail.resume;
+
+        // Send the file to the client
+        res.set({
+            'Content-Type': 'application/pdf', // Adjust based on the actual file type
+            'Content-Disposition': `attachment; filename=${fileName}`,
+        });
+
+        // Send the file buffer as a response
+        res.send(fileBuffer);
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Error while downloading resume",
+        });
+    }
+};

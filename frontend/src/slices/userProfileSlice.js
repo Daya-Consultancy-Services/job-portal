@@ -9,6 +9,7 @@ const initialState = {
     education: [],
     projects : [],
     empProfile: [],
+    resume : null,
     loading: false,
     Onlineprofile : null,
 }
@@ -46,7 +47,13 @@ const profileSlice = createSlice({
         },
         setEmpProfile(state,action){
             state.empProfile = action.payload
-        }
+        },
+        setResume(state, action) {  // New action for resume upload
+            state.resume = action.payload;  // Store resume data if necessary
+        },
+        clearResume(state) {
+            state.resume = null; // Clear the resume when deleted
+        },
     },
 });
 
@@ -62,7 +69,9 @@ export const {
     setCareers,
     setEducation,
     setProject,
-    setEmpProfile
+    setEmpProfile,
+    setResume,
+    clearResume
 
 } = profileSlice.actions;
 export default profileSlice.reducer;

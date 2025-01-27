@@ -10,6 +10,9 @@ export const userPoint = {
 export const profilePoint = {
     updateProfile_api : BASE_URL + "/profile/update",
     getAllDetails     : BASE_URL + "/profile/details",
+    uploadresume      : BASE_URL + "/profile/upload-resume",
+    deleteresume      : BASE_URL + "/profile/delete-resume",
+    getresume         : BASE_URL + "/profile/download-resume"
 }
 
 export const personalDetail = {

@@ -1,11 +1,14 @@
 const express = require("express");
 const router = express.Router();
-
+const upload = require("../config/multer");
 
 const {
 
     updateProfile,
     getAllDetail,
+    uploadResume,
+    deleteResume,
+    downloadResume
 
 } = require("../controllers/Profilecontrol")
 
@@ -94,6 +97,12 @@ router.put("/update",auth,isJobseeker,updateProfile)
 // }
 
 router.get("/details",auth,getAllDetail)
+router.post("/upload-resume",auth,isJobseeker,
+    upload.single("resume"),
+    uploadResume
+);
+router.delete("/delete-resume", auth, isJobseeker, deleteResume);
+router.get("/download-resume", auth, isJobseeker, downloadResume);
 
 
 // Personal Details routes***********************************************************************************************
