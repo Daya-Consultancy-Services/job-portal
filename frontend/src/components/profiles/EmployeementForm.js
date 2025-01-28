@@ -6,12 +6,12 @@ const EmploymentForm = ({ initialData = null, onClose }) => {
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.profile);
   const [formData, setFormData] = useState({
-    isCurrentEmp: false,
+    isCurrentEmp: true,
     empType: '',
     totalExp: '',
     currentJobTitle: '',
     joinDate: '',
-    leaveDate: '',
+    leaveDate: null,
     currentSalary: '',
     skill: '',
     jobProfile: '',
