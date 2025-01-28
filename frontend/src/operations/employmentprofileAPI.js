@@ -56,7 +56,7 @@ export function createEmploymentProfiles (
     }
 }
 
-export function updateEmploymentProfile(token,empId,formdata){
+export function updateEmploymentProfiles(token,empId,formdata){
     return async (dispatch) => {
         const toastId = toast.loading("Loading....")
         dispatch(setLoading(true));

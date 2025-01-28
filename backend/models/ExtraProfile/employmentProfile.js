@@ -6,7 +6,7 @@ const empProfileSchema = new mongoose.Schema({
     },
     empType:{
         type:String,
-        enum:["Internship","Fulltime","Contract","Freelance"]  
+        // enum:["Internship","Fulltime","Contract","Freelance"]  
     },
     totalExp:{
         type:String

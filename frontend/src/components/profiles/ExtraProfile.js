@@ -167,19 +167,7 @@ function ExtraProfile() {
                         <label className="block font-medium mb-1">Pincode</label>
                         <input value={pincode} onChange={(e) => setPincode(e.target.value)} type="number" className="w-full px-3 py-2 border rounded" />
                     </div>
-                    {/* <div>
-                        <label className="block font-medium mb-1">Work Status</label>
-                        <select
-                            className="w-full px-3 py-2 border rounded"
-                            value={workStatus}
-                            onChange={(e) => setWorkStatus(e.target.value)}
-                        >
-                            <option value="">Select Work Status</option>
-                            <option value="employed">Employed</option>
-                            <option value="student">Student</option>
-                            <option value="unemployed">Unemployed</option>
-                        </select>
-                    </div> */}
+        
                     
                     <div>
                         <label className="block font-medium mb-1">Languages</label>

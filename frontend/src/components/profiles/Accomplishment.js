@@ -30,14 +30,6 @@ const FORM_CONFIGS = {
       ],
       dispatchType: 'workSamples'
     },
-    'journal-entry': {
-      fields: [
-        { name: 'title', label: 'Title', type: 'text', placeholder: 'Enter your journal entry title' },
-        { name: 'date', label: 'Date', type: 'date', placeholder: 'Enter your journal entry date' },
-        { name: 'content', label: 'Content', type: 'textarea', placeholder: 'Enter your journal entry content' }
-      ],
-      dispatchType: 'journalEntries'
-    },
     'presentation': {
       fields: [
         { name: 'title', label: 'Title', type: 'text', placeholder: 'Enter your presentation title' },

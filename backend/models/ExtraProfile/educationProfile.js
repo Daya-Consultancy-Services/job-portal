@@ -1,9 +1,9 @@
 const mongoose = require("mongoose")
 
 const educationSchema = new mongoose.Schema({
-    educationName:{
-        type:String
-    },
+    // educationName:{
+    //     type:String
+    // },
     institutionName:{
         type:String
     },
@@ -24,7 +24,7 @@ const educationSchema = new mongoose.Schema({
     },
     education: {
         type:String,
-        enum:["10th","12th","Graduation","Post-graduation","PHD"], 
+        // enum:["10th","12th","Graduation","Post-graduation","PHD"], 
     },
 })
 

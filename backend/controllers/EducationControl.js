@@ -7,7 +7,7 @@ exports.createEducationProfile = async (req , res) => {
     try {
         const {
 
-            educationName,
+            // educationName,
             institutionName,
             courseName,
             courseType,
@@ -18,7 +18,7 @@ exports.createEducationProfile = async (req , res) => {
 
         } = req.body
         if(
-            !educationName ||
+            // !educationName ||
             !institutionName ||
             !courseName ||
             !courseType ||
@@ -46,7 +46,7 @@ exports.createEducationProfile = async (req , res) => {
             })
         }
         const educationProfiles = await educationProfile.create({
-            educationName,
+            // educationName,
             institutionName,
             courseName,
             courseType,
@@ -78,7 +78,7 @@ exports.updateEducationProfile =  async (req , res) => {
     try {
         const {
             educationProfileId,
-            educationName,
+            // educationName,
             institutionName,
             courseName,
             courseType,
@@ -90,7 +90,7 @@ exports.updateEducationProfile =  async (req , res) => {
         } = req.body
         if(
             !educationProfileId ||
-            !educationName ||
+            // !educationName ||
             !institutionName ||
             !courseName ||
             !courseType ||
@@ -120,7 +120,7 @@ exports.updateEducationProfile =  async (req , res) => {
         const educationProfiles = await educationProfile.findByIdAndUpdate(
             educationProfileId,
             {
-                educationName    : educationName,
+                // educationName    : educationName,
                 institutionName  : institutionName,
                 courseName       : courseName,
                 courseType       : courseType,

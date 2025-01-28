@@ -1,57 +1,36 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-
-
 import Header from '../../pages/home/Header';
-
 import Footer from '../Footer';
-
 import { FaPencilAlt, FaTimes } from "react-icons/fa";
-
 import { IoClose, IoLocationOutline } from "react-icons/io5";
-
-import { HiOutlineBriefcase } from "react-icons/hi2";
-
 import { SlCalender } from "react-icons/sl";
-
 import { MdLocalPhone } from "react-icons/md";
-
 import { CiMail } from "react-icons/ci";
-
 import { TbDeviceMobileCheck } from "react-icons/tb";
-
 import ResumeUpload from './ResumeUpload';
-
 import EducationForm from './EducationForm';
-
 import SkillsForm from './SkillForm';
-
 import ProjectForm from './ProjectForm';
-
 import ProfileSummery from './ProfileSummery';
-
 import { useDispatch, useSelector } from 'react-redux';
-
 import { deleteUser, logout, updateDetail } from '../../operations/userAPI';
-
 import ExtraProfile from './ExtraProfile';
-
 import { useForm } from 'react-hook-form';
-
 import { useNavigate } from 'react-router-dom';
-
 import { updateProfile } from '../../operations/profileAPI';
-
 import ProfileForm from './ProfileForm';
 import FORM_CONFIGS, { ModalComponent } from './Accomplishment';
-import { BsPencil, BsTrash } from 'react-icons/bs';
 import { deleteOnlineProfiles, onlineProfiles, updateonlineProfiles, getOnlineProfiles } from '../../operations/onlineprofileAPI';
-// import {  deleteOnlineProfiles, getOnlineProfiles, onlineProfiles, updateonlineProfiles } from '../../operations/onlineprofileAPI';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, PencilIcon, Trash2, Trash2Icon } from 'lucide-react';
 import { deleteCertificates, fetchCertificates, updateCertificates } from '../../operations/certificateAPI';
 import { deleteSkillProfiles, fetchSkillProfiles } from '../../operations/skillprofileAPI';
 import { onlineProfile } from '../../operations/apis';
 import CareerProfileModal from './CareerProfileModal';
 import { deleteCareers, fetchCareers } from '../../operations/careerAPI';
+import { deleteProject, deleteProjects, fetchProject } from '../../operations/projectAPI';
+import EmploymentForm from './EmployeementForm';
+import { deleteEmploymentProfiles, fetchEmploymentProfile } from '../../operations/employmentprofileAPI';
+import { deleteEducationProfiles, fetchEducationProfile } from '../../operations/educationprofileAPI';
 
 
 
@@ -62,6 +41,9 @@ function UserProfile() {
     selectCertificates: (state) => state.profile.certificates,
     selectOnlineProfiles: (state) => state.profile.Onlineprofile,
     selectCareerProfiles: (state) => state.profile.careers,
+    selectProjectProfiles: (state) => state.profile.projects,
+    selectEmployeeProfiles: (state) => state.profile.empProfile,
+    selectEducationProfiles: (state) => state.profile.education
 
   }), []);
 
@@ -71,6 +53,9 @@ function UserProfile() {
   const Onlineprofile = useSelector(selectors.selectOnlineProfiles);
   const skillProfiles = useSelector((state) => state.profile.skillprofiles);
   const careerProfiles = useSelector(selectors.selectCareerProfiles);
+  const projectProfiles = useSelector(selectors.selectProjectProfiles);
+  const empProfile = useSelector(selectors.selectEmployeeProfiles);
+  const educationProfiles = useSelector(selectors.selectEducationProfiles);
 
 
   const dispatch = useDispatch();
@@ -93,8 +78,22 @@ function UserProfile() {
       }
       if (careerProfiles && careerProfiles.length === 0) {
         dispatch(fetchCareers(token));
-        console.log("skillprofiles fetching")
+        console.log("career fetching", careerProfiles)
       }
+      if (projectProfiles && projectProfiles.length === 0) {
+        dispatch(fetchProject(token));
+        console.log("projectProfiles fetching", projectProfiles)
+
+      }
+      if (empProfile && empProfile.length === 0) {
+        dispatch(fetchEmploymentProfile(token));
+        console.log("empProfile fetching", empProfile)
+      }
+      if (educationProfiles && educationProfiles.length === 0) {
+        dispatch(fetchEducationProfile(token));
+        console.log("educationProfile fetching", educationProfiles)
+      }
+
     }
   }, [dispatch, token]);
 
@@ -120,6 +119,20 @@ function UserProfile() {
   }, [certificates]);
 
   useEffect(() => {
+    if (educationProfiles) {
+      // If educationProfiles is not an array, but contains the array
+      const profiles = Array.isArray(educationProfiles) ? 
+        educationProfiles : 
+        (educationProfiles.education || []);
+        
+      setSectionData(prevData => ({
+        ...prevData,
+        education: profiles
+      }));
+    }
+  }, [educationProfiles]);
+
+  useEffect(() => {
     if (skillProfiles && skillProfiles.length > 0) {
       setSkillsData(skillProfiles);
     }
@@ -135,13 +148,13 @@ function UserProfile() {
   const [educationData, setEducationData] = useState(null);
   const [isSkillsVisible, setSkillsVisible] = useState(false);
   const [skillsData, setSkillsData] = useState([]);
-  const [isProjectVisible, setProjectVisible] = useState(false);
   const [projectsData, setProjectsData] = useState([]);
   const [isPersonalDetailsVisible, setPersonalDetailsVisible] = useState(false);
   const [personalDetails, setPersonalDetails] = useState('');
   const [showExtraProfile, setShowExtraProfile] = useState(false);
   const [isNamePopupOpen, setIsNamePopupOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [initialValue, setInitialValue] = useState("");
   const [openModal, setOpenModal] = useState(null);
 
@@ -322,7 +335,7 @@ function UserProfile() {
 
         }
 
-      
+
       }
 
 
@@ -483,37 +496,126 @@ function UserProfile() {
   };
 
 
-// ---------------------------------------------------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------------------------------------------------
 
-// ------------------------------- update and delete of career profile ---------------------------------------------
+  // ------------------------------- update and delete of career profile ---------------------------------------------
 
-const [currentProfile, setCurrentProfile] = useState(null);
-const handleAddProfile = () => {
-  // Reset current profile to null when adding a new profile
-  setCurrentProfile(null);
-  setIsModalOpen(true);
-};
+  const [currentProfile, setCurrentProfile] = useState(null);
+  const handleAddProfile = () => {
+    setCurrentProfile(null);
+    setIsModalOpen(true);
+  };
 
-const updateCareersProfile = (profile) => {
-  // Set the current profile for editing
-  setCurrentProfile(profile);
-  setIsModalOpen(true);
-};
+  const updateCareersProfile = (profile) => {
+    setCurrentProfile(profile);
+    setIsModalOpen(true);
+  };
 
-const handleSubmitForCareerProfile = (submitData) => {
-  // This function can be used for both creating and updating
-  // The CareerProfileModal will handle the dispatch based on whether initialData exists
-  setIsModalOpen(false);
-};
+  const handleSubmitForCareerProfile = (submitData) => {
+    setIsModalOpen(false);
+  };
 
-const handleDeleteForCareerProfile = (profileId) => {
-  // Implement your delete logic here
-  // Typically this would dispatch an action to remove the profile
-  dispatch(deleteCareers(token, profileId));
-};
+  const handleDeleteForCareerProfile = (profileId) => {
+    dispatch(deleteCareers(token, profileId));
+  };
 
-// --------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------------------------------------------
 
+
+  // --------------------------------update and delete of education -------------------------------------------------
+  const [isEducationProfileVisible, setIsEducationProfileVisible] = useState(false);
+  const [editingEducation, setEditingEducation] = useState(null);
+  
+  const handleButtonEducation = () => {
+    setEditingEducation(null);
+    setIsEducationProfileVisible(true);
+  };
+
+  const handleEditEducation = (education) => {
+    setEditingEducation(education);
+    setIsEducationProfileVisible(true);
+  };
+
+  const handleEducationSaved = () => {
+    setIsEducationProfileVisible(false);
+    setEditingEducation(null);
+  };
+
+  const handleDeleteEducation = (token, educationId) => {
+    dispatch(deleteEducationProfiles(token, educationId));
+  };
+  // --------------------------------------------------------------------------------------------------------------------
+
+  // --------------------------------update and delete of projects ---------------------------------------------------
+
+  const [isProjectVisible, setIsProjectVisible] = useState(false);
+  const [editingProject, setEditingProject] = useState(null);
+
+
+  const handleButtonClick = () => {
+    setEditingProject(null);
+    setIsProjectVisible(true);
+  };
+
+  const handleProjectEditClick = (project) => {
+    setEditingProject(project);
+    setIsProjectVisible(true);
+  };
+
+  const handleProjectSaved = (projectData) => {
+    setIsProjectVisible(false);
+    setEditingProject(null);
+  };
+
+  const handleDeleteProject = (token, projectId) => {
+    dispatch(deleteProjects(token, projectId));
+  };
+  // --------------------------------------------------------------------------------------------------------------------
+
+
+  // ------------------------------------update and delete of employement -----------------------------------------
+  const [showEmp, setShowEmp] = useState(false);
+  const [selectEmpProfile, setselectEmpProfile] = useState(null);
+  const [empProfiles, setEmpProfiles] = useState();
+
+  
+
+  const handleButtonClickForEmp = () => {
+    setShowEmp(true);
+    setselectEmpProfile(null);
+  };
+
+  const handleEditClickForEmp = (profile) => {
+    setselectEmpProfile(profile);
+    setShowEmp(true);
+  };
+
+  const handleDeleteProfile = async (token, profileId) => {
+    try {
+      await dispatch(deleteEmploymentProfiles(token, profileId));
+      setEmpProfiles(empProfile.filter(profile => profile._id !== profileId));
+    } catch (error) {
+      console.error('Error deleting profile:', error);
+    }
+  };
+
+  const handleFormClose = () => {
+    setShowEmp(false);
+    setselectEmpProfile(null);
+  };
+
+  const handleFormSubmitSuccess = async () => {
+    try {
+      const updatedProfiles = empProfile;
+      setEmpProfiles(updatedProfiles);
+      setShowEmp(false);
+      setselectEmpProfile(null);
+    } catch (error) {
+      console.error('Error refreshing profiles:', error);
+    }
+  };
+
+  // --------------------------------------------------------------------------------------------------------------------
 
   const { register, handleSubmit } = useForm({
 
@@ -556,16 +658,7 @@ const handleDeleteForCareerProfile = (profileId) => {
 
 
 
-  const handleButtonClick1 = () => {
-    setEducationVisible(!isEducationVisible);
-  };
-
-
-  const handleEducationSaved = (data) => {
-    setEducationData(data);
-    setEducationVisible(false);
-    // dispatch(updateDetail({ education: data }));
-  };
+  
 
 
 
@@ -582,17 +675,6 @@ const handleDeleteForCareerProfile = (profileId) => {
     setSkillsVisible(false);
   };
 
-  const handleButtonClick3 = () => {
-    setProjectVisible(!isProjectVisible);
-  };
-
-  const handleProjectSaved = (data) => {
-    if (data) {
-      setProjectsData([...projectsData, data]);
-      // dispatch(updateDetail({ projects: [...projectsData, data] }));
-    }
-    setProjectVisible(false);
-  };
 
 
   const handleButtonClick4 = () => {
@@ -632,7 +714,7 @@ const handleDeleteForCareerProfile = (profileId) => {
 
   };
 
-  const handleDelete = () => {
+  const handleDeleteUser = () => {
     dispatch(deleteUser(token, navigate));
     console.log("Profile deleted");
     setIsModalOpen(false);
@@ -704,19 +786,6 @@ const handleDeleteForCareerProfile = (profileId) => {
           <TextInput label="Project Title" placeholder="Enter project title" />
           <TextInput label="Project URL" type="url" placeholder="Enter project URL" />
           <TextArea label="Description" placeholder="Describe your work sample" />
-        </>
-      )
-    },
-    {
-      id: 'white-paper',
-      title: "White paper / Research publication / Journal entry",
-      description: "Add links to your online publications",
-      form: (
-        <>
-          <TextInput label="Publication Title" placeholder="Enter publication title" />
-          <TextInput label="Publication URL" type="url" placeholder="Enter publication URL" />
-          <TextInput label="Authors" placeholder="Enter authors' names" />
-          <TextArea label="Abstract" placeholder="Enter publication abstract" />
         </>
       )
     },
@@ -896,7 +965,7 @@ const handleDeleteForCareerProfile = (profileId) => {
                     <div onClick={() => scrollToDiv('Personal-details')} className="Personal-details flex"><h3>Personal Details</h3></div>
                   </div>
                   <div className="delete-btn mt-5 flex justify-between items-center">
-                    <button onClick={() => setIsModalOpen(true)} className='px-3 py-2 border bg-red-500 text-white rounded-full cursor-pointer font-semibold hover:bg-red-600'>
+                    <button onClick={() => setIsDeleteModalOpen(true)} className='px-3 py-2 border bg-red-500 text-white rounded-full cursor-pointer font-semibold hover:bg-red-600'>
                       Delete profile
                     </button>
 
@@ -933,29 +1002,58 @@ const handleDeleteForCareerProfile = (profileId) => {
 
 
                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='education'>
-                  <div className="head flex w-full px-4 flex-col">
-                    <div className="flex justify-between w-full"><div className="flex justify-between px-2 w-fit gap-5 items-center"><h1 className='font-semibold text-2xl'>Education</h1> <p className='text-green-400'>Add 10%</p></div>
-                      <h1 className='text-blue-700 font-semibold cursor-pointer flex flex-col' onClick={handleButtonClick1}>Add education</h1></div>
+      <div className="head flex w-full px-4 flex-col">
+        <div className="flex justify-between w-full">
+          <div className="flex justify-between px-2 w-fit gap-5 items-center">
+            <h1 className='font-semibold text-2xl'>Education</h1>
+            <p className='text-green-400'>Add 10%</p>
+          </div>
+          <h1 
+            className='text-blue-700 font-semibold cursor-pointer flex flex-col' 
+            onClick={handleButtonEducation}
+          >
+            Add education
+          </h1>
+        </div>
 
-                    {isEducationVisible && (
-                      <EducationForm onSave={handleEducationSaved} />
-                    )}
-
-                    {educationData && (
-                      <div className="flex justify-between px-2 w-fit gap-5 items-center mt-3">
-
-                        <div className='flex flex-col'>
-                          <p><strong>University/Institute:</strong> {educationData.universityOrInstitute}</p>
-                          <p><strong>Course:</strong> {educationData.course}</p>
-                          <p><strong>Specialization:</strong> {educationData.specialization}</p>
-                          <p><strong>Course Type:</strong> {educationData.courseType}</p>
-                          <p><strong>Course Duration:</strong> From {educationData.courseDurationFrom} To {educationData.courseDurationTo}</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  <p className='text-zinc-400 px-6'>Your qualifications help employers know your educational background</p>
-                </div>
+        {isEducationProfileVisible && (
+          <EducationForm 
+            onSave={handleEducationSaved}  
+            initialData={editingEducation}
+            onClose={() => setIsEducationProfileVisible(false)}
+          />
+        )}
+{ Array.isArray(educationProfiles) && educationProfiles.length > 0 && educationProfiles?.map((education) => (
+          <div key={education._id} className="flex justify-between px-2 w-full gap-5 items-start mt-5 border p-3 rounded-xl">
+            <div className="flex flex-col space-y-2">
+              <p><strong>Institution Name:</strong> {education.institutionName}</p>
+              <p><strong>Course Name:</strong> {education.courseName}</p>
+              <p><strong>Course Type:</strong> {education.courseType}</p>
+              <p><strong>Duration:</strong> {education.duration}</p>
+              <p><strong>Marks:</strong> {education.marks}</p>
+              <p><strong>Location:</strong> {education.location}</p>
+              <p><strong>Education Level:</strong> {education.education}</p>
+            </div>
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => handleEditEducation(education)}
+                className="text-blue-500 hover:text-blue-700"
+              >
+                <Pencil size={20} />
+              </button>
+              <button
+                onClick={() => handleDeleteEducation(token, education._id)}
+                className="text-red-500 hover:text-red-700"
+              >
+                <Trash2 size={20} />
+              </button>
+            </div>
+          </div>
+        ))}
+     
+      </div>
+      <p className='text-zinc-400 px-6'>Your qualifications help employers know your educational background</p>
+    </div>
 
 
                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='IT-skills'>
@@ -1014,25 +1112,61 @@ const handleDeleteForCareerProfile = (profileId) => {
                     )}
                   </div>
                 </div>
+
+
+
                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Projects'>
                   <div className="head flex w-full justify-between px-4">
-                    <div className="flex justify-between px-2 w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Projects</h1> <p className='text-green-400'>Add 8%</p></div>
-                    <h1 className='text-blue-700 font-semibold cursor-pointer'
-                      onClick={handleButtonClick3}>Add projects</h1>
+                    <div className="flex justify-between px-2 w-fit gap-5 items-center">
+                      <h1 className='font-semibold text-2xl'>Projects</h1>
+                      <p className='text-green-400'>Add 8%</p>
+                    </div>
+                    <h1
+                      className='text-blue-700 font-semibold cursor-pointer'
+                      onClick={handleButtonClick}
+                    >
+                      Add projects
+                    </h1>
                   </div>
-                  <p className='text-zinc-400 px-6'>Stand out to employers by adding details about projects that you have done so far</p>
+
+                  <p className='text-zinc-400 px-6'>
+                    Stand out to employers by adding details about projects that you have done so far
+                  </p>
+
                   {isProjectVisible && (
-                    <ProjectForm onSave={handleProjectSaved} />
+                    <ProjectForm
+                      onSave={handleProjectSaved}
+                      isEdit={!!editingProject}
+                      initialData={editingProject}
+                    />
                   )}
 
                   <div className="projects-list mt-6">
-                    {projectsData.length > 0 ? (
-                      projectsData.map((project, index) => (
+                    {projectProfiles.length > 0 ? (
+                      projectProfiles.map((project, index) => (
                         <div key={index} className="project-entry flex justify-between p-2 border-b flex-col pl-5">
-                          <p><strong>Project Title:</strong> {project.title}</p>
-                          <p><strong>Role:</strong> {project.role}</p>
-                          <p><strong>Technologies Used:</strong> {project.technologies.join(', ')}</p>
-                          <p><strong>Duration:</strong> {project.duration}</p>
+                          <div className="w-full flex justify-between items-start">
+                            <div className='w-full'>
+                              <p><strong>Project Title:</strong> {project.projectTitle}</p>
+                              <p><strong>Link:</strong> {project.projectLink}</p>
+                              <p><strong>Description:</strong> {project.projectDescription}</p>
+                              <p><strong>Skills Used:</strong> {project.projectSkills}</p>
+                            </div>
+                            <div className="flex items-center space-x-4">
+                              <button
+                                onClick={() => handleProjectEditClick(project)}
+                                className="text-blue-500 hover:text-blue-700"
+                              >
+                                <PencilIcon size={20} />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteProject(token, project._id)}
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                <Trash2Icon size={20} />
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       ))
                     ) : (
@@ -1066,6 +1200,88 @@ const handleDeleteForCareerProfile = (profileId) => {
                   )}
 
                 </div>
+
+                <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id="employment">
+      <div className="head flex w-full justify-between px-4">
+        <div className="flex justify-between px-2 w-fit gap-5 items-center">
+          <h1 className="font-semibold text-2xl">Employment</h1>
+          <p className="text-green-400 relative top-1">Add 15%</p>
+        </div>
+        <button
+          className="text-blue-700 font-semibold hover:text-blue-800"
+          onClick={handleButtonClickForEmp}
+        >
+          Add employment
+        </button>
+      </div>
+
+      {showEmp && (
+        <EmploymentForm 
+          initialData={selectEmpProfile}
+          onClose={handleFormClose}
+          onSubmitSuccess={handleFormSubmitSuccess}
+        />
+      )}
+
+      {empProfile && empProfile.length > 0 ? (
+        <div className="empProfile-display mt-6 px-4">
+          <ul className="space-y-4">
+            {empProfile.map((profile) => (
+              <div key={profile._id} className="border p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex justify-between">
+                  <div className="space-y-2 flex-1">
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-bold text-gray-900 text-lg">{profile.currentJobTitle}</h4>
+                      {profile.isCurrentEmp && (
+                        <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Current</span>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <p><span className="font-semibold">Type:</span> {profile.empType}</p>
+                        <p><span className="font-semibold">Experience:</span> {profile.totalExp} years</p>
+                        <p><span className="font-semibold">Salary:</span> {profile.currentSalary}</p>
+                        <p><span className="font-semibold">Notice Period:</span> {profile.noticePeriod}</p>
+                        <p><span className="font-semibold">Join Date:</span> {new Date(profile.joinDate).toLocaleDateString()}</p>
+                          <p><span className="font-semibold">Leave Date:</span> {new Date(profile.leaveDate).toLocaleDateString()}</p>
+                        <p><span className="font-semibold">Profile:</span> {profile.jobProfile}</p>
+                      </div>
+                     
+                        
+                    
+                    </div>
+                    <div className="-mt-2">
+                      <p><span className="font-semibold">Skills:</span> {profile.skill}</p>
+                      <p ><span className="font-semibold">Description:</span> {profile.jobDescription}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 ml-4">
+                    <button
+                      onClick={() => handleEditClick(profile)}
+                      className="text-blue-500 hover:text-blue-700 p-1"
+                      aria-label="Edit employment"
+                    >
+                      <PencilIcon size={20} />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteProfile(token, profile._id)}
+                      className="text-red-500 hover:text-red-700 p-1"
+                      aria-label="Delete employment"
+                    >
+                      <Trash2Icon size={20} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <p className="text-zinc-400 px-6 mt-4">
+          Add your work history to showcase your professional experience and career progression
+        </p>
+      )}
+    </div>
 
 
                 <div className="p-6 space-y-4 shadow-lg">
@@ -1193,65 +1409,65 @@ const handleDeleteForCareerProfile = (profileId) => {
 
 
                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Career-profile'>
-      <div className="head flex w-full justify-between px-4">
-        <div className="flex justify-between px-2 w-fit gap-5 items-center ">
-          <h1 className='font-semibold text-2xl'>Career Profile</h1> 
-          <p className='text-green-400'>Add 18%</p>
-        </div>
-        <h1 
-          className='text-blue-700 font-semibold cursor-pointer' 
-                 onClick={handleAddProfile}
-        
-        >
-          Add Career Profile
-        </h1>
-      </div>
+                  <div className="head flex w-full justify-between px-4">
+                    <div className="flex justify-between px-2 w-fit gap-5 items-center ">
+                      <h1 className='font-semibold text-2xl'>Career Profile</h1>
+                      <p className='text-green-400'>Add 18%</p>
+                    </div>
+                    <h1
+                      className='text-blue-700 font-semibold cursor-pointer'
+                      onClick={handleAddProfile}
 
-      {careerProfiles && careerProfiles.length > 0 ? (
-        <div className="mt-4 px-6">
-          <div className="p-4 rounded-lg border">
-            {careerProfiles.map((career, index) => (
-              <div key={index} className="mb-4 pb-4 border-b last:border-b-0 relative">
-                <div className="absolute right-0 top-0 flex space-x-2">
-                  <Pencil
-                    className="text-blue-500 cursor-pointer hover:text-blue-700"
-                    size={20}
-                    onClick={() => updateCareersProfile(career)}
-                  />
-                  <Trash2
-                    className="text-red-500 cursor-pointer hover:text-red-700"
-                    size={20}
-                    onClick={() => handleDeleteForCareerProfile(career._id)}
+                    >
+                      Add Career Profile
+                    </h1>
+                  </div>
+
+                  {careerProfiles && careerProfiles.length > 0 ? (
+                    <div className="mt-4 px-6">
+                      <div className="p-4 rounded-lg border">
+                        {careerProfiles.map((career, index) => (
+                          <div key={index} className="mb-4 pb-4 border-b last:border-b-0 relative">
+                            <div className="absolute right-0 top-0 flex space-x-2">
+                              <Pencil
+                                className="text-blue-500 cursor-pointer hover:text-blue-700"
+                                size={20}
+                                onClick={() => updateCareersProfile(career)}
+                              />
+                              <Trash2
+                                className="text-red-500 cursor-pointer hover:text-red-700"
+                                size={20}
+                                onClick={() => handleDeleteForCareerProfile(career._id)}
+                              />
+                            </div>
+                            {Object.entries(career).map(([key, value]) =>
+                              value && key !== '_id' ? (
+                                <div key={key} className="flex mt-2">
+                                  <span className="font-medium mr-2 capitalize">
+                                    {key.replace(/([A-Z])/g, ' $1').toLowerCase()}:
+                                  </span>
+                                  <span>{value}</span>
+                                </div>
+                              ) : null
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <p className='text-zinc-400 px-6'>
+                      Add details about your current and preferred career profile.
+                      This helps us personalise your job recommendations.
+                    </p>
+                  )}
+
+                  <CareerProfileModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onSubmit={handleSubmitForCareerProfile}
+                    initialData={currentProfile}
                   />
                 </div>
-                {Object.entries(career).map(([key, value]) =>
-                  value && key !== '_id' ? (
-                    <div key={key} className="flex mt-2">
-                      <span className="font-medium mr-2 capitalize">
-                        {key.replace(/([A-Z])/g, ' $1').toLowerCase()}:
-                      </span>
-                      <span>{value}</span>
-                    </div>
-                  ) : null
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <p className='text-zinc-400 px-6'>
-          Add details about your current and preferred career profile. 
-          This helps us personalise your job recommendations.
-        </p>
-      )}
-
-      <CareerProfileModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleSubmitForCareerProfile}
-        initialData={currentProfile}
-      />
-    </div>
 
 
 
@@ -1343,14 +1559,14 @@ const handleDeleteForCareerProfile = (profileId) => {
 
 
 
-        {isModalOpen && (
+        {isDeleteModalOpen && (
           <div className="modal fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center">
             <div className="modal-content bg-white p-6 rounded shadow-lg w-1/3 text-center">
               <h2 className="text-xl font-bold mb-4">Confirm Deletion</h2>
               <p className="text-gray-700 mb-6">Are you sure you want to delete your profile?</p>
               <div className="flex justify-center gap-4">
                 <button
-                  onClick={handleDelete}
+                  onClick={handleDeleteUser}
                   className="px-4 py-2 bg-red-500 text-white rounded-full font-semibold hover:bg-red-600">
                   Yes, Delete
                 </button>
