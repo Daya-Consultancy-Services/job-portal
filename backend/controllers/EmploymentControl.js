@@ -26,7 +26,7 @@ exports.createEmploymentProfile = async (req , res) => {
             !totalExp ||
             !currentJobTitle ||
             !joinDate ||
-            !leaveDate ||
+            // !leaveDate ||
             !currentSalary ||
             !skill ||
             !jobProfile ||
@@ -153,7 +153,7 @@ exports.updateEmploymentProfile = async (req , res) => {
         return res.status(200).json({
             success:true,
             message:"employprofile Updated Successfully !!",
-            employprofile,
+            data:employprofile,
         })
     } catch (error) {
         console.log(error)

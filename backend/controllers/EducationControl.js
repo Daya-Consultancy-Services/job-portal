@@ -62,7 +62,7 @@ exports.createEducationProfile = async (req , res) => {
         return res.status(200).json({
             success:true,
             message:"EducationProfiles Created Successfully",
-            educationProfiles,
+            data:educationProfiles,
         })
 
     } catch (error) {
@@ -136,7 +136,7 @@ exports.updateEducationProfile =  async (req , res) => {
         return res.status(200).json({
             success:true,
             message:"EducationProfiles Updated Successfully !!",
-            educationProfiles,
+            data:educationProfiles,
         })
 
     } catch (error) {

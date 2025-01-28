@@ -90,7 +90,7 @@ export function deleteEmploymentProfiles(token,empId,navigate){
         const toastId = toast.loading("Loading....")
         dispatch(setLoading(true))
         try {
-            const response = await apiConnector("DELETE", deleteEmploymentProfile, {empId}, {
+            const response = await apiConnector("DELETE", deleteEmploymentProfile, empId, {
                 Authorization: `Bearer ${token}`,
             });
 
