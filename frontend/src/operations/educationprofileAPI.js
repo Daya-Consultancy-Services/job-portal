@@ -127,6 +127,7 @@ export function fetchEducationProfile(token) {
 
 
             // Update Redux state with certificates
+            
             dispatch(setEducation(response.data.data));
 
             toast.success("EducationProfiles fetched successfully");

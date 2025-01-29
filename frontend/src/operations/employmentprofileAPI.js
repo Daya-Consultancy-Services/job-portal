@@ -85,12 +85,13 @@ export function updateEmploymentProfiles(token,empId,formdata){
     }
 }
 
-export function deleteEmploymentProfiles(token,empId,navigate){
+export function deleteEmploymentProfiles(token,empId){
     return async (dispatch) => {
+        console.log("token in api", token, "empId in api", empId);
         const toastId = toast.loading("Loading....")
         dispatch(setLoading(true))
         try {
-            const response = await apiConnector("DELETE", deleteEmploymentProfile, empId, {
+            const response = await apiConnector("DELETE", deleteEmploymentProfile, {empId}, {
                 Authorization: `Bearer ${token}`,
             });
 
@@ -100,8 +101,8 @@ export function deleteEmploymentProfiles(token,empId,navigate){
                 throw new Error(response.data.message);
             }
             
-            toast.success("EmploymentProfile deleted Successfully!");
             dispatch(fetchEmploymentProfile(token))
+            toast.success("EmploymentProfile deleted Successfully!");
         } catch (error) {
             console.error("EmploymentProfile_API error:", error);
             toast.error("Could not delete EmploymentProfile.");

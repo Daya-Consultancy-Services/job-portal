@@ -76,7 +76,7 @@ export function updateProjects(token,projectId,formdata){
     }
 }
 
-export function deleteProjects(token,projectId,navigate){
+export function deleteProjects(token,projectId){
     return async (dispatch) => {
         const toastId = toast.loading("Loading....")
         dispatch(setLoading(true))

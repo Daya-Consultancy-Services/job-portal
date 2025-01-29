@@ -122,7 +122,7 @@ exports.updateEmploymentProfile = async (req , res) => {
             !totalExp ||
             !currentJobTitle ||
             !joinDate ||
-            //!leaveDate ||
+            leaveDate === null && !isCurrentEmp ||
             !currentSalary ||
             !skill ||
             !jobProfile ||
@@ -132,6 +132,12 @@ exports.updateEmploymentProfile = async (req , res) => {
             return res.status(403).json({
                 success:false,
                 message:"All field are required too be filled"
+            });
+        }
+        if (!isCurrentEmp && leaveDate === null) {
+            return res.status(400).json({
+                success: false,
+                message: "leaveDate must be provided when changing to past employment"
             });
         }
         const Id = req.user.id
@@ -149,12 +155,12 @@ exports.updateEmploymentProfile = async (req , res) => {
         const employprofile = await employmentprofile.findByIdAndUpdate(
             empId,
             {
-                isCurrentEmp      : isCurrentEmp,
+                isCurrentEmp      : isCurrentEmp,  //changed here from isCurrentEmp? null : leaveData to only isCurrentEmp
                 empType           : empType,
                 totalExp          : totalExp,
                 currentJobTitle   : currentJobTitle,
                 joinDate          : joinDate,
-                leaveDate         : leaveDate,
+                leaveDate         :  leaveDate,  //changed here from isCurrentEmp? null : leaveData to only leaveData
                 currentSalary     : currentSalary,
                 skill             : skill,
                 jobProfile        : jobProfile,

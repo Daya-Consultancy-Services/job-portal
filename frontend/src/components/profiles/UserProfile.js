@@ -27,7 +27,7 @@ import { deleteSkillProfiles, fetchSkillProfiles } from '../../operations/skillp
 import { onlineProfile } from '../../operations/apis';
 import CareerProfileModal from './CareerProfileModal';
 import { deleteCareers, fetchCareers } from '../../operations/careerAPI';
-import { deleteProject, deleteProjects, fetchProject } from '../../operations/projectAPI';
+import {  deleteProjects, fetchProject } from '../../operations/projectAPI';
 import EmploymentForm from './EmployeementForm';
 import { deleteEmploymentProfiles, fetchEmploymentProfile } from '../../operations/employmentprofileAPI';
 import { deleteEducationProfiles, fetchEducationProfile } from '../../operations/educationprofileAPI';
@@ -121,13 +121,13 @@ function UserProfile() {
   useEffect(() => {
     if (educationProfiles) {
       // If educationProfiles is not an array, but contains the array
-      const profiles = Array.isArray(educationProfiles) ? 
-        educationProfiles : 
-        (educationProfiles.education || []);
+      // const profiles = Array.isArray(educationProfiles) ? 
+      //   educationProfiles : 
+      //   (educationProfiles.education || []);
         
       setSectionData(prevData => ({
         ...prevData,
-        education: profiles
+        education: educationProfiles
       }));
     }
   }, [educationProfiles]);
@@ -144,11 +144,8 @@ function UserProfile() {
   const [popupType, setPopupType] = useState('');
   const [newInput, setNewInput] = useState('');
   const [activeLink, setActiveLink] = useState('resume');
-  const [isEducationVisible, setEducationVisible] = useState(false);
-  const [educationData, setEducationData] = useState(null);
   const [isSkillsVisible, setSkillsVisible] = useState(false);
   const [skillsData, setSkillsData] = useState([]);
-  const [projectsData, setProjectsData] = useState([]);
   const [isPersonalDetailsVisible, setPersonalDetailsVisible] = useState(false);
   const [personalDetails, setPersonalDetails] = useState('');
   const [showExtraProfile, setShowExtraProfile] = useState(false);
@@ -157,6 +154,7 @@ function UserProfile() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [initialValue, setInitialValue] = useState("");
   const [openModal, setOpenModal] = useState(null);
+  const [openEmpForm, setOpenEmpForm] = useState(null);
 
 
 
@@ -231,7 +229,7 @@ function UserProfile() {
       ...prevData,
       ...updatedData,
     }));
-    setIsPopupOpen(false); // Close the popup after saving
+    setIsPopupOpen(false); 
   };
 
 
@@ -577,31 +575,32 @@ function UserProfile() {
   const [showEmp, setShowEmp] = useState(false);
   const [selectEmpProfile, setselectEmpProfile] = useState(null);
   const [empProfiles, setEmpProfiles] = useState();
+  const [selectedEmployment, setSelectedEmployment] = useState(null);  // Added missing state
+  const [showEmploymentForm, setShowEmploymentForm] = useState(false);
 
-  
-
-  const handleButtonClickForEmp = () => {
-    setShowEmp(true);
-    setselectEmpProfile(null);
+  const handleAddEmployment = () => {
+    setSelectedEmployment(null);
+    setShowEmploymentForm(true);
   };
 
-  const handleEditClickForEmp = (profile) => {
-    setselectEmpProfile(profile);
-    setShowEmp(true);
+  const handleEditEmployment = (employment) => {
+    setSelectedEmployment(employment);
+    setShowEmploymentForm(true);
   };
 
-  const handleDeleteProfile = async (token, profileId) => {
+  const handleFormClose = () => {
+    setShowEmploymentForm(false);
+    setSelectedEmployment(null);
+  };
+
+  const handleDeleteEmployment = async (token, profileId) => {
     try {
+      console.log("token", token, "emp id", profileId);
       await dispatch(deleteEmploymentProfiles(token, profileId));
       setEmpProfiles(empProfile.filter(profile => profile._id !== profileId));
     } catch (error) {
       console.error('Error deleting profile:', error);
     }
-  };
-
-  const handleFormClose = () => {
-    setShowEmp(false);
-    setselectEmpProfile(null);
   };
 
   const handleFormSubmitSuccess = async () => {
@@ -614,8 +613,13 @@ function UserProfile() {
       console.error('Error refreshing profiles:', error);
     }
   };
-
   // --------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+  // ---------------------------------------------------------------------------------------------------------------------
 
   const { register, handleSubmit } = useForm({
 
@@ -1023,7 +1027,7 @@ function UserProfile() {
             onClose={() => setIsEducationProfileVisible(false)}
           />
         )}
-{ Array.isArray(educationProfiles) && educationProfiles.length > 0 && educationProfiles?.map((education) => (
+{ educationProfiles.length > 0 && educationProfiles?.map((education) => (
           <div key={education._id} className="flex justify-between px-2 w-full gap-5 items-start mt-5 border p-3 rounded-xl">
             <div className="flex flex-col space-y-2">
               <p><strong>Institution Name:</strong> {education.institutionName}</p>
@@ -1209,62 +1213,59 @@ function UserProfile() {
         </div>
         <button
           className="text-blue-700 font-semibold hover:text-blue-800"
-          onClick={handleButtonClickForEmp}
+          onClick={handleAddEmployment}
         >
           Add employment
         </button>
       </div>
-
-      {showEmp && (
-        <EmploymentForm 
-          initialData={selectEmpProfile}
+      {showEmploymentForm && (
+        <EmploymentForm
+          initialData={selectedEmployment}
           onClose={handleFormClose}
           onSubmitSuccess={handleFormSubmitSuccess}
         />
       )}
-
       {empProfile && empProfile.length > 0 ? (
         <div className="empProfile-display mt-6 px-4">
           <ul className="space-y-4">
-            {empProfile.map((profile) => (
-              <div key={profile._id} className="border p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            {empProfile.map((employment) => (
+              <div key={employment._id} className="border p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex justify-between">
                   <div className="space-y-2 flex-1">
                     <div className="flex items-center gap-2">
-                      <h4 className="font-bold text-gray-900 text-lg">{profile.currentJobTitle}</h4>
-                      {profile.isCurrentEmp && (
+                      <h4 className="font-bold text-gray-900 text-lg">{employment.currentJobTitle}</h4>
+                      {employment.isCurrentEmp && (
                         <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Current</span>
                       )}
                     </div>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <p><span className="font-semibold">Type:</span> {profile.empType}</p>
-                        <p><span className="font-semibold">Experience:</span> {profile.totalExp} years</p>
-                        <p><span className="font-semibold">Salary:</span> {profile.currentSalary}</p>
-                        <p><span className="font-semibold">Notice Period:</span> {profile.noticePeriod}</p>
-                        <p><span className="font-semibold">Join Date:</span> {new Date(profile.joinDate).toLocaleDateString()}</p>
-                          <p><span className="font-semibold">Leave Date:</span> {new Date(profile.leaveDate).toLocaleDateString()}</p>
-                        <p><span className="font-semibold">Profile:</span> {profile.jobProfile}</p>
+                        <p><span className="font-semibold">Type:</span> {employment.empType}</p>
+                        <p><span className="font-semibold">Experience:</span> {employment.totalExp} years</p>
+                        <p><span className="font-semibold">Salary:</span> {employment.currentSalary}</p>
+                        <p><span className="font-semibold">Notice Period:</span> {employment.noticePeriod}</p>
+                        <p><span className="font-semibold">Join Date:</span> {new Date(employment.joinDate).toLocaleDateString()}</p>
+                        {!employment.isCurrentEmp && employment.leaveDate && (
+                          <p><span className="font-semibold">Leave Date:</span> {new Date(employment.leaveDate).toLocaleDateString()}</p>
+                        )}
+                        <p><span className="font-semibold">Profile:</span> {employment.jobProfile}</p>
                       </div>
-                     
-                        
-                    
                     </div>
                     <div className="-mt-2">
-                      <p><span className="font-semibold">Skills:</span> {profile.skill}</p>
-                      <p ><span className="font-semibold">Description:</span> {profile.jobDescription}</p>
+                      <p><span className="font-semibold">Skills:</span> {employment.skill}</p>
+                      <p><span className="font-semibold">Description:</span> {employment.jobDescription}</p>
                     </div>
                   </div>
                   <div className="flex gap-2 ml-4">
                     <button
-                      onClick={() => handleEditClick(profile)}
+                      onClick={() => handleEditEmployment(employment)}
                       className="text-blue-500 hover:text-blue-700 p-1"
                       aria-label="Edit employment"
                     >
                       <PencilIcon size={20} />
                     </button>
                     <button
-                      onClick={() => handleDeleteProfile(token, profile._id)}
+                      onClick={() => handleDeleteEmployment(token, employment._id)}
                       className="text-red-500 hover:text-red-700 p-1"
                       aria-label="Delete employment"
                     >
