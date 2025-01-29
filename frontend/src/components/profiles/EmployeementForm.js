@@ -17,7 +17,7 @@ const defaultFormData = {
   totalExp: '',
   currentJobTitle: '',
   joinDate: '',
-  leaveDate: '',
+  leaveDate: null,
   currentSalary: '',
   skill: '',
   jobProfile: '',
@@ -38,8 +38,8 @@ const EmploymentForm = ({ initialData = null, onClose }) => {
       setFormData({
         ...defaultFormData,
         ...initialData,
-        joinDate: initialData.joinDate?.split('T')[0] || '',
-        leaveDate: initialData.leaveDate?.split('T')[0] || ''
+        joinDate: initialData.joinDate ? new Date(initialData.joinDate).toISOString().split('T')[0] : '',
+        leaveDate: initialData.leaveDate ? new Date(initialData.leaveDate).toISOString().split('T')[0] : ''
       });
     }
   }, [initialData]);
@@ -49,42 +49,53 @@ const EmploymentForm = ({ initialData = null, onClose }) => {
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
-      ...(name === 'isCurrentEmp' && checked ? { leaveDate: '' } : {})
+      ...(name === 'isCurrentEmp' && checked ? { leaveDate: null } : {})
     }));
   };
 
   const validateForm = () => {
     const requiredFields = ['empType', 'currentJobTitle', 'joinDate', 'jobProfile'];
     const missingFields = requiredFields.filter(field => !formData[field]);
-    
+
     if (missingFields.length > 0) {
       setError(`Please fill in all required fields: ${missingFields.join(', ')}`);
       return false;
     }
-    
+
     if (!formData.isCurrentEmp && !formData.leaveDate) {
       setError('Please provide a leave date for past employment');
       return false;
     }
-    
+
     return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-    
+
     if (!validateForm()) {
       return;
     }
 
+    // const submissionData = {
+    //   ...formData,
+    //   leaveDate: formData.isCurrentEmp ? null : formData.leaveDate
+    // };
+
+     // Ensure we're not including any id fields in the submission data
+     const { _id,  ...submissionData } = {
+      ...formData,
+      leaveDate: formData.isCurrentEmp ? null : formData.leaveDate
+    };
+
     setLoading(true);
     try {
       if (isEditing) {
-        console.log("token", token, "id", initialData._id, "form data", formData)
-        await dispatch(updateEmploymentProfiles(token, initialData._id, formData));
+        console.log("token", token, "id", initialData._id, "form data", submissionData)
+        await dispatch(updateEmploymentProfiles(token, initialData._id, submissionData));
       } else {
-        await dispatch(createEmploymentProfiles(token, formData));
+        await dispatch(createEmploymentProfiles(token, submissionData));
       }
       onClose();
     } catch (error) {
@@ -209,8 +220,8 @@ const EmploymentForm = ({ initialData = null, onClose }) => {
                 Current Salary
               </label>
               <input
-                type="number"
-                id="currentSalary"
+                type="text" // Changed from "number" to "text"           
+                 id="currentSalary"
                 name="currentSalary"
                 min="0"
                 value={formData.currentSalary}

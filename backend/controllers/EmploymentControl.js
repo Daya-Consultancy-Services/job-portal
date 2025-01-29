@@ -39,20 +39,7 @@ exports.createEmploymentProfile = async (req , res) => {
                     message:"All field are required too be filled emp"
                 });
             }
-                // Validate leaveDate conditionally
-        if (isCurrentEmp && leaveDate !== null) {
-                return res.status(400).json({
-                        success: false,
-                        message: "leaveDate must be null for current employment"
-                });
-        }
-        
-        if (!isCurrentEmp && !leaveDate) {
-                return res.status(400).json({
-                        success: false,
-                        message: "leaveDate is required for past employment"
-                });
-        }
+      
         const Id = req.user.id
 
         const user = await User.findById(Id)
@@ -117,7 +104,7 @@ exports.updateEmploymentProfile = async (req , res) => {
         } = req.body
         if(
             !empId ||
-            !isCurrentEmp ||
+            // isCurrentEmp ||
             !empType ||
             !totalExp ||
             !currentJobTitle ||

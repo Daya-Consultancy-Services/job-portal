@@ -43,7 +43,8 @@ function UserProfile() {
     selectCareerProfiles: (state) => state.profile.careers,
     selectProjectProfiles: (state) => state.profile.projects,
     selectEmployeeProfiles: (state) => state.profile.empProfile,
-    selectEducationProfiles: (state) => state.profile.education
+    selectEducationProfiles: (state)=> state.profile.education
+    
 
   }), []);
 
@@ -119,12 +120,8 @@ function UserProfile() {
   }, [certificates]);
 
   useEffect(() => {
-    if (educationProfiles) {
-      // If educationProfiles is not an array, but contains the array
-      // const profiles = Array.isArray(educationProfiles) ? 
-      //   educationProfiles : 
-      //   (educationProfiles.education || []);
-        
+    if (educationProfiles ) {
+  
       setSectionData(prevData => ({
         ...prevData,
         education: educationProfiles
@@ -1020,15 +1017,9 @@ function UserProfile() {
           </h1>
         </div>
 
-        {isEducationProfileVisible && (
-          <EducationForm 
-            onSave={handleEducationSaved}  
-            initialData={editingEducation}
-            onClose={() => setIsEducationProfileVisible(false)}
-          />
-        )}
-{ educationProfiles.length > 0 && educationProfiles?.map((education) => (
-          <div key={education._id} className="flex justify-between px-2 w-full gap-5 items-start mt-5 border p-3 rounded-xl">
+       
+{ educationProfiles.length > 0 && educationProfiles.map((education, index) => (
+          <div key={index} className="flex justify-between px-2 w-full gap-5 items-start mt-5 border p-3 rounded-xl">
             <div className="flex flex-col space-y-2">
               <p><strong>Institution Name:</strong> {education.institutionName}</p>
               <p><strong>Course Name:</strong> {education.courseName}</p>
@@ -1057,6 +1048,13 @@ function UserProfile() {
      
       </div>
       <p className='text-zinc-400 px-6'>Your qualifications help employers know your educational background</p>
+      {isEducationProfileVisible && (
+          <EducationForm 
+            onSave={handleEducationSaved}  
+            initialData={editingEducation}
+            onClose={() => setIsEducationProfileVisible(false)}
+          />
+        )}
     </div>
 
 
