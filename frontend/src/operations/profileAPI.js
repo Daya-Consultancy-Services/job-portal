@@ -12,7 +12,7 @@ const {
     deleteresume,
     getresume,
     uploadimage,
-    getImage
+    getimage
     
 
 } = profilePoint
@@ -156,7 +156,7 @@ export function uploadProfileImage(token, imageFile) {
             }
             
             // Update Redux store with new image URL
-            dispatch(setImage(response.data.url));
+            dispatch(fetchProfileImage(token));
             toast.success("Profile image updated successfully");
             
         } catch (error) {
@@ -177,7 +177,7 @@ export function fetchProfileImage(token) {
         try {
             const response = await apiConnector(
                 "GET",
-                getImage,
+                getimage,
                 null,
                 {
                     Authorization: `Bearer ${token}`
@@ -191,7 +191,7 @@ export function fetchProfileImage(token) {
             // This dispatches the URL to the Redux store
             dispatch(setImage(response.data.url));
             
-            return response.data.url;
+
         } catch (error) {
             console.log("FETCH_PROFILE_IMAGE_API ERROR............", error);
             toast.error("Could not fetch profile image");

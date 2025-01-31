@@ -12,7 +12,7 @@ exports.updateProfile = async (req,res) => {
                 resumeHeadline,
                 profileSummary,
                 location,
-                image 
+                //image 
             } = req.body
 
             if( 
@@ -20,8 +20,8 @@ exports.updateProfile = async (req,res) => {
                 !contactNumber || 
                 !resumeHeadline ||
                 !profileSummary ||
-                !location || 
-                !image
+                !location 
+                //!image
             )
                 {
                     return res.status(400).json({
@@ -53,7 +53,7 @@ exports.updateProfile = async (req,res) => {
                 resumeHeadline,
                 profileSummary,
                 location,
-                image,
+                //image,
             };
             if (req.file) {
                 updatedProfile.resume = req.file.buffer;  // Assuming file is uploaded as buffer
@@ -322,8 +322,8 @@ exports.getProfileImage = async (req, res) => {
             });
         }
 
-        const profileDetail = await Profile.findById(userDetail.profile._id);
-        console.log(profileDetail);
+        const profileDetail = await Profile.findById(userDetail.profile).populate("image").exec();
+       
         if (!profileDetail) {
             return res.status(404).json({
                 success: false,
@@ -344,7 +344,6 @@ exports.getProfileImage = async (req, res) => {
             success: true,
             message: "Profile image URL fetched successfully",
             url: profileDetail.image
-            
         });
     } catch (error) {
         console.error('Error fetching profile image:', error);
@@ -355,3 +354,6 @@ exports.getProfileImage = async (req, res) => {
         });
     }
 };
+
+// ladukishorsubudhi44@gmail.com
+// ladu12345
