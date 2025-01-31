@@ -73,7 +73,7 @@ export function updateEducationProfiles(token,educationProfileId,formdata)
             }
 
             toast.success("educationProfile is updated Successfully")
-            dispatch(setEducation(token));
+            dispatch(fetchEducationProfile(token));
         } catch (error) {
             console.log("UPDATE Certificate API ERROR............", error)
             toast.error("Could Not Update Certificate")

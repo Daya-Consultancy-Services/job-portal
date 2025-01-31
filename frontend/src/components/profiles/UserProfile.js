@@ -17,7 +17,7 @@ import { deleteUser, logout, updateDetail } from '../../operations/userAPI';
 import ExtraProfile from './ExtraProfile';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { updateProfile } from '../../operations/profileAPI';
+import { updateProfile, uploadProfileImage } from '../../operations/profileAPI';
 import ProfileForm from './ProfileForm';
 import FORM_CONFIGS, { ModalComponent } from './Accomplishment';
 import { deleteOnlineProfiles, onlineProfiles, updateonlineProfiles, getOnlineProfiles } from '../../operations/onlineprofileAPI';
@@ -27,7 +27,7 @@ import { deleteSkillProfiles, fetchSkillProfiles } from '../../operations/skillp
 import { onlineProfile } from '../../operations/apis';
 import CareerProfileModal from './CareerProfileModal';
 import { deleteCareers, fetchCareers } from '../../operations/careerAPI';
-import {  deleteProjects, fetchProject } from '../../operations/projectAPI';
+import { deleteProjects, fetchProject } from '../../operations/projectAPI';
 import EmploymentForm from './EmployeementForm';
 import { deleteEmploymentProfiles, fetchEmploymentProfile } from '../../operations/employmentprofileAPI';
 import { deleteEducationProfiles, fetchEducationProfile } from '../../operations/educationprofileAPI';
@@ -43,8 +43,8 @@ function UserProfile() {
     selectCareerProfiles: (state) => state.profile.careers,
     selectProjectProfiles: (state) => state.profile.projects,
     selectEmployeeProfiles: (state) => state.profile.empProfile,
-    selectEducationProfiles: (state)=> state.profile.education
-    
+    selectEducationProfiles: (state) => state.profile.education
+
 
   }), []);
 
@@ -120,8 +120,8 @@ function UserProfile() {
   }, [certificates]);
 
   useEffect(() => {
-    if (educationProfiles ) {
-  
+    if (educationProfiles) {
+
       setSectionData(prevData => ({
         ...prevData,
         education: educationProfiles
@@ -226,7 +226,7 @@ function UserProfile() {
       ...prevData,
       ...updatedData,
     }));
-    setIsPopupOpen(false); 
+    setIsPopupOpen(false);
   };
 
 
@@ -520,7 +520,7 @@ function UserProfile() {
   // --------------------------------update and delete of education -------------------------------------------------
   const [isEducationProfileVisible, setIsEducationProfileVisible] = useState(false);
   const [editingEducation, setEditingEducation] = useState(null);
-  
+
   const handleButtonEducation = () => {
     setEditingEducation(null);
     setIsEducationProfileVisible(true);
@@ -651,18 +651,6 @@ function UserProfile() {
 
 
 
-
-
-
-
-
-
-
-
-  
-
-
-
   const handleButtonClick2 = () => {
     setSkillsVisible(!isSkillsVisible);
   };
@@ -692,14 +680,33 @@ function UserProfile() {
 
 
   const mainSectionRef = useRef(null);
-  const handleImageUpload = (event) => {
+  // const handleImageUpload = (event) => {
+    
+  //   const file = event.target.files[0];
+  //   if (file) {
+  //     const imageURL = URL.createObjectURL(file);
+  //     setProfileImage(imageURL);
+    
+  //   }
+  // };
+
+  const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
-      const imageURL = URL.createObjectURL(file);
-      setProfileImage(imageURL);
-      dispatch(updateProfile({ profileImage: imageURL }));
+        // Show temporary preview
+        const tempImageURL = URL.createObjectURL(file);
+        setProfileImage(tempImageURL);
+
+        try {
+            // Upload to server
+            await dispatch(uploadProfileImage(token, file));
+        } catch (error) {
+            console.error("Error uploading image:", error);
+            // Revert to previous image if upload fails
+            setProfileImage(user?.image || require("../../assets/default-profile.jpg"));
+        }
     }
-  };
+};
 
   const togglePopup = (field) => {
     setPopupType(field);
@@ -849,7 +856,7 @@ function UserProfile() {
               <div className="profile-info w-[65%] h-full  flex ">
                 <div className="profile h-full w-[30%]  flex items-center justify-center">
                   <div className="img-div h-[150px] w-[150px]  rounded-full overflow-hidden relative group">
-                    <img className="h-full w-full object-cover" src={user?.profileImage ? user.profileImage : require("../../assets/default-profile.jpg")} alt="image" />
+                    <img className="h-full w-full object-cover" src={profileImage ? profileImage : require("../../assets/default-profile.jpg")} alt="image" />
                     {/* Overlay for Upload */}
                     <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <label
@@ -1003,59 +1010,68 @@ function UserProfile() {
 
 
                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='education'>
-      <div className="head flex w-full px-4 flex-col">
-        <div className="flex justify-between w-full">
-          <div className="flex justify-between px-2 w-fit gap-5 items-center">
-            <h1 className='font-semibold text-2xl'>Education</h1>
-            <p className='text-green-400'>Add 10%</p>
-          </div>
-          <h1 
-            className='text-blue-700 font-semibold cursor-pointer flex flex-col' 
-            onClick={handleButtonEducation}
-          >
-            Add education
-          </h1>
-        </div>
+                  <div className="head flex w-full px-4 flex-col">
+                    <div className="flex justify-between w-full">
+                      <div className="flex justify-between px-2 w-fit gap-5 items-center">
+                        <h1 className='font-semibold text-2xl'>Education</h1>
+                        <p className='text-green-400'>Add 10%</p>
+                      </div>
+                      <h1
+                        className='text-blue-700 font-semibold cursor-pointer flex flex-col'
+                        onClick={handleButtonEducation}
+                      >
+                        Add education
+                      </h1>
+                    </div>
+                    <p className='text-zinc-400 px-2'>Your qualifications help employers know your educational background</p>
 
-       
-{ educationProfiles.length > 0 && educationProfiles.map((education, index) => (
-          <div key={index} className="flex justify-between px-2 w-full gap-5 items-start mt-5 border p-3 rounded-xl">
-            <div className="flex flex-col space-y-2">
-              <p><strong>Institution Name:</strong> {education.institutionName}</p>
-              <p><strong>Course Name:</strong> {education.courseName}</p>
-              <p><strong>Course Type:</strong> {education.courseType}</p>
-              <p><strong>Duration:</strong> {education.duration}</p>
-              <p><strong>Marks:</strong> {education.marks}</p>
-              <p><strong>Location:</strong> {education.location}</p>
-              <p><strong>Education Level:</strong> {education.education}</p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => handleEditEducation(education)}
-                className="text-blue-500 hover:text-blue-700"
-              >
-                <Pencil size={20} />
-              </button>
-              <button
-                onClick={() => handleDeleteEducation(token, education._id)}
-                className="text-red-500 hover:text-red-700"
-              >
-                <Trash2 size={20} />
-              </button>
-            </div>
-          </div>
-        ))}
-     
-      </div>
-      <p className='text-zinc-400 px-6'>Your qualifications help employers know your educational background</p>
-      {isEducationProfileVisible && (
-          <EducationForm 
-            onSave={handleEducationSaved}  
-            initialData={editingEducation}
-            onClose={() => setIsEducationProfileVisible(false)}
-          />
-        )}
-    </div>
+
+                    <div className="space-y-4">
+                      {educationProfiles.length > 0 ? (
+                        educationProfiles.map((education, index) => (
+                          <div key={index} className="flex justify-between px-2 w-full gap-5 items-start mt-5 border p-3 rounded-xl">
+                            <div className="flex flex-col space-y-2">
+                              <p><strong>Institution Name:</strong> {education.institutionName}</p>
+                              <p><strong>Course Name:</strong> {education.courseName}</p>
+                              <p><strong>Course Type:</strong> {education.courseType}</p>
+                              <p><strong>Duration:</strong> {education.duration}</p>
+                              <p><strong>Marks:</strong> {education.marks}</p>
+                              <p><strong>Location:</strong> {education.location}</p>
+                              <p><strong>Education Level:</strong> {education.education}</p>
+                            </div>
+                            <div className="flex items-center space-x-4">
+                              <button
+                                onClick={() => handleEditEducation(education)}
+                                className="text-blue-500 hover:text-blue-700"
+                              >
+                                <Pencil size={20} />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteEducation(token, education._id)}
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                <Trash2 size={20} />
+                              </button>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div></div>
+                      )}
+                      {isEducationProfileVisible && (
+                        <EducationForm
+                          onSave={handleEducationSaved}
+                          initialData={editingEducation}
+                          onClose={() => setIsEducationProfileVisible(false)}
+                        />
+                      )}
+                    </div>
+
+
+
+                  </div>
+
+                </div>
 
 
                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='IT-skills'>
@@ -1204,83 +1220,83 @@ function UserProfile() {
                 </div>
 
                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id="employment">
-      <div className="head flex w-full justify-between px-4">
-        <div className="flex justify-between px-2 w-fit gap-5 items-center">
-          <h1 className="font-semibold text-2xl">Employment</h1>
-          <p className="text-green-400 relative top-1">Add 15%</p>
-        </div>
-        <button
-          className="text-blue-700 font-semibold hover:text-blue-800"
-          onClick={handleAddEmployment}
-        >
-          Add employment
-        </button>
-      </div>
-      {showEmploymentForm && (
-        <EmploymentForm
-          initialData={selectedEmployment}
-          onClose={handleFormClose}
-          onSubmitSuccess={handleFormSubmitSuccess}
-        />
-      )}
-      {empProfile && empProfile.length > 0 ? (
-        <div className="empProfile-display mt-6 px-4">
-          <ul className="space-y-4">
-            {empProfile.map((employment) => (
-              <div key={employment._id} className="border p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex justify-between">
-                  <div className="space-y-2 flex-1">
-                    <div className="flex items-center gap-2">
-                      <h4 className="font-bold text-gray-900 text-lg">{employment.currentJobTitle}</h4>
-                      {employment.isCurrentEmp && (
-                        <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Current</span>
-                      )}
+                  <div className="head flex w-full justify-between px-4">
+                    <div className="flex justify-between px-2 w-fit gap-5 items-center">
+                      <h1 className="font-semibold text-2xl">Employment</h1>
+                      <p className="text-green-400 relative top-1">Add 15%</p>
                     </div>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <p><span className="font-semibold">Type:</span> {employment.empType}</p>
-                        <p><span className="font-semibold">Experience:</span> {employment.totalExp} years</p>
-                        <p><span className="font-semibold">Salary:</span> {employment.currentSalary}</p>
-                        <p><span className="font-semibold">Notice Period:</span> {employment.noticePeriod}</p>
-                        <p><span className="font-semibold">Join Date:</span> {new Date(employment.joinDate).toLocaleDateString()}</p>
-                        {!employment.isCurrentEmp && employment.leaveDate && (
-                          <p><span className="font-semibold">Leave Date:</span> {new Date(employment.leaveDate).toLocaleDateString()}</p>
-                        )}
-                        <p><span className="font-semibold">Profile:</span> {employment.jobProfile}</p>
-                      </div>
-                    </div>
-                    <div className="-mt-2">
-                      <p><span className="font-semibold">Skills:</span> {employment.skill}</p>
-                      <p><span className="font-semibold">Description:</span> {employment.jobDescription}</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-2 ml-4">
                     <button
-                      onClick={() => handleEditEmployment(employment)}
-                      className="text-blue-500 hover:text-blue-700 p-1"
-                      aria-label="Edit employment"
+                      className="text-blue-700 font-semibold hover:text-blue-800"
+                      onClick={handleAddEmployment}
                     >
-                      <PencilIcon size={20} />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteEmployment(token, employment._id)}
-                      className="text-red-500 hover:text-red-700 p-1"
-                      aria-label="Delete employment"
-                    >
-                      <Trash2Icon size={20} />
+                      Add employment
                     </button>
                   </div>
+                  {showEmploymentForm && (
+                    <EmploymentForm
+                      initialData={selectedEmployment}
+                      onClose={handleFormClose}
+                      onSubmitSuccess={handleFormSubmitSuccess}
+                    />
+                  )}
+                  {empProfile && empProfile.length > 0 ? (
+                    <div className="empProfile-display mt-6 px-4">
+                      <ul className="space-y-4">
+                        {empProfile.map((employment) => (
+                          <div key={employment._id} className="border p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                            <div className="flex justify-between">
+                              <div className="space-y-2 flex-1">
+                                <div className="flex items-center gap-2">
+                                  <h4 className="font-bold text-gray-900 text-lg">{employment.currentJobTitle}</h4>
+                                  {employment.isCurrentEmp && (
+                                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Current</span>
+                                  )}
+                                </div>
+                                <div className="grid grid-cols-2 gap-4 text-sm">
+                                  <div>
+                                    <p><span className="font-semibold">Type:</span> {employment.empType}</p>
+                                    <p><span className="font-semibold">Experience:</span> {employment.totalExp} years</p>
+                                    <p><span className="font-semibold">Salary:</span> {employment.currentSalary}</p>
+                                    <p><span className="font-semibold">Notice Period:</span> {employment.noticePeriod}</p>
+                                    <p><span className="font-semibold">Join Date:</span> {new Date(employment.joinDate).toLocaleDateString()}</p>
+                                    {!employment.isCurrentEmp && employment.leaveDate && (
+                                      <p><span className="font-semibold">Leave Date:</span> {new Date(employment.leaveDate).toLocaleDateString()}</p>
+                                    )}
+                                    <p><span className="font-semibold">Profile:</span> {employment.jobProfile}</p>
+                                  </div>
+                                </div>
+                                <div className="-mt-2">
+                                  <p><span className="font-semibold">Skills:</span> {employment.skill}</p>
+                                  <p><span className="font-semibold">Description:</span> {employment.jobDescription}</p>
+                                </div>
+                              </div>
+                              <div className="flex gap-2 ml-4">
+                                <button
+                                  onClick={() => handleEditEmployment(employment)}
+                                  className="text-blue-500 hover:text-blue-700 p-1"
+                                  aria-label="Edit employment"
+                                >
+                                  <PencilIcon size={20} />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteEmployment(token, employment._id)}
+                                  className="text-red-500 hover:text-red-700 p-1"
+                                  aria-label="Delete employment"
+                                >
+                                  <Trash2Icon size={20} />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : (
+                    <p className="text-zinc-400 px-6 mt-4">
+                      Add your work history to showcase your professional experience and career progression
+                    </p>
+                  )}
                 </div>
-              </div>
-            ))}
-          </ul>
-        </div>
-      ) : (
-        <p className="text-zinc-400 px-6 mt-4">
-          Add your work history to showcase your professional experience and career progression
-        </p>
-      )}
-    </div>
 
 
                 <div className="p-6 space-y-4 shadow-lg">

@@ -7,6 +7,7 @@ const userRoute = require("./routes/UserRoutes")
 const profileRoute = require("./routes/ProfileRoutes")
 const companyRoute = require("./routes/CompanyRoutes")
 const recruiterRoute = require("./routes/RecruiterRoutes");
+const fileUpload = require("express-fileupload")
 
 // database fetch
 const database = require("./config/database")
@@ -23,6 +24,10 @@ const PORT = process.env.PORT || 5000 ;
 app.use(express.json())
 app.use(cookieParser())
 
+app.use(fileUpload({
+
+    useTempFiles: true,
+}))
 app.use(
     cors({
         origin:"http://localhost:3000",

@@ -1,5 +1,6 @@
 const User = require("../models/User")
 const Profile = require("../models/Profile")
+const {uploadToCloudinary} = require("../config/cloudinary");
 require("dotenv").config();
 
 
@@ -235,6 +236,66 @@ exports.downloadResume = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Error while downloading resume",
+        });
+    }
+};
+
+exports.uploadProfileImage = async (req, res) => {
+    try {
+        const id = req.user.id; // Extract user ID from authenticated request
+       console.log("Uploading profile image", req.files);
+        if (!req.files) {
+            return res.status(400).json({
+                success: false,
+                message: "No image file provided",
+            });
+        }
+
+        // Upload the image to Cloudinary
+        const imageUrl = await uploadToCloudinary(req.files);
+
+        if (!imageUrl) {
+            return res.status(500).json({
+                success: false,
+                message: "Failed to upload image to Cloudinary",
+            });
+        }
+
+        // Find the user and their profile
+        const userDetail = await User.findById(id);
+
+        if (!userDetail) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        const profileDetail = await Profile.findById(userDetail.profile._id);
+
+        if (!profileDetail) {
+            return res.status(404).json({
+                success: false,
+                message: "Profile not found",
+            });
+        }
+
+        // Update the profile with the new image URL
+        profileDetail.image = imageUrl;
+        await profileDetail.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Profile image uploaded successfully!",
+            data: {
+                imageUrl: imageUrl,
+            },
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Error while uploading profile image",
         });
     }
 };

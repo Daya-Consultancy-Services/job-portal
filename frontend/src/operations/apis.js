@@ -12,7 +12,8 @@ export const profilePoint = {
     getAllDetails     : BASE_URL + "/profile/details",
     uploadresume      : BASE_URL + "/profile/upload-resume",
     deleteresume      : BASE_URL + "/profile/delete-resume",
-    getresume         : BASE_URL + "/profile/download-resume"
+    getresume         : BASE_URL + "/profile/download-resume",
+    uploadimage: BASE_URL + "/profile/upload-image"
 }
 
 export const personalDetail = {

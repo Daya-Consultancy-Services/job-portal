@@ -2,13 +2,15 @@ const express = require("express");
 const router = express.Router();
 const upload = require("../config/multer");
 
+
 const {
 
     updateProfile,
     getAllDetail,
     uploadResume,
     deleteResume,
-    downloadResume
+    downloadResume,
+    uploadProfileImage
 
 } = require("../controllers/Profilecontrol")
 
@@ -84,6 +86,9 @@ const {
 } = require("../controllers/EmploymentControl")
 
 const { auth , isJobseeker} = require("../middleware/auth");
+
+
+router.post('/upload-image', auth, isJobseeker, uploadProfileImage)
 
 router.put("/update",auth,isJobseeker,updateProfile)
 // {
@@ -223,6 +228,9 @@ router.post("/employprofile",auth,isJobseeker,createEmploymentProfile)
 router.put("/updateemployprofile",auth,isJobseeker,updateEmploymentProfile)
 router.delete("/deleteemployprofile",auth,isJobseeker,deleteEmploymentProfile)
 router.get("/getemployprofile",auth,isJobseeker,getEmploymentProfile)
+
+
+
 
 
 module.exports=router

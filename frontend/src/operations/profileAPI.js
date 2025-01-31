@@ -1,15 +1,17 @@
 import { toast } from "react-hot-toast"
 
-import { setUser,setResume,clearResume } from "../slices/userProfileSlice"
+import { setUser,setResume,clearResume,setImage } from "../slices/userProfileSlice"
 import { apiConnector } from "../services/apiConnector"
 import { profilePoint } from "../operations/apis"
+
 
 const {
 
     updateProfile_api,
     uploadresume,
     deleteresume,
-    getresume
+    getresume,
+    uploadimage
 
 } = profilePoint
 
@@ -122,6 +124,42 @@ export function downloadResume(token) {
         } catch (error) {
             console.log("Download Resume API Error", error);
             toast.error("Failed to download resume.");
+        }
+        toast.dismiss(toastId);
+    };
+}
+
+export function uploadProfileImage(token, imageFile) {
+    return async (dispatch) => {
+        const toastId = toast.loading("Uploading image...");
+        console.log("token ", token, "image file", imageFile);
+        try {
+            const formData = new FormData();
+            formData.append('image', imageFile);
+
+            const response = await apiConnector(
+                "POST",
+                uploadimage,
+                formData,
+                {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
+                }
+            );
+
+            console.log("UPLOAD_PROFILE_IMAGE API RESPONSE............", response);
+
+            if (!response.data.success) {
+                throw new Error(response.data.message);
+            }
+
+            // Update Redux store with new image URL
+            dispatch(setImage(response.data.data.image));
+            toast.success("Profile image updated successfully");
+
+        } catch (error) {
+            console.log("UPLOAD_PROFILE_IMAGE_API ERROR............", error);
+            toast.error("Could not upload profile image");
         }
         toast.dismiss(toastId);
     };

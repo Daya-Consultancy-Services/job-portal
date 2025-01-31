@@ -12,6 +12,10 @@ const initialState = {
     resume : null,
     loading: false,
     Onlineprofile : null,
+    image: null
+
+
+    
 }
 
 const profileSlice = createSlice({
@@ -55,6 +59,9 @@ const profileSlice = createSlice({
         clearResume(state) {
             state.resume = null; // Clear the resume when deleted
         },
+        setImage(state, action){
+            state.image = action.payload;  // Store image data if necessary
+        }
     },
 });
 
@@ -72,7 +79,8 @@ export const {
     setProject,
     setEmpProfile,
     setResume,
-    clearResume
+    clearResume,
+    setImage
 
 } = profileSlice.actions;
 export default profileSlice.reducer;
