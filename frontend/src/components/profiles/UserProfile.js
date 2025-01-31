@@ -17,7 +17,7 @@ import { deleteUser, logout, updateDetail } from '../../operations/userAPI';
 import ExtraProfile from './ExtraProfile';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { updateProfile, uploadProfileImage } from '../../operations/profileAPI';
+import { fetchProfileImage, updateProfile, uploadProfileImage } from '../../operations/profileAPI';
 import ProfileForm from './ProfileForm';
 import FORM_CONFIGS, { ModalComponent } from './Accomplishment';
 import { deleteOnlineProfiles, onlineProfiles, updateonlineProfiles, getOnlineProfiles } from '../../operations/onlineprofileAPI';
@@ -43,7 +43,9 @@ function UserProfile() {
     selectCareerProfiles: (state) => state.profile.careers,
     selectProjectProfiles: (state) => state.profile.projects,
     selectEmployeeProfiles: (state) => state.profile.empProfile,
-    selectEducationProfiles: (state) => state.profile.education
+    selectEducationProfiles: (state) => state.profile.education,
+    selectImage: (state) => state.profile.image,
+
 
 
   }), []);
@@ -57,6 +59,12 @@ function UserProfile() {
   const projectProfiles = useSelector(selectors.selectProjectProfiles);
   const empProfile = useSelector(selectors.selectEmployeeProfiles);
   const educationProfiles = useSelector(selectors.selectEducationProfiles);
+  const imageUrl = useSelector(selectors.selectImage);
+
+
+  
+
+ 
 
 
   const dispatch = useDispatch();
@@ -67,33 +75,31 @@ function UserProfile() {
     if (token && user) {
       if (certificates && certificates.length === 0) {
         dispatch(fetchCertificates(token));
-        console.log("cirtificate fetching")
       }
       if (!Onlineprofile || Object.keys(Onlineprofile).length === 0) {
         dispatch(getOnlineProfiles(token));
-        console.log("onlineprofile fetching")
       }
       if (skillProfiles && skillProfiles.length === 0) {
         dispatch(fetchSkillProfiles(token));
-        console.log("skillprofiles fetching")
       }
       if (careerProfiles && careerProfiles.length === 0) {
         dispatch(fetchCareers(token));
-        console.log("career fetching", careerProfiles)
       }
       if (projectProfiles && projectProfiles.length === 0) {
         dispatch(fetchProject(token));
-        console.log("projectProfiles fetching", projectProfiles)
 
       }
       if (empProfile && empProfile.length === 0) {
         dispatch(fetchEmploymentProfile(token));
-        console.log("empProfile fetching", empProfile)
       }
       if (educationProfiles && educationProfiles.length === 0) {
         dispatch(fetchEducationProfile(token));
-        console.log("educationProfile fetching", educationProfiles)
       }
+      if (token && user) {
+        dispatch(fetchProfileImage(token));
+        
+    }
+
 
     }
   }, [dispatch, token]);
@@ -680,15 +686,7 @@ function UserProfile() {
 
 
   const mainSectionRef = useRef(null);
-  // const handleImageUpload = (event) => {
-    
-  //   const file = event.target.files[0];
-  //   if (file) {
-  //     const imageURL = URL.createObjectURL(file);
-  //     setProfileImage(imageURL);
-    
-  //   }
-  // };
+  
 
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
@@ -700,9 +698,9 @@ function UserProfile() {
         try {
             // Upload to server
             await dispatch(uploadProfileImage(token, file));
+
         } catch (error) {
             console.error("Error uploading image:", error);
-            // Revert to previous image if upload fails
             setProfileImage(user?.image || require("../../assets/default-profile.jpg"));
         }
     }
@@ -856,7 +854,7 @@ function UserProfile() {
               <div className="profile-info w-[65%] h-full  flex ">
                 <div className="profile h-full w-[30%]  flex items-center justify-center">
                   <div className="img-div h-[150px] w-[150px]  rounded-full overflow-hidden relative group">
-                    <img className="h-full w-full object-cover" src={profileImage ? profileImage : require("../../assets/default-profile.jpg")} alt="image" />
+                    <img className="h-full w-full object-cover" src={imageUrl || require("../../assets/default-profile.jpg")} alt="image" />
                     {/* Overlay for Upload */}
                     <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <label

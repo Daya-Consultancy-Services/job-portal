@@ -44,7 +44,6 @@ const profileSlice = createSlice({
             state.careers = action.payload
         },
         setEducation(state,action){
-            console.log("Education Payload:", action.payload);
             state.education = action.payload
         },
         setProject(state,action){

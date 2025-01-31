@@ -10,7 +10,8 @@ const {
     uploadResume,
     deleteResume,
     downloadResume,
-    uploadProfileImage
+    uploadProfileImage,
+    getProfileImage,
 
 } = require("../controllers/Profilecontrol")
 
@@ -20,7 +21,7 @@ const {
     updatePersonalDetail,
     deletePeronalDetail
 
-} = require("../controllers/PersonalDetailcontrol") 
+} = require("../controllers/PersonalDetailcontrol")
 
 const {
 
@@ -28,7 +29,7 @@ const {
     updateOnlineProfile,
     deleteOnlineProfile,
     getOnlineProfile
-    
+
 } = require("../controllers/OnlineProfileControl")
 
 const {
@@ -37,7 +38,7 @@ const {
     updateCertificate,
     deleteCertificate,
     getCertificates
-    
+
 } = require("../controllers/CertificateControl")
 
 const {
@@ -48,7 +49,7 @@ const {
     getSkillProfile
 
 } = require("../controllers/SkillsControl")
-    
+
 
 const {
 
@@ -85,12 +86,13 @@ const {
 
 } = require("../controllers/EmploymentControl")
 
-const { auth , isJobseeker} = require("../middleware/auth");
+const { auth, isJobseeker } = require("../middleware/auth");
 
 
-router.post('/upload-image', auth, isJobseeker, uploadProfileImage)
+router.post('/upload-image', auth, isJobseeker, uploadProfileImage);
+router.get("/get-profile-image", auth, isJobseeker, getProfileImage);
 
-router.put("/update",auth,isJobseeker,updateProfile)
+router.put("/update", auth, isJobseeker, updateProfile);
 // {
 //     "about":"developer",
 //     "contactNumber":"070787870",
@@ -101,8 +103,8 @@ router.put("/update",auth,isJobseeker,updateProfile)
 //     "image":"link"
 // }
 
-router.get("/details",auth,getAllDetail)
-router.post("/upload-resume",auth,isJobseeker,
+router.get("/details", auth, getAllDetail)
+router.post("/upload-resume", auth, isJobseeker,
     upload.single("resume"),
     uploadResume
 );
@@ -111,11 +113,11 @@ router.get("/download-resume", auth, isJobseeker, downloadResume);
 
 
 // Personal Details routes***********************************************************************************************
-router.post("/personaldetail",auth,createPersonalDetail)
+router.post("/personaldetail", auth, createPersonalDetail)
 
-router.put("/updatepersonaldetail",auth,updatePersonalDetail)
+router.put("/updatepersonaldetail", auth, updatePersonalDetail)
 
-router.put("/deletepersonaldetail",auth,deletePeronalDetail)
+router.put("/deletepersonaldetail", auth, deletePeronalDetail)
 
 // {
 //     "gender":"male",
@@ -128,7 +130,7 @@ router.put("/deletepersonaldetail",auth,deletePeronalDetail)
 // }
 
 //Online Profile routes***************************************************************************************************
-router.post("/onlineprofile",auth,isJobseeker,createOnlineProfile)
+router.post("/onlineprofile", auth, isJobseeker, createOnlineProfile)
 
 // {
 //     "instagramLink":"www.instagram.com",
@@ -137,52 +139,52 @@ router.post("/onlineprofile",auth,isJobseeker,createOnlineProfile)
 //     "linkedinLink":"www.linkedIN.com"
 // }
 
-router.put("/updateonlineprofile",auth,isJobseeker,updateOnlineProfile)
+router.put("/updateonlineprofile", auth, isJobseeker, updateOnlineProfile)
 
-router.put("/deleteonlineprofile",auth, isJobseeker,deleteOnlineProfile)
-router.get("/getonlineprofile",auth,isJobseeker,getOnlineProfile)
+router.put("/deleteonlineprofile", auth, isJobseeker, deleteOnlineProfile)
+router.get("/getonlineprofile", auth, isJobseeker, getOnlineProfile)
 
-        // the body will have the 
-        // {
-        //     "instagramLink": true,
-        //     "facebookLink": true
-        // }
+// the body will have the 
+// {
+//     "instagramLink": true,
+//     "facebookLink": true
+// }
 //Certificate Routes ******************************************************************************************************
-router.post("/certificate",auth,isJobseeker,createCertificate)
+router.post("/certificate", auth, isJobseeker, createCertificate)
 // {
 //     "certificateName":"full Stack",
 //     "certificateLink":"link",
 //     "certificateDescription":"MERNStack"
 // }
-router.put("/updatecertificate",auth,isJobseeker,updateCertificate)
+router.put("/updatecertificate", auth, isJobseeker, updateCertificate)
 
-router.delete("/deletecertificate",auth,isJobseeker,deleteCertificate)
-router.get("/getcertificate",auth,isJobseeker,getCertificates);
+router.delete("/deletecertificate", auth, isJobseeker, deleteCertificate)
+router.get("/getcertificate", auth, isJobseeker, getCertificates);
 
 //SkillProfile Routes*******************************************************************************************************
-router.post("/skillprofile",auth,isJobseeker,createSkillProfile)
+router.post("/skillprofile", auth, isJobseeker, createSkillProfile)
 // {
 //     "skillName":"React",
 //     "experience":"1year"
 // }
-router.put("/updateskillprofile",auth,isJobseeker,updateSkillProfile)
-router.delete("/deleteskillprofile",auth,isJobseeker,deleteSkillProfile)
-router.get("/getskillprofile",auth,isJobseeker,getSkillProfile)
+router.put("/updateskillprofile", auth, isJobseeker, updateSkillProfile)
+router.delete("/deleteskillprofile", auth, isJobseeker, deleteSkillProfile)
+router.get("/getskillprofile", auth, isJobseeker, getSkillProfile)
 
 //ProjectProfile Routes*****************************************************************************************************
-router.post("/project",auth,isJobseeker,createProject)
+router.post("/project", auth, isJobseeker, createProject)
 // {
 //     "projectTitle":"todo app",
 //     "projectLink":"todo.com",
 //     "projectDescription":"Simple Js app with crud operation",
 //     "projectSkills":["js","mysql"]
 // }
-router.put("/updateproject",auth,isJobseeker,updateProject)
-router.delete("/deleteproject",auth,isJobseeker,deleteProject)
-router.get("/getproject",auth,isJobseeker,getProject)
+router.put("/updateproject", auth, isJobseeker, updateProject)
+router.delete("/deleteproject", auth, isJobseeker, deleteProject)
+router.get("/getproject", auth, isJobseeker, getProject)
 
 //CareerProfile**************************************************************************************************************
-router.post("/careerprofile",auth,isJobseeker,createCareer)
+router.post("/careerprofile", auth, isJobseeker, createCareer)
 // {
 //             "industryType":"IT",
 //             "department":"Software Engineer",
@@ -191,12 +193,12 @@ router.post("/careerprofile",auth,isJobseeker,createCareer)
 //             "jobLocation":"Mumbai",
 //             "salary":"40k"
 // }
-router.put("/updatecareer",auth,isJobseeker,updateCareer)
-router.delete("/deletecareer",auth,isJobseeker,deleteCareer)
-router.get("/getcareer",auth,isJobseeker,getCareer)
+router.put("/updatecareer", auth, isJobseeker, updateCareer)
+router.delete("/deletecareer", auth, isJobseeker, deleteCareer)
+router.get("/getcareer", auth, isJobseeker, getCareer)
 
 //educationProfile***********************************************************************************************************
-router.post("/educationprofile",auth,isJobseeker,createEducationProfile)
+router.post("/educationprofile", auth, isJobseeker, createEducationProfile)
 // {
 //     "educationName":"MCA",
 //     "institutionName":"PICA",
@@ -207,11 +209,11 @@ router.post("/educationprofile",auth,isJobseeker,createEducationProfile)
 //     "location":"Gujarat",
 //     "education":"Post-graduation"
 // }
-router.put("/updateeducation",auth,isJobseeker,updateEducationProfile)
-router.delete("/deleteeducation",auth,isJobseeker,deleteEducationProfile)
-router.get("/geteducation",auth,isJobseeker,getEducationProfile)
+router.put("/updateeducation", auth, isJobseeker, updateEducationProfile)
+router.delete("/deleteeducation", auth, isJobseeker, deleteEducationProfile)
+router.get("/geteducation", auth, isJobseeker, getEducationProfile)
 //employmentprofile************************************************************************************************************
-router.post("/employprofile",auth,isJobseeker,createEmploymentProfile)
+router.post("/employprofile", auth, isJobseeker, createEmploymentProfile)
 // {
 //     "isCurrentEmp":"true",
 //     "empType":"Fulltime",
@@ -225,15 +227,15 @@ router.post("/employprofile",auth,isJobseeker,createEmploymentProfile)
 //     "noticePeriod":"30days",
 //     "jobDescription":"Web developer"
 // }
-router.put("/updateemployprofile",auth,isJobseeker,updateEmploymentProfile)
-router.delete("/deleteemployprofile",auth,isJobseeker,deleteEmploymentProfile)
-router.get("/getemployprofile",auth,isJobseeker,getEmploymentProfile)
+router.put("/updateemployprofile", auth, isJobseeker, updateEmploymentProfile)
+router.delete("/deleteemployprofile", auth, isJobseeker, deleteEmploymentProfile)
+router.get("/getemployprofile", auth, isJobseeker, getEmploymentProfile)
 
 
 
 
 
-module.exports=router
+module.exports = router
 
 
 // {
