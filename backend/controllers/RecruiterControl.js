@@ -16,11 +16,11 @@ exports.updateRecruiterDetail = async (req,res) => {
         } = req.body
 
         if(
-            !name,
-            !email,
-            !password,
-            !contactNumber,
-            !image,
+            !name ||
+            !email ||
+            !password ||
+            !contactNumber ||
+            !image ||
             !description
           
         )
@@ -34,17 +34,35 @@ exports.updateRecruiterDetail = async (req,res) => {
         const Id = req.user.id
         
         const compId = await Company.findById(Id);
-        const recruiterDetail = await Recruiter.findByIdAndUpdate(compId.recruiter)
+        if (!compId) {
+            return res.status(404).json({
+                success: false,
+                message: "Company not found",
+            });
+        }
 
+        const recruiterId  = compId.recruiter._id
+        if (!recruiterId) {
+            return res.status(404).json({
+                success: false,
+                message: "recruiter not found",
+            });
+        }
+
+       
+       
         const hashedPassword = await bcrypt.hash(password,10);
-
-        recruiterDetail.name = name
-        recruiterDetail.email = email
-        recruiterDetail.password = hashedPassword
-        recruiterDetail.contactNumber = contactNumber
-        recruiterDetail.image = image
-        recruiterDetail.description = description
-        recruiterDetail.companyId = compId._id
+        const updateRecruiterDetail = {
+            name,
+            email,
+            password:hashedPassword,
+            contactNumber,
+            image,
+            description,
+            companyId:compId._id
+        };
+        
+        const recruiterDetail = await Recruiter.findByIdAndUpdate(recruiterId,updateRecruiterDetail,{new:true})
 
         await recruiterDetail.save();
 
@@ -79,7 +97,7 @@ exports.getAlldetail = async (req, res) => {
         return res.status(200).json({
             success:true,
             message:"All recruiter Detail",
-            recruiterDetail: recruiterDetail.recruiter,
+            data: recruiterDetail.recruiter,
         })
     } catch (error) {
         console.log(error)

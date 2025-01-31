@@ -3,6 +3,7 @@ const Recruiter = require("../models/recruiter");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
 
 exports.companySignup = async (req,res) => {
@@ -45,16 +46,6 @@ exports.companySignup = async (req,res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password,10);
-
-        const createRecruiter = await Recruiter.create({
-            name:null,
-            email:null,
-            password:null,
-            contactNumber:null,
-            image:null,
-            //companyId:company._id,
-            description:null,
-        });
 
         const company = await Company.create({
             name,
@@ -278,5 +269,80 @@ exports.getAllDetailCompany = async (req,res) => {
             success:false,
             message:"Error while Fetching Company Details"
         });
+    }
+}
+
+exports.createRecruiter = async (req,res) => {
+    try {
+        const companyId =  req.user.id
+        const {
+            name,
+            email,
+            password,
+            contactNumber,
+            image,
+            description,
+            
+        } = req.body
+
+        if(
+            !name ||
+            !email ||
+            !password ||
+            !contactNumber ||
+            !image ||
+            !description
+          
+        )
+        {
+            return res.status(400).json({
+                success:false,
+                message:"All field are Required"
+            });
+        }
+        //check if Recruiter is already exist by emailaddress
+        const existRecruiter = await Recruiter.findOne({email});
+        if(existRecruiter){
+            return res.status(400).json({
+                success:false,
+                message:"Recruiter already Exist"
+            })
+        }
+
+        const hashedPassword = await bcrypt.hash(password,10); // hassing password for recruiter
+        const compId = await Company.findById(companyId)  //finding company Id and pushing it to recruiter
+
+        const createRecruiter = await Recruiter.create({
+            name,
+            email,
+            password:hashedPassword,
+            contactNumber,
+            image,
+            companyId:compId._id,
+            description
+        });
+
+        compId.recruiter =  createRecruiter._id
+        await compId.save();
+
+        return res.status(200).json({
+            success:true,
+            message:"Recruiter Register Successfully",
+            createRecruiter,
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success:false,
+            message:"Recruiter can't register, Try again"
+        });
+    }
+}
+
+exports.loginRecruiter = async(req,res) => {
+    try {
+        const{email,password} = req.body
+    } catch (error) {
+        
     }
 }

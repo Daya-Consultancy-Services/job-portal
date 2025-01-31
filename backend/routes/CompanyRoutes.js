@@ -8,7 +8,8 @@ const {
     loginCompany,
     updateCompanyDetail,
     deleteCompany,
-    getAllDetailCompany
+    getAllDetailCompany,
+    createRecruiter
 
 } = require("../controllers/Companycontrol") 
 
@@ -49,5 +50,6 @@ router.delete("/delete",auth,isCompany,deleteCompany); // delete the company pro
 
 
 router.get("/companydetails",auth,getAllDetailCompany);  // get all the detail for the company with the recruiter details
+router.post("/createrecruiter",auth,isCompany,createRecruiter)
 
 module.exports = router

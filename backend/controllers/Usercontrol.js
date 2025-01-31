@@ -182,7 +182,7 @@ exports.updateDetail = async(req,res) => {
         // find the user 
         // const user = await User.findById(req.user.id);
         const userDetail = await User.findByIdAndUpdate(
-            req.user.id,
+            userID,
             { 
                 firstName: firstName,
                 lastName : lastName,
