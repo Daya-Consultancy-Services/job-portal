@@ -6,7 +6,9 @@ import { X } from 'lucide-react';
 const EducationForm = ({ onSave, initialData = null }) => {
     const dispatch = useDispatch();
     const {token} = useSelector((state) => state.profile);
-    const [educationData, setEducationData] = useState({
+
+   
+    const [educationData, setEducationData] = useState([{
         
         institutionName: '',
         courseName: '',
@@ -15,7 +17,7 @@ const EducationForm = ({ onSave, initialData = null }) => {
         marks: '',
         location: '',
         education: ''
-    });
+    }]);
 
     useEffect(() => {
         if (initialData) {

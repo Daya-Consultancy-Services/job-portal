@@ -1,5 +1,6 @@
 const User = require("../models/User")
 const Profile = require("../models/Profile")
+const {uploadToCloudinary} = require("../config/cloudinary");
 require("dotenv").config();
 
 
@@ -235,6 +236,122 @@ exports.downloadResume = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Error while downloading resume",
+        });
+    }
+};
+
+
+
+exports.uploadProfileImage = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        
+        // Debug logging
+        console.log('Request files:', req.files);
+        console.log('Request file:', req.file);
+        
+        // Check both req.files.image and req.file
+        const file = req.files?.image || req.file;
+        
+        if (!file) {
+            return res.status(400).json({
+                success: false,
+                message: 'No file uploaded'
+            });
+        }
+
+        // Upload to Cloudinary
+        const cloudinaryUrl = await uploadToCloudinary(file);
+        
+        if (!cloudinaryUrl) {
+            return res.status(400).json({
+                success: false,
+                message: 'Upload to Cloudinary failed'
+            });
+        }
+
+        // Find user and their profile
+        const userDetail = await User.findById(userId);
+        
+        if (!userDetail) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        const profileDetail = await Profile.findById(userDetail.profile._id);
+
+        if (!profileDetail) {
+            return res.status(404).json({
+                success: false,
+                message: "Profile not found"
+            });
+        }
+
+        // Update profile with new image URL
+        profileDetail.image = cloudinaryUrl;
+        await profileDetail.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Profile image uploaded successfully",
+            url: cloudinaryUrl 
+        });
+
+    } catch (error) {
+        console.error('Profile upload error:', error);
+        return res.status(500).json({ 
+            success: false,
+            message: "Error uploading profile image",
+            error: error.message 
+        });
+    }
+};
+
+exports.getProfileImage = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        // Find user and populate profile
+        const userDetail = await User.findById(userId);
+        if (!userDetail) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        const profileDetail = await Profile.findById(userDetail.profile._id);
+        console.log(profileDetail);
+        if (!profileDetail) {
+            return res.status(404).json({
+                success: false,
+                message: "Profile not found"
+            });
+        }
+
+        // Check if image exists
+        if (!profileDetail.image) {
+            return res.status(404).json({
+                success: false,
+                message: "No profile image found"
+            });
+        }
+
+        // Return the image URL
+        return res.status(200).json({
+            success: true,
+            message: "Profile image URL fetched successfully",
+            url: profileDetail.image
+            
+        });
+    } catch (error) {
+        console.error('Error fetching profile image:', error);
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching profile image",
+            error: error.message
         });
     }
 };

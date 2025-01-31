@@ -118,7 +118,7 @@ const ProfileForm = ({ isOpen, onClose, onSave, popupType, initialValue }) => {
             </label>
             <input
               id="image"
-              type="text"
+              type="file"
               placeholder="Enter image"
               {...register("image", { required: true })}
               className="border p-2 rounded w-full"

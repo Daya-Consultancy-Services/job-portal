@@ -1,15 +1,19 @@
 import { toast } from "react-hot-toast"
 
-import { setUser,setResume,clearResume } from "../slices/userProfileSlice"
+import { setUser,setResume,clearResume,setImage } from "../slices/userProfileSlice"
 import { apiConnector } from "../services/apiConnector"
 import { profilePoint } from "../operations/apis"
+
 
 const {
 
     updateProfile_api,
     uploadresume,
     deleteresume,
-    getresume
+    getresume,
+    uploadimage,
+    getImage
+    
 
 } = profilePoint
 
@@ -124,5 +128,76 @@ export function downloadResume(token) {
             toast.error("Failed to download resume.");
         }
         toast.dismiss(toastId);
+    };
+}
+
+
+export function uploadProfileImage(token, imageFile) {
+    return async (dispatch) => {
+        const toastId = toast.loading("Uploading image...");
+     
+        try {
+            const formData = new FormData();
+            formData.append('image', imageFile);
+            const response = await apiConnector(
+                "POST",
+                uploadimage,
+                formData,
+                {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
+                }
+            );
+            console.log("UPLOAD_PROFILE_IMAGE API RESPONSE............", response);
+            
+            // Check if we have a successful response with URL
+            if (!response.data.url) {
+                throw new Error("No image URL received from server");
+            }
+            
+            // Update Redux store with new image URL
+            dispatch(setImage(response.data.url));
+            toast.success("Profile image updated successfully");
+            
+        } catch (error) {
+            console.log("UPLOAD_PROFILE_IMAGE_API ERROR............", error);
+            toast.error("Could not upload profile image");
+            throw error; // Re-throw to handle in the component
+        } finally {
+            toast.dismiss(toastId);
+        }
+    };
+}
+
+
+// This is already implemented in your action creators
+export function fetchProfileImage(token) {
+    return async (dispatch) => {
+        const toastId = toast.loading("Fetching profile image...");
+        try {
+            const response = await apiConnector(
+                "GET",
+                getImage,
+                null,
+                {
+                    Authorization: `Bearer ${token}`
+                }
+            );
+            
+            if (!response.data.url) {
+                throw new Error("No image URL received from server");
+            }
+            
+            // This dispatches the URL to the Redux store
+            dispatch(setImage(response.data.url));
+            
+            return response.data.url;
+        } catch (error) {
+            console.log("FETCH_PROFILE_IMAGE_API ERROR............", error);
+            toast.error("Could not fetch profile image");
+            throw error;
+        } finally {
+            toast.dismiss(toastId);
+        }
     };
 }
