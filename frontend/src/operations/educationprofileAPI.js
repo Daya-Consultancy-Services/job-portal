@@ -42,7 +42,7 @@ export function createEducationProfiles(
                 throw new Error(response.data.message);
             }
             toast.success("EducationProfile Created Successfully!!!!!!!!");
-            dispatch(setEducation(token));
+            dispatch(fetchEducationProfile(token));
         } catch (error) {
             console.error("Error Creating EducationProfile:", error);
             toast.error("Failed to create EducationProfile, Please try again.");
@@ -102,7 +102,7 @@ export function deleteEducationProfiles(token,educationProfileId,navigate)
             }
             
             toast.success("EducationProfile deleted Successfully!");
-            dispatch(setEducation(token));
+            dispatch(fetchEducationProfile(token));
         } catch (error) {
             console.error("Certificate_API error:", error);
             toast.error("Could not delete Certificate.");
