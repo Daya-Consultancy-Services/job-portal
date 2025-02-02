@@ -273,17 +273,17 @@ exports.getOnlineProfile = async(req , res) => {
     try {
         const id = req.user.id;
         const user = await User.findById(id)
-        if (!user || !user.profile) {
+        if (!user) {
             return res.status(404).json({
                 success: false,
-                message: "User or profile not found",
+                message: "User not found",
             });
         }
         const profile  = await Profile.findById(user.profile).populate("onlineProfiles").exec();
-        if (!profile || !profile.onlineProfiles) {
+        if (!profile) {
             return res.status(404).json({
                 success: false,
-                message: "Online profiles not found",
+                message: "Profile not found",
             });
         }
      
