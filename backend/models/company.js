@@ -17,7 +17,7 @@ const companySchema = new mongoose.Schema({
     },
     role: {  // Add this to the schema
         type: String,
-        enum: ["jobseeker", "company", "admin"],  // Enums will limit the possible roles
+        enum: ["jobseeker", "company", "admin","recruiter"],  // Enums will limit the possible roles
         required: true,
     },
     website:{

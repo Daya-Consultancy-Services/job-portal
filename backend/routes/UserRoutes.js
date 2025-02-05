@@ -10,7 +10,9 @@ const {
     login,
     updateDetail,
     deleteUser,
-    getalldetail
+    getalldetail,
+    getJobs,
+    applyJobs
     
 } = require("../controllers/Usercontrol")
 
@@ -28,6 +30,10 @@ router.put("/update",auth,isJobseeker,updateDetail)
 router.delete("/delete",auth,isJobseeker, deleteUser)
 
 router.get("/getdetail",auth,isJobseeker,getalldetail)
+router.get("/getjobs",getJobs)
+
+router.post("/applyjob",auth,isJobseeker,applyJobs)
+
 
 
 module.exports = router

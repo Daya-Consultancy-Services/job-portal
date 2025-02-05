@@ -9,12 +9,14 @@ const {
     updateCompanyDetail,
     deleteCompany,
     getAllDetailCompany,
-    createRecruiter
+    createRecruiter,
+    updateRecruiterDetail,
+    getAlldetail
 
 } = require("../controllers/Companycontrol") 
 
 
-const { auth , isCompany} = require("../middleware/auth");
+const { auth , isCompany,isRecruiter} = require("../middleware/auth");
 
 
 //For the Company controller
@@ -50,6 +52,10 @@ router.delete("/delete",auth,isCompany,deleteCompany); // delete the company pro
 
 
 router.get("/companydetails",auth,getAllDetailCompany);  // get all the detail for the company with the recruiter details
-router.post("/createrecruiter",auth,isCompany,createRecruiter)
+
+// recruiter **********************************************************************************************
+router.post("/createrecruiter",auth,createRecruiter);
+router.put("/updaterecruiter",auth,isRecruiter,updateRecruiterDetail)
+router.get("/getrecruiter",auth,isRecruiter,getAlldetail)
 
 module.exports = router

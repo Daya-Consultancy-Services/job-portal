@@ -4,16 +4,34 @@ const router = express.Router();
 
 const {
 
-    updateRecruiterDetail,
-    getAlldetail
+    loginRecruiter,
+    createJob,
+    updateJob,
+    deleteJob,
+    getJobRecruiter,
+    logoutRecruiter
     
 } = require("../controllers/RecruiterControl")
 
-const { auth , isCompany} = require("../middleware/auth");
+const { auth , isRecruiter} = require("../middleware/auth");
 
 
-router.put("/update",auth,isCompany,updateRecruiterDetail);
+router.post("/loginrecruiter",loginRecruiter)
+router.get("/logout",logoutRecruiter)
 
+router.post("/createjob",auth,isRecruiter,createJob)
+// {
+//     "jobTitle":"web dev intern",
+//     "description":"des",
+//     "skillRequired":["js"],
+//     "jobType":"WFO",
+//     "salaryRange":"5k",
+//     "jobLocation":"mumbai"
+// } 
+router.put("/updatejob",auth,isRecruiter,updateJob)
+router.delete("/deletejob",auth,isRecruiter,deleteJob)
+
+router.get("/getjobrecruiter",auth,isRecruiter,getJobRecruiter)
 // {
 //     "name":"Jacks",
 //     "email":"jack66@gmail.com",
@@ -23,7 +41,7 @@ router.put("/update",auth,isCompany,updateRecruiterDetail);
 //     "description":"im recruiter"
 // }
 
-router.get("/getdetail",auth,isCompany,getAlldetail)
+
 
 
 

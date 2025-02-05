@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
 	},
     role: {  // Add this to the schema
         type: String,
-        enum: ["jobseeker", "company", "admin"],  // Enums will limit the possible roles
+        enum: ["jobseeker", "company", "admin","recruiter"],  // Enums will limit the possible roles
         required: true,
     },
     workstatus: {
@@ -40,7 +40,13 @@ const userSchema = new mongoose.Schema({
     },
     token:{
         type:String,
-    }
+    },
+    appliedJobs: [  // Stores an array of Job IDs the user has applied to
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: "Jobs"
+        }
+    ]
 
 })
 

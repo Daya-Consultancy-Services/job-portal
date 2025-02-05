@@ -4,7 +4,7 @@ import { setLoading, setToken } from '../slices/userSlice'
 import { setUser } from '../slices/userSlice'
 import { apiConnector } from '../services/apiConnector'
 import { userPoint } from './apis'
-import {setCertificate, setOnlineprofile} from '../slices/userProfileSlice'
+import {setCertificate, setOnlineprofile,setskillprofiles,setCareers,setEducation,setProject,setEmpProfile,setResume,setImage} from '../slices/userProfileSlice'
 
 
 const {
@@ -162,6 +162,13 @@ export function logout(navigate) {
         dispatch(setUser(null))
         dispatch(setOnlineprofile(null));
         dispatch(setCertificate(null))
+        dispatch(setskillprofiles(null))
+        dispatch(setCareers(null))
+        dispatch(setEducation(null))
+        dispatch(setProject(null))
+        dispatch(setEmpProfile(null))
+        dispatch(setResume(null))
+        dispatch(setImage(null))
         localStorage.removeItem("token")
         localStorage.removeItem("user")
         toast.success("Logged Out")

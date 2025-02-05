@@ -26,10 +26,17 @@ const recruiterSchema = new mongoose.Schema({
         type:mongoose.Schema.ObjectId,
         ref:"Company"
     },
-    // role:{
-    //     type:String,
-    //     enum:["Full","Partial"]
-    // }
+    role:{
+        type:String,
+        enum: ["jobseeker", "company", "admin", "recruiter"],
+        require:true
+    },
+    job:[
+        {
+            type:mongoose.Schema.ObjectId,
+            ref:"Jobs"
+        }
+    ],
     // association:{
     //     type:String,
     //     enum:["assign","freelance"],

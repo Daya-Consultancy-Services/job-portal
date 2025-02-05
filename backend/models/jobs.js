@@ -6,6 +6,10 @@ const jobSchema = new mongoose.Schema({
         type:mongoose.Schema.ObjectId,
         ref:"Company"
     },
+    recruiterId:{
+        type:mongoose.Schema.ObjectId,
+        ref:"Recruiter"
+    },
     jobTitle: {
         type:String // for example web devloper 
     },
@@ -27,12 +31,19 @@ const jobSchema = new mongoose.Schema({
     jobLocation:{
         type:String,  // like pune or banglore
     },
-    createdAt:{
-        type:Date
-    },
     isClose:{
         type:Boolean,
-    }
+    },
+    createdAt:{
+        type:Date,
+        default:Date.now
+    },
+    appliedUsers: [  // Stores an array of User IDs who applied for the job
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: "User"
+        }
+    ]
 
 })
 

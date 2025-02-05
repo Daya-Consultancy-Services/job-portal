@@ -3,6 +3,7 @@ require("dotenv").config();
 const User = require("../models/User");
 const Company = require("../models/company")
 const Admin = require("../models/admin")
+const Recruiter = require("../models/recruiter")
 
 exports.auth = async(req,res,next) => {
     try {
@@ -35,6 +36,9 @@ exports.auth = async(req,res,next) => {
                 case "admin":
                     roleData = await Admin.findById(decode.id);
                     break;
+                case "recruiter":
+                    roleData = await Recruiter.findById(decode.id);
+                    break;
                 default:
                     return res.status(401).json({
                         success: false,
@@ -50,7 +54,7 @@ exports.auth = async(req,res,next) => {
             req.user = decode;
             req.roleData = roleData;
 
-
+            console.log(decode)
 
         }
         catch(err) {
@@ -85,12 +89,12 @@ exports.isJobseeker = async (req, res, next) => {
         console.log(error)
        return res.status(500).json({
            success:false,
-           message:'User role cannot be verified, please try again'
+           message:'jobseeker role cannot be verified, please try again'
        })
     }
 }
 
-//iscompany
+
 exports.isCompany = async (req, res, next) => {
     try{
            if(req.user.role !== "company") {                   // to check if the user is company Role or not in User Schema
@@ -104,7 +108,26 @@ exports.isCompany = async (req, res, next) => {
     catch(error) {
        return res.status(500).json({
            success:false,
-           message:'User role cannot be verified, please try again'
+           message:'company role cannot be verified, please try again'
+       })
+    }
+}
+
+//isRecruiter
+exports.isRecruiter = async (req, res, next) => {
+    try{
+           if(req.user.role !== "recruiter") {                   // to check if the user is recruiter Role or not in User Schema
+               return res.status(401).json({
+                   success:false,
+                   message:'This is a protected route for recruiter only',
+               });
+           }
+           next();  // go to next one to check
+    }
+    catch(error) {
+       return res.status(500).json({
+           success:false,
+           message:'recruiter role cannot be verified, please try again'
        })
     }
 }

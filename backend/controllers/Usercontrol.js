@@ -3,7 +3,7 @@ const Profile = require("../models/Profile")
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
+const Job = require("../models/jobs");
 
 exports.signup = async (req,res) => {
     try {
@@ -294,3 +294,78 @@ exports.getalldetail = async(req,res) => {
         })
     }
 }
+
+exports.getJobs = async (req, res) => {
+    try {
+        const jobs = await Job.find()
+            .select("jobTitle description skillRequired jobType salaryRange jobLocation") // Select only these fields
+            .populate("companyId","name location email website description logo companyfield") // Populate only the name of the company if needed
+            .exec();
+
+        return res.status(200).json({
+            success: true,
+            message: "Jobs fetched successfully",
+            data: jobs
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Error while fetching jobs"
+        });
+    }
+};
+
+exports.applyJobs = async (req, res) => {
+    try {
+        const userId = req.user.id; // Assuming user ID is available from auth middleware
+        const { jobId } = req.body; // Get job ID from request body
+
+        // Check if the job exists
+        const job = await Job.findById(jobId);
+        if (!job) {
+            return res.status(404).json({
+                success: false,
+                message: "Job not found",
+            });
+        }
+
+        // Check if the user exists
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        // Check if the user has already applied for this job
+        if (user.appliedJobs.includes(jobId)) {
+            return res.status(400).json({
+                success: false,
+                message: "You have already applied for this job",
+            });
+        }
+
+        // Add jobId to user's appliedJobs array
+        user.appliedJobs.push(jobId);
+        await user.save();
+
+        // Add userId to job's appliedUsers array
+        job.appliedUsers.push(userId);
+        await job.save();
+
+        return res.status(200).json({
+            success: true,
+            message: `Your job application for ${job.jobTitle} position has been submitted successfully!`,
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Error while applying for the job",
+        });
+    }
+};
