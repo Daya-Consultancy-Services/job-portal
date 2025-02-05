@@ -1,6 +1,6 @@
 import { toast } from 'react-hot-toast'
 
-import { setLoading, setToken } from '../slices/userProfileSlice'
+import { setLoading, setPersonalDetails, setToken } from '../slices/userProfileSlice'
 import { setUser } from '../slices/userProfileSlice'
 import { apiConnector } from '../services/apiConnector'
 import { personalDetail } from './apis'
@@ -10,7 +10,8 @@ const {
 
     createPersonaldetail,
     updatePersonaldetail,
-    deletePersonaldetail
+    deletePersonaldetail,
+    getPersonalDetail
 
 } = personalDetail
 
@@ -29,6 +30,7 @@ export function personalDetails(
     return async (dispatch) => {
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
+       
         try {
             const response = await apiConnector("POST", createPersonaldetail, {
                 gender,
@@ -46,6 +48,7 @@ export function personalDetails(
                 throw new Error(response.data.message);
             }
             toast.success("PersonalDetail Created Successfully!!!");
+            dispatch(fetchPersonalDetails(token))
         } catch (error) {
             console.error("Error creating personal detail:", error);
             toast.error("Failed to create personal detail. Please try again.");
@@ -73,11 +76,12 @@ export function updatePersonaldetails(token, personalDetailsData){
         if(!response.data.success){
             throw new Error(response.data.message);
         }
-        dispatch(setUser({...response.data.personalDetails}))
+        // dispatch(setUser({...response.data.personalDetails}))
+        dispatch(fetchPersonalDetails(token));
         toast.success("PersonalDetail is updated Successfully")
 
     } catch (error) {
-        console.log("UPDATE PERSONALUPDATE API ERROR............", error)
+        console.log("UPDATE PERSONALUPDATE API ERROR............", error) 
         toast.error("Could Not Update PersonalDetail")
     } finally{
         dispatch(setLoading(false))
@@ -105,6 +109,7 @@ export function deletePersonaldetails(token,navigate){
 
         toast.success("PersonalDetail deleted Successfully!");
         // dispatch(logout(navigate));
+        dispatch(fetchPersonalDetails(token))
 
     } catch (error) {
         console.error("DeletePersonalDetail_API error:", error);
@@ -116,3 +121,42 @@ export function deletePersonaldetails(token,navigate){
     
     }
 }
+
+export function fetchPersonalDetails(token) {
+    return async (dispatch) => {
+        const toastId = toast.loading("Loading...")
+        dispatch(setLoading(true))
+        
+        try {
+            const response = await apiConnector(
+                "GET",
+                getPersonalDetail,
+                null,
+                {
+                    Authorization: `Bearer ${token}`
+                }
+            )
+            
+            console.log("FETCH_PERSONAL_DETAILS API RESPONSE............", response)
+            
+            if (!response.data.success) {
+                throw new Error(response.data.message)
+            }
+            
+            // Update the user state with fetched personal details
+            dispatch(setPersonalDetails({ ...response.data.data }))
+            toast.success("Personal details fetched successfully!")
+            
+            return response.data.data
+            
+        } catch (error) {
+            console.error("FETCH_PERSONAL_DETAILS API ERROR............", error)
+            toast.error("Could not fetch personal details")
+            return null
+        } finally {
+            dispatch(setLoading(false))
+            toast.dismiss(toastId)
+        }
+    }
+}
+

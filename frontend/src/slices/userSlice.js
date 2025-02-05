@@ -21,7 +21,9 @@ const userSlice = createSlice({
             state.token = action.payload;
         },
         setUser(state, action) {
+            
             state.user = action.payload;
+            console.log("value : ",action);
         },
     },
 });

@@ -1,6 +1,6 @@
 import { toast } from "react-hot-toast"
 
-import { setUser,setResume,clearResume,setImage } from "../slices/userProfileSlice"
+import { setUser,setResume,clearResume,setImage, setLoading, setImageResume } from "../slices/userProfileSlice"
 import { apiConnector } from "../services/apiConnector"
 import { profilePoint } from "../operations/apis"
 
@@ -12,14 +12,61 @@ const {
     deleteresume,
     getresume,
     uploadimage,
-    getimage
+    getimage,
+    getimageresume
+    
+    
+    
     
 
 } = profilePoint
 
+// export function getAllDetail(token){
+//     return async (dispatch)=>{
+//         dispatch(setLoading(true));
+//         try {
+//             const response = await apiConnector("GET", getAllDetails, null, {
+//                 Authorization: `Bearer ${token}`,
+//             })
+//             console.log("getting all the profile data...........", response)
+//             if (!response.data.success) {
+//                 throw new Error(response.data.message);
+//             }
+//             dispatch(setUser({...response.data.data}))
+            
+//         } catch (error) {
+//             console.log("profile error", error);
+
+//         }finally{
+//             dispatch(setLoading(false));
+//         }
+//     }
+// }
+export function fetchImageResume(token){
+    return async (dispatch)=>{
+        dispatch(setLoading(true));
+        try {
+            const response = await apiConnector("GET", getimageresume, null, {
+                Authorization: `Bearer ${token}`,
+            })
+            if (!response.data.success) {
+                throw new Error(response.data.message);
+            }
+            // dispatch(setUser({...response.data.data}))
+            dispatch(setImageResume(response.data.data));
+            
+        } catch (error) {
+            console.log("profile error", error);
+
+        }finally{
+            dispatch(setLoading(false));
+        }
+    }
+}
+
+
 
 export function updateProfile(token,formdata){
-    console.log("token", token, "formdata", formdata);
     return async(dispatch) => {
         const toastId = toast.loading("Loading...")
         // console.log("profile data : " + {formdata});
@@ -62,7 +109,8 @@ export function uploadResume(token, formData) {
             }
 
             // Optionally, you can update the state with the uploaded resume data
-            dispatch(setResume(response.data.data));
+            // dispatch(setResume(response.data.data));
+            dispatch(fetchImageResume(token));
 
             toast.success("Resume uploaded successfully!");
         } catch (error) {
@@ -89,7 +137,8 @@ export function deleteResume(token) {
             }
 
             // If successful, clear the resume in the Redux state
-            dispatch(clearResume());
+            // dispatch(clearResume());
+            dispatch(fetchImageResume(token));
 
             toast.success("Resume deleted successfully!");
         } catch (error) {
@@ -100,32 +149,42 @@ export function deleteResume(token) {
     };
 }
 
+
+
+
 export function downloadResume(token) {
     return async (dispatch) => {
         const toastId = toast.loading("Downloading resume...");
         try {
-            // Make API request to download the resume
-            const response = await apiConnector("GET", getresume, null, {
-                Authorization: `Bearer ${token}`,
-            });
+            const response = await apiConnector(
+                "GET", 
+                getresume, 
+                null,
+                {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    Accept: 'application/pdf'
+                }
+            );
 
-            if (response.status !== 200) {
-                throw new Error("Failed to download resume.");
+            // Check if we got the download URL
+            if (!response?.data?.downloadUrl) {
+                throw new Error("Download URL not found");
             }
 
-            // Create a Blob from the file buffer received in the response
-            const file = new Blob([response.data], { type: "application/pdf" });
-
-            // Create a link to download the file
+            // Create a temporary link to download from the URL
             const link = document.createElement("a");
-            link.href = URL.createObjectURL(file);
-            link.download = "resume.pdf"; // You can change this to the file name you want
+            link.href = response.data.downloadUrl;
+            link.target = "_blank";
+            link.download = "resume.pdf";
+            document.body.appendChild(link);
             link.click();
+            document.body.removeChild(link);
 
             toast.success("Resume downloaded successfully!");
         } catch (error) {
             console.log("Download Resume API Error", error);
-            toast.error("Failed to download resume.");
+            toast.error(error.message || "Failed to download resume.");
         }
         toast.dismiss(toastId);
     };
@@ -189,7 +248,7 @@ export function fetchProfileImage(token) {
             }
             
             // This dispatches the URL to the Redux store
-            dispatch(setImage(response.data.url));
+            // dispatch(setImage(response.data.url));
             
 
         } catch (error) {

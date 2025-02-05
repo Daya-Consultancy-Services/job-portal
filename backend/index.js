@@ -24,7 +24,7 @@ const PORT = process.env.PORT || 5000 ;
 app.use(express.json())
 app.use(cookieParser())
 
-app.use(fileUpload({
+app.use("/api/v1/profile/upload-image",fileUpload({
 
     useTempFiles: true,
 }))

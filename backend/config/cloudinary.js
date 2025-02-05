@@ -69,4 +69,57 @@ const uploadToCloudinary = async (file) => {
     }
 };
 
-module.exports = { uploadToCloudinary };
+
+const uploadResumeToCloudinary = async (file) => {
+    try {
+        if (!file) {
+            throw new Error('No file provided');
+        }
+
+        // Convert buffer to base64
+        const fileStr = file.buffer.toString('base64');
+        const fileType = file.mimetype;
+
+      
+        const uploadOptions = {
+            resource_type: 'image', 
+            folder: 'resumes',
+            allowed_formats: ['pdf', 'doc', 'docx'],
+            public_id: `resume_${Date.now()}`,
+            tags: ['resume'],
+            format: 'pdf',
+            pages: true,
+            flags: 'attachment',
+            
+            transformation: [
+                { flags: "preserve_transparency" },
+                { quality: "auto" },
+                { fetch_format: "auto" }
+            ],
+            // Keep your access control if needed
+            access_mode: 'authenticated'
+        };
+
+        const uploadResponse = await cloudinary.uploader.upload(
+            `data:${fileType};base64,${fileStr}`,
+            uploadOptions
+        );
+
+        return {
+            success: true,
+            url: uploadResponse.secure_url,
+            public_id: uploadResponse.public_id,
+            format: uploadResponse.format,
+            created_at: uploadResponse.created_at,
+            pages: uploadResponse.pages // Include number of pages if it's a PDF
+        };
+    } catch (error) {
+        console.error('Resume upload to Cloudinary failed:', error);
+        return {
+            success: false,
+            error: error.message || 'Failed to upload resume'
+        };
+    }
+};
+
+module.exports = { uploadToCloudinary, uploadResumeToCloudinary };

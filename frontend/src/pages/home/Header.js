@@ -1,15 +1,28 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { GoBellFill } from "react-icons/go";
 import { CiSearch } from "react-icons/ci";
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProfileImage } from '../../operations/profileAPI';
 
 function HomeHeader() {
-   
+      const image = useSelector((state) => state.profile.imageResume?.image,)
+      const token = useSelector((state)=> state.user.token)
+      const user = useSelector((state)=> state.profile.user)
         // const [isSearchOpen, setIsSearchOpen] = useState(false);
       
         // const toggleSearch = () => {
         //   setIsSearchOpen(!isSearchOpen);
         // };
+
+        const dispatch = useDispatch();
+
+        useEffect(()=>{
+          if (token && user) {
+                  dispatch(fetchProfileImage(token));
+                  
+              }
+        }, [dispatch, token])
   return (
     <div className=" fixed bg-white h-[80px] w-full flex items-center justify-center  shadow-md">
         <div className='h-full w-[70%]  flex items-center pl-2 pr-2 justify-between '>
@@ -55,7 +68,7 @@ function HomeHeader() {
         <div className=" h-full w-[90%] flex justify-center items-center">
             <Link to="/components/profiles/UserProfile">
             <div className="h-[45px] w-[45px] rounded-full border border-zinc-300 overflow-hidden" >
-                <img src={require("../../assets/default-profile.jpg")} alt="" />
+            <img className="h-full w-full object-cover" src={image || require("../../assets/default-profile.jpg")} alt="image" />
             </div>
             </Link>
            

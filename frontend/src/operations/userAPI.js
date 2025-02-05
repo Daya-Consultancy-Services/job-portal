@@ -4,6 +4,7 @@ import { setLoading, setToken } from '../slices/userSlice'
 import { setUser } from '../slices/userSlice'
 import { apiConnector } from '../services/apiConnector'
 import { userPoint } from './apis'
+import {setCertificate, setImageResume, setOnlineprofile} from '../slices/userProfileSlice'
 import {setCertificate, setOnlineprofile,setskillprofiles,setCareers,setEducation,setProject,setEmpProfile,setResume,setImage} from '../slices/userProfileSlice'
 
 
@@ -161,6 +162,8 @@ export function logout(navigate) {
         dispatch(setToken(null))
         dispatch(setUser(null))
         dispatch(setOnlineprofile(null));
+        dispatch(setCertificate(null));
+        dispatch(setImageResume(null));
         dispatch(setCertificate(null))
         dispatch(setskillprofiles(null))
         dispatch(setCareers(null))

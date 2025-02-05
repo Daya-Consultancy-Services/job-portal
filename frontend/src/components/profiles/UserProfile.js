@@ -7,7 +7,6 @@ import { SlCalender } from "react-icons/sl";
 import { MdLocalPhone } from "react-icons/md";
 import { CiMail } from "react-icons/ci";
 import { TbDeviceMobileCheck } from "react-icons/tb";
-import ResumeUpload from './ResumeUpload';
 import EducationForm from './EducationForm';
 import SkillsForm from './SkillForm';
 import ProjectForm from './ProjectForm';
@@ -17,11 +16,11 @@ import { deleteUser, logout, updateDetail } from '../../operations/userAPI';
 import ExtraProfile from './ExtraProfile';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { fetchProfileImage, updateProfile, uploadProfileImage } from '../../operations/profileAPI';
+import { fetchImageResume, fetchProfileImage, getAllDetail, updateProfile, uploadProfileImage } from '../../operations/profileAPI';
 import ProfileForm from './ProfileForm';
 import FORM_CONFIGS, { ModalComponent } from './Accomplishment';
 import { deleteOnlineProfiles, onlineProfiles, updateonlineProfiles, getOnlineProfiles } from '../../operations/onlineprofileAPI';
-import { Pencil, PencilIcon, Trash2, Trash2Icon } from 'lucide-react';
+import { Calendar, Globe, MapPin, Pencil, PencilIcon, Trash2, Trash2Icon, User } from 'lucide-react';
 import { deleteCertificates, fetchCertificates, updateCertificates } from '../../operations/certificateAPI';
 import { deleteSkillProfiles, fetchSkillProfiles } from '../../operations/skillprofileAPI';
 import { onlineProfile } from '../../operations/apis';
@@ -31,12 +30,14 @@ import { deleteProjects, fetchProject } from '../../operations/projectAPI';
 import EmploymentForm from './EmployeementForm';
 import { deleteEmploymentProfiles, fetchEmploymentProfile } from '../../operations/employmentprofileAPI';
 import { deleteEducationProfiles, fetchEducationProfile } from '../../operations/educationprofileAPI';
+import ResumeUpload from './ResumeUpload';
+import { deletePersonaldetails, fetchPersonalDetails, updatePersonaldetails } from '../../operations/personaldetailAPI';
 
 
 
 function UserProfile() {
   const selectors = useMemo(() => ({
-    selectUser: (state) => state.profile.user,
+    selectUser: (state) => state.user.user,
     selectToken: (state) => state.user.token,
     selectCertificates: (state) => state.profile.certificates,
     selectOnlineProfiles: (state) => state.profile.Onlineprofile,
@@ -44,10 +45,8 @@ function UserProfile() {
     selectProjectProfiles: (state) => state.profile.projects,
     selectEmployeeProfiles: (state) => state.profile.empProfile,
     selectEducationProfiles: (state) => state.profile.education,
-    selectImage: (state) => state.profile.image,
-
-
-
+    selectImage: (state) => state.profile.imageResume?.image,
+    selectPersonalDetails: (state) => state.profile.personalDetails,
   }), []);
 
   const user = useSelector(selectors.selectUser);
@@ -60,6 +59,9 @@ function UserProfile() {
   const empProfile = useSelector(selectors.selectEmployeeProfiles);
   const educationProfiles = useSelector(selectors.selectEducationProfiles);
   const imageUrl = useSelector(selectors.selectImage);
+  const personalDetail = useSelector(selectors.selectPersonalDetails);
+
+
 
 
   
@@ -69,7 +71,7 @@ function UserProfile() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  
   // Fetch certificates on component mount
   useEffect(() => {
     if (token && user) {
@@ -96,11 +98,13 @@ function UserProfile() {
         dispatch(fetchEducationProfile(token));
       }
       if (token && user) {
-        dispatch(fetchProfileImage(token));
-        
+        dispatch(fetchImageResume(token));
+
     }
-
-
+    if(personalDetail && personalDetail.length === 0) {
+      dispatch(fetchPersonalDetails(token));
+     
+      }
     }
   }, [dispatch, token]);
 
@@ -193,6 +197,28 @@ function UserProfile() {
   };
 
   // -------------------------------------------------------------------------------------------------------------
+
+
+  //------------------------------ updation and deletion of personal detail-----------------------------------
+ 
+  const [showModal, setShowModal] = useState(false);
+  const handleDelete = () => {
+
+    if (window.confirm('Are you sure you want to delete your personal details?')) {
+
+      dispatch(deletePersonaldetails(token));
+
+    }
+
+  };
+
+
+
+  const handleModalClose = () => {
+    setShowModal(false);
+};
+
+  // --------------------------------------------------------------------------------------------------------------
 
   // ---------------------------------- save , edit, delete ---------------------------------------
 
@@ -665,7 +691,6 @@ function UserProfile() {
   const handleSkillsSaved = (data) => {
     if (data) {
       setSkillsData([...skillsData, data]);
-      // dispatch(updateDetail({ skills: [...skillsData, data] }));
     }
     setSkillsVisible(false);
   };
@@ -679,7 +704,6 @@ function UserProfile() {
   const handlePersonalDetailsSaved = (details) => {
     if (details) {
       setPersonalDetails(details);
-      // dispatch(updateDetail({ personalDetails: details }));
     }
     setPersonalDetailsVisible(false);
   };
@@ -691,7 +715,6 @@ function UserProfile() {
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
-        // Show temporary preview
         const tempImageURL = URL.createObjectURL(file);
         setProfileImage(tempImageURL);
 
@@ -709,10 +732,7 @@ function UserProfile() {
   const togglePopup = (field) => {
     setPopupType(field);
     setIsPopupOpen(!isPopupOpen);
-
-
     setNewInput('');
-
   };
 
   const togglePopupForName = () => {
@@ -948,7 +968,7 @@ function UserProfile() {
                   <button className='px-3 py-2 rounded-full bg-orange-500 text-white ' >Add missing details</button>
                 </div>
               </div>
-              {showExtraProfile && <ExtraProfile token={token} />}
+              {showExtraProfile && <ExtraProfile  token={token} />}
             </div>
 
             <div className=" min-h-[600px] w-full flex gap-3 rounded-xl  ">
@@ -1484,13 +1504,106 @@ function UserProfile() {
 
 
 
-                <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Personal-details'>
+                {/* <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Personal-details'>
                   <div className="head flex w-full justify-between px-4">
                     <div className="flex justify-between px-2 w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Personal details</h1> <p className='text-green-400'>Add 18%</p></div>
                     <h1 className='text-blue-700 font-semibold cursor-pointer' onClick={() => setShowExtraProfile(true)} >Add personal details</h1>
                   </div>
                   <p className='text-zinc-400 px-6'>This information is important for employers to know you better</p>
+                </div> */}
+
+<div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id="Personal-details">
+                <div className="head flex w-full justify-between px-4">
+                    <div className="flex justify-between px-2 w-fit gap-5 items-center">
+                        <h1 className="font-semibold text-2xl">Personal details</h1>
+                        <p className="text-green-400">
+                            Add 18%
+                        </p>
+                    </div>
+                    <button
+                        className="text-blue-700 font-semibold cursor-pointer hover:text-blue-800"
+                        onClick={() => setShowModal(true)}
+                    >
+                        {personalDetail ? 'Edit personal details' : 'Add personal details'}
+                    </button>
                 </div>
+                
+                <p className="text-zinc-400 px-6 mb-4">
+                    This information is important for employers to know you better
+                </p>
+                
+                {personalDetail && (
+      <div className="px-6 space-y-3 relative">
+        <button
+          onClick={handleDelete}
+          className="absolute top-0 right-0 p-2 text-red-500 transition-colors"
+          aria-label="Delete personal details"
+        >
+          <Trash2 className="w-5 h-5" />
+        </button>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex items-center gap-2">
+            <User className="w-5 h-5 text-gray-500" />
+            <div>
+              <p className="text-sm text-gray-500">Gender</p>
+              <p className="font-medium">{personalDetail.gender}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-gray-500" />
+            <div>
+              <p className="text-sm text-gray-500">Date of Birth</p>
+              <p className="font-medium">{personalDetail.dateOfBirth}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <User className="w-5 h-5 text-gray-500" />
+            <div>
+              <p className="text-sm text-gray-500">Martial Status</p>
+              <p className="font-medium">{personalDetail.martialStatus}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <MapPin className="w-5 h-5 text-gray-500" />
+            <div>
+              <p className="text-sm text-gray-500">Current Address</p>
+              <p className="font-medium">{personalDetail.address}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <MapPin className="w-5 h-5 text-gray-500" />
+            <div>
+              <p className="text-sm text-gray-500">Permanent Address</p>
+              <p className="font-medium">
+                {personalDetail.permanentAddress}
+                {personalDetail.pincode && ` - ${personalDetail.pincode}`}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Globe className="w-5 h-5 text-gray-500" />
+            <div>
+              <p className="text-sm text-gray-500">Languages</p>
+              <p className="font-medium">
+                {personalDetail.language?.join(', ')}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+                {showModal && (
+                    <ExtraProfile
+                        isEdit={!!personalDetail}
+                        initialData={personalDetail}
+                        onSave={(data) => {
+                            handleModalClose();
+                        }}
+                    />
+                )}
+            </div>
+
 
 
               </div>

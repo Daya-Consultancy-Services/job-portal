@@ -207,3 +207,49 @@ exports.deletePeronalDetail = async(req,res) => {
             })
     }
 }
+
+exports.getPersonalDetails = async (req, res) => {
+    try {
+        const Id = req.user.id;
+        
+        // Find user by ID
+        const userId = await User.findById(Id);
+        if (!userId) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        // Find profile using user's profile reference
+        const profileId = await Profile.findById(userId.profile);
+        if (!profileId) {
+            return res.status(400).json({
+                success: false,
+                message: "Profile doesn't exist"
+            });
+        }
+
+        // Find personal details using profile's personal details reference
+        const personalDetails = await personalDetail.findById(profileId.personalDetails);
+        if (!personalDetails) {
+            return res.status(404).json({
+                success: false,
+                message: "Personal details not found"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Personal details fetched successfully",
+            data: personalDetails
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Error while fetching personal details"
+        });
+    }
+}

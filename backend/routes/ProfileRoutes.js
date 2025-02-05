@@ -12,6 +12,8 @@ const {
     downloadResume,
     uploadProfileImage,
     getProfileImage,
+    // getResume
+    getImageAndResume
 
 } = require("../controllers/Profilecontrol")
 
@@ -19,7 +21,8 @@ const {
 
     createPersonalDetail,
     updatePersonalDetail,
-    deletePeronalDetail
+    deletePeronalDetail,
+    getPersonalDetails
 
 } = require("../controllers/PersonalDetailcontrol")
 
@@ -110,6 +113,7 @@ router.post("/upload-resume", auth, isJobseeker,
 );
 router.delete("/delete-resume", auth, isJobseeker, deleteResume);
 router.get("/download-resume", auth, isJobseeker, downloadResume);
+router.get("/get-imageresume", auth, isJobseeker, getImageAndResume);
 
 
 // Personal Details routes***********************************************************************************************
@@ -118,6 +122,7 @@ router.post("/personaldetail", auth, createPersonalDetail)
 router.put("/updatepersonaldetail", auth, updatePersonalDetail)
 
 router.put("/deletepersonaldetail", auth, deletePeronalDetail)
+router.get("/getpersonaldetails", auth,getPersonalDetails);
 
 // {
 //     "gender":"male",
