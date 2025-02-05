@@ -9,8 +9,12 @@ const profileSchema = new mongoose.Schema({
         type:Number,
     },
     resume:{
-        type:Buffer // type:Buffer
+        type:String // type:Buffer
     },
+    resumePublicId: {
+        type: String  // Store Cloudinary public ID for deletion
+    },
+
     resumeHeadline:{
         type:String
     },

@@ -28,6 +28,7 @@ export function createCareers(
     return async (dispatch) => {
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
+        console.log("in career api", formdata, token);
         try {
             const response = await apiConnector("POST",createCareer,formdata,{Authorization: `Bearer ${token}`});
 

@@ -112,7 +112,7 @@ const ProfileForm = ({ isOpen, onClose, onSave, popupType, initialValue }) => {
               className="border p-2 rounded w-full"
             />
           </div>
-          <div>
+          {/* <div>
             <label htmlFor="location" className="block text-sm font-medium text-gray-700">
               image
             </label>
@@ -123,7 +123,7 @@ const ProfileForm = ({ isOpen, onClose, onSave, popupType, initialValue }) => {
               {...register("image", { required: true })}
               className="border p-2 rounded w-full"
             />
-          </div>
+          </div> */}
           <div className="flex justify-end gap-2">
             <button
               type="button"

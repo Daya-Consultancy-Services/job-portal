@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createCareers, updateCareers } from '../../operations/careerAPI';
-import { careerProfile } from '../../operations/apis';
 
 // Custom Dialog Component
 const Dialog = ({ open, onClose, children }) => {
@@ -56,10 +55,17 @@ const Input = ({ type = 'text', name, value, onChange, placeholder, required = f
   );
 };
 
-// Custom MultiSelect Component
+// Updated MultiSelect Component
 const MultiSelect = ({ options: predefinedOptions, value, onChange, placeholder }) => {
   const [inputValue, setInputValue] = useState('');
   const inputRef = useRef(null);
+
+  // Handle clicking on predefined options
+  const handleOptionClick = (option) => {
+    if (!value.includes(option)) {
+      onChange([...value, option]);
+    }
+  };
 
   const toggleOption = (option) => {
     const newValue = value.includes(option)
@@ -70,29 +76,32 @@ const MultiSelect = ({ options: predefinedOptions, value, onChange, placeholder 
 
   const handleInputKeyDown = (e) => {
     if (e.key === 'Enter' && inputValue.trim()) {
-      // Prevent duplicate entries
-      if (!value.includes(inputValue.trim())) {
-        onChange([...value, inputValue.trim()]);
-        setInputValue('');
-      }
       e.preventDefault();
+      // Add the new skill if it's not already in the list
+      if (!value.includes(inputValue.trim())) {
+        const newSkills = [...value, inputValue.trim()];
+        onChange(newSkills);
+        setInputValue('');  // Clear input after adding
+      }
     }
   };
 
   return (
-    <div>
-      <div className="flex flex-wrap gap-2 border rounded p-2 mb-2">
-        {value.map(v => (
+    <div className="flex flex-col gap-2">
+      {/* Selected Skills */}
+      <div className="flex flex-wrap gap-2 border rounded p-2 min-h-[42px]">
+        {value.map(skill => (
           <span 
-            key={v} 
+            key={skill} 
             className="bg-blue-100 px-2 py-1 rounded text-sm flex items-center"
           >
-            {v}
+            {skill}
             <button
-              onClick={() => toggleOption(v)}
+              type="button"
+              onClick={() => toggleOption(skill)}
               className="ml-1 text-red-500"
             >
-              ✕
+              ×
             </button>
           </span>
         ))}
@@ -102,21 +111,34 @@ const MultiSelect = ({ options: predefinedOptions, value, onChange, placeholder 
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleInputKeyDown}
-          placeholder={placeholder}
-          className="flex-grow outline-none"
+          placeholder={value.length === 0 ? placeholder : ""}
+          className="flex-grow outline-none min-w-[60px]"
         />
+      </div>
+      
+      {/* Predefined Options */}
+      <div className="flex flex-wrap gap-2">
+        {predefinedOptions.map(option => (
+          <button
+            key={option}
+            type="button"
+            onClick={() => handleOptionClick(option)}
+            className={`px-2 py-1 rounded text-sm ${
+              value.includes(option) 
+                ? 'bg-blue-500 text-white' 
+                : 'bg-gray-100 hover:bg-gray-200'
+            }`}
+          >
+            {option}
+          </button>
+        ))}
       </div>
     </div>
   );
 };
 
-
-const CareerProfileModal = ({ 
-  isOpen, 
-  onClose, 
-  onSubmit, 
-  initialData = null 
-}) => {
+// Main CareerProfileModal Component
+const CareerProfileModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
   const [formData, setFormData] = useState({
     industryType: '',
     department: '',
@@ -126,16 +148,17 @@ const CareerProfileModal = ({
     salary: ''
   });
 
+  const dispatch = useDispatch();
+  const { token } = useSelector((state) => state.profile);
+
   // Reset form when modal opens/changes
   useEffect(() => {
-    if (initialData) {
-      // If editing, populate form with existing data
+    if (initialData && initialData !== "Save Profile") {
       setFormData({
         ...initialData,
         skills: initialData.skills ? initialData.skills.split(', ') : []
       });
     } else {
-      // If adding, reset form
       setFormData({
         industryType: '',
         department: '',
@@ -146,10 +169,6 @@ const CareerProfileModal = ({
       });
     }
   }, [initialData, isOpen]);
-
-  const { token } = useSelector((state) => state.profile);
-  const dispatch = useDispatch();
-
 
   const industryTypes = [
     'Technology', 'Finance', 'Healthcare', 
@@ -176,41 +195,45 @@ const CareerProfileModal = ({
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Create a copy of formData with properly formatted skills
     const submitData = {
       ...formData,
-      skills: formData.skills.join(', ')
+      skills: Array.isArray(formData.skills) ? formData.skills.join(', ') : ''
     };
-  
-    // Check if this is a new profile or an existing one
-    if (!initialData || initialData === "Save Profile") {
-      dispatch(createCareers(token, submitData));
-      console.log("creating career......")
-    } else {
-      // Ensure we have a valid _id for updating
-      const profileId = initialData._id || initialData.id;
-      if (profileId) {
-        dispatch(updateCareers(token, profileId, submitData));
-        console.log("updating career......")
+
+    try {
+      if (!initialData || initialData === "Save Profile") {
+        await dispatch(createCareers(token, submitData));
+        console.log("Creating career profile:", submitData);
       } else {
-        console.error("No valid profile ID found for updating");
-        return;
+        const profileId = initialData._id || initialData.id;
+        if (profileId) {
+          await dispatch(updateCareers(token, profileId, submitData));
+          console.log("Updating career profile:", submitData);
+        } else {
+          throw new Error("No valid profile ID found for updating");
+        }
       }
+
+      onSubmit(submitData);
+      onClose();
+    } catch (error) {
+      console.error("Error saving career profile:", error);
+      // You might want to show an error message to the user here
     }
-  
-    onSubmit(submitData);
-    onClose();
   };
 
   return (
     <Dialog open={isOpen} onClose={onClose}>
       <div>
         <h2 className="text-xl font-bold mb-2">
-          {initialData ? 'Edit Career Profile' : 'Add Career Profile'}
+          {initialData && initialData !== "Save Profile" ? 'Edit Career Profile' : 'Add Career Profile'}
         </h2>
         <p className="text-gray-600 mb-4">
-          {initialData 
+          {initialData && initialData !== "Save Profile"
             ? 'Update your existing career details' 
             : 'Fill in your career details to personalize job recommendations'}
         </p>
@@ -271,7 +294,7 @@ const CareerProfileModal = ({
               ]}
               value={formData.skills}
               onChange={handleSkillsChange}
-              placeholder="Select Skills"
+              placeholder="Type or select skills"
             />
           </div>
 
@@ -307,7 +330,7 @@ const CareerProfileModal = ({
               Cancel
             </Button>
             <Button type="submit">
-              {initialData ? 'Update Profile' : 'Save Profile'}
+              {initialData && initialData !== "Save Profile" ? 'Update Profile' : 'Save Profile'}
             </Button>
           </div>
         </form>

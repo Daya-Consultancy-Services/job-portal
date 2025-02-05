@@ -12,7 +12,10 @@ const initialState = {
     resume : null,
     loading: false,
     Onlineprofile : null,
-    image: null
+    image: null,
+    imageResume:null,
+    personalDetails:null
+
 
 
     
@@ -52,15 +55,21 @@ const profileSlice = createSlice({
         setEmpProfile(state,action){
             state.empProfile = action.payload
         },
-        setResume(state, action) {  // New action for resume upload
-            state.resume = action.payload;  // Store resume data if necessary
+        setResume(state, action) {  
+            state.resume = action.payload;  
         },
         clearResume(state) {
-            state.resume = null; // Clear the resume when deleted
+            state.resume = null; 
         },
-        setImage(state, action){
-            state.image = action.payload;  // Store image data if necessary
+        setImageResume(state, action){
+            state.imageResume = action.payload;  
+        },
+        setPersonalDetails(state, action){
+            state.personalDetails = action.payload;
+            console.log("in slice",state.personalDetails);
         }
+      
+      
     },
 });
 
@@ -79,7 +88,9 @@ export const {
     setEmpProfile,
     setResume,
     clearResume,
-    setImage
+    setImage,
+    setImageResume,
+    setPersonalDetails
 
 } = profileSlice.actions;
 export default profileSlice.reducer;

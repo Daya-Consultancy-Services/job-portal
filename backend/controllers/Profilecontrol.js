@@ -1,8 +1,8 @@
 const User = require("../models/User")
 const Profile = require("../models/Profile")
-const {uploadToCloudinary} = require("../config/cloudinary");
+const {uploadToCloudinary, uploadResumeToCloudinary} = require("../config/cloudinary");
 require("dotenv").config();
-
+const cloudinary = require('cloudinary').v2;
 
 exports.updateProfile = async (req,res) => {
         try {
@@ -111,66 +111,71 @@ exports.getAllDetail = async (req,res) => {
 // Upload Resume Function
 exports.uploadResume = async (req, res) => {
     try {
-        const id = req.user.id; // Extract user ID from authenticated request
+        const userId = req.user.id;
+        
+        const userDetail = await User.findById(userId);
+        const profileDetail = await Profile.findById(userDetail.profile._id);
 
         if (!req.file) {
             return res.status(400).json({
                 success: false,
-                message: "No file uploaded",
+                message: "No resume file provided"
             });
         }
 
-        const userDetail = await User.findById(id);
+        // Upload to Cloudinary
+        const cloudinaryResponse = await uploadResumeToCloudinary(req.file);
 
-        if (!userDetail) {
-            return res.status(404).json({
+        if (!cloudinaryResponse.success) {
+            return res.status(500).json({
                 success: false,
-                message: "User not found",
+                message: cloudinaryResponse.error
             });
         }
 
-        const profileDetail = await Profile.findById(userDetail.profile._id);
 
         if (!profileDetail) {
             return res.status(404).json({
                 success: false,
-                message: "Profile not found",
+                message: "Profile not found"
             });
         }
 
-        // Update resume field
-        profileDetail.resume = req.file.buffer; // Store file as Buffer
+        // Update profile with new URL
+        profileDetail.resume = cloudinaryResponse.url,
+        profileDetail.resumePublicId = cloudinaryResponse.public_id;
         await profileDetail.save();
 
         return res.status(200).json({
             success: true,
-            message: "Resume uploaded successfully!",
-            data: profileDetail.resume,
+            message: "Resume uploaded successfully",
+            data: {
+                resumeUrl: cloudinaryResponse.url,
+                uploadedAt: cloudinaryResponse.created_at
+            }
         });
+
     } catch (error) {
-        console.log(error);
+        console.error('Resume upload handler error:', error);
         return res.status(500).json({
             success: false,
-            message: "Error while uploading resume",
+            message: "Error uploading resume",
+            error: error.message
         });
     }
 };
 
 exports.deleteResume = async (req, res) => {
     try {
-        const id = req.user.id; // Extract user ID from authenticated request
-
+        const id = req.user.id;
         const userDetail = await User.findById(id);
-
         if (!userDetail) {
             return res.status(404).json({
                 success: false,
                 message: "User not found",
             });
         }
-
         const profileDetail = await Profile.findById(userDetail.profile._id);
-
         if (!profileDetail) {
             return res.status(404).json({
                 success: false,
@@ -178,30 +183,59 @@ exports.deleteResume = async (req, res) => {
             });
         }
 
-        // Delete the resume field
-        profileDetail.resume = undefined; // Remove the file
+        if (!profileDetail.resumePublicId) {
+            return res.status(404).json({
+                success: false,
+                message: "No resume found to delete",
+            });
+        }
+
+        // Try deleting with explicit resource type
+        try {
+            console.log('Attempting to delete:', profileDetail.resumePublicId);
+            const result = await cloudinary.uploader.destroy(profileDetail.resumePublicId, {
+                resource_type: "raw"  // Specify raw for documents/PDFs
+            });
+            console.log('Deletion result:', result);
+        } catch (cloudinaryError) {
+            console.error('Cloudinary deletion error:', cloudinaryError);
+            
+            // Try alternative deletion method if first one fails
+            try {
+                const altResult = await cloudinary.api.delete_resources([profileDetail.resumePublicId], {
+                    resource_type: "raw"
+                });
+                console.log('Alternative deletion result:', altResult);
+            } catch (altError) {
+                console.error('Alternative deletion failed:', altError);
+                throw altError;
+            }
+        }
+
+        // Update database regardless of Cloudinary result
+        profileDetail.resume = undefined;
+        profileDetail.resumePublicId = undefined;
         await profileDetail.save();
 
         return res.status(200).json({
             success: true,
-            message: "Resume deleted successfully!",
-            data:profileDetail.resume,
+            message: "Resume deleted successfully",
         });
     } catch (error) {
-        console.log(error);
+        console.error('Resume deletion error:', error);
         return res.status(500).json({
             success: false,
             message: "Error while deleting resume",
+            error: error.message
         });
     }
 };
 
+
 exports.downloadResume = async (req, res) => {
     try {
-        const id = req.user.id; // Extract user ID from authenticated request
-
+        const id = req.user.id;
         const userDetail = await User.findById(id);
-
         if (!userDetail) {
             return res.status(404).json({
                 success: false,
@@ -210,37 +244,124 @@ exports.downloadResume = async (req, res) => {
         }
 
         const profileDetail = await Profile.findById(userDetail.profile._id);
-
-        if (!profileDetail || !profileDetail.resume) {
+        if (!profileDetail || !profileDetail.resumePublicId) {
             return res.status(404).json({
                 success: false,
                 message: "Resume not found",
             });
         }
 
-        // Set the file name and type for the response
-        const fileName = 'resume.pdf'; // Change as necessary based on the file type
-        const fileBuffer = profileDetail.resume;
-
-        // Send the file to the client
-        res.set({
-            'Content-Type': 'application/pdf', // Adjust based on the actual file type
-            'Content-Disposition': `attachment; filename=${fileName}`,
+        // Get the resource details from Cloudinary
+        const resource = await cloudinary.api.resource(profileDetail.resumePublicId, {
+            resource_type: 'image',
+            type: 'upload'
         });
 
-        // Send the file buffer as a response
-        res.send(fileBuffer);
+        // Return the secure URL
+        return res.json({
+            success: true,
+            downloadUrl: resource.secure_url
+        });
 
     } catch (error) {
-        console.log(error);
+        console.error('Resume download error:', error);
         return res.status(500).json({
             success: false,
             message: "Error while downloading resume",
+            error: error.message
         });
     }
 };
 
 
+// exports.getResume = async (req, res) => {
+//     try {
+//         const userId = req.user.id;
+        
+//         // Find user and check if exists
+//         const userDetail = await User.findById(userId);
+//         if (!userDetail) {
+//             return res.status(404).json({
+//                 success: false,
+//                 message: "User not found"
+//             });
+//         }
+
+//         // Find profile and check if exists
+//         const profileDetail = await Profile.findById(userDetail.profile._id);
+//         if (!profileDetail) {
+//             return res.status(404).json({
+//                 success: false,
+//                 message: "Profile not found"
+//             });
+//         }
+
+//         // Check if resume exists
+//         if (!profileDetail.resume) {
+//             return res.status(404).json({
+//                 success: false,
+//                 message: "No resume found for this user"
+//             });
+//         }
+
+//         // Extract the original filename from the Cloudinary URL or use a default
+//         let resumeName = 'resume.pdf';
+//         if (profileDetail.resumePublicId) {
+//             // Extract filename from public ID
+//             const nameParts = profileDetail.resumePublicId.split('/');
+//             resumeName = nameParts[nameParts.length - 1];
+//             // Add file extension if missing
+//             if (!resumeName.includes('.')) {
+//                 resumeName += '.pdf';
+//             }
+//         }
+
+//         // Return the resume URL, public ID, and filename
+//         return res.status(200).json({
+//             success: true,
+//             message: "Resume fetched successfully",
+//             data: {
+//                 resumeUrl: profileDetail.resume,
+//                 resumePublicId: profileDetail.resumePublicId,
+//                 resumeName: resumeName
+//             }
+//         });
+//     } catch (error) {
+//         console.error('Error fetching resume:', error);
+//         return res.status(500).json({
+//             success: false,
+//             message: "Error while fetching resume",
+//             error: error.message
+//         });
+//     }
+// };
+
+exports.getImageAndResume = async (req, res) => {
+    try {
+        const id = req.user.id;
+
+        // Populate only 'image' and 'resume' fields from the profile
+        const userDetail = await User.findById(id)
+            .populate({
+                path: "profile",
+                select: "image resume" // Select only the required fields
+            })
+            .exec();
+
+        return res.status(200).json({
+            success: true,
+            message: "User Detail Fetched Successfully",
+            data: userDetail.profile
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Error while Fetching User Details"
+        });
+    }
+};
 
 exports.uploadProfileImage = async (req, res) => {
     try {

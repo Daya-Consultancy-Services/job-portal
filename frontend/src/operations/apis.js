@@ -14,13 +14,15 @@ export const profilePoint = {
     deleteresume      : BASE_URL + "/profile/delete-resume",
     getresume         : BASE_URL + "/profile/download-resume",
     uploadimage: BASE_URL + "/profile/upload-image",
-    getimage: BASE_URL + "/profile/get-profile-image"
+    getimage: BASE_URL + "/profile/get-profile-image",
+    getimageresume: BASE_URL + "/profile/get-imageresume",
 }
 
 export const personalDetail = {
     createPersonaldetail : BASE_URL + "/profile/personaldetail",
     updatePersonaldetail : BASE_URL + "/profile/updatepersonaldetail",
-    deletePersonaldetail : BASE_URL + "/profile/deletepersonaldetail" 
+    deletePersonaldetail : BASE_URL + "/profile/deletepersonaldetail" ,
+    getPersonalDetail    : BASE_URL + "/profile/getpersonaldetails"
 }
 export const onlineProfile = {
     createOnlineProfile : BASE_URL + "/profile/onlineprofile",

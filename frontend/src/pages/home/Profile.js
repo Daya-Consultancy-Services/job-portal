@@ -1,19 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SiTicktick } from "react-icons/si";
 import { Link } from 'react-router-dom';
 import { IoBriefcaseOutline } from "react-icons/io5";
 import { TbBuildings } from "react-icons/tb";
 import { LuBookOpen } from "react-icons/lu";
+import { fetchProfileImage } from '../../operations/profileAPI';
+import { useDispatch, useSelector } from 'react-redux';
 function Profile() {
-  const [profileImage, setProfileImage] = useState(require('../../assets/profile.png'));
+  const image = useSelector((state) => state.profile.imageResume?.image,)
+  const token = useSelector((state)=> state.user.token)
+  const user = useSelector((state)=> state.profile.user)
 
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const imageURL = URL.createObjectURL(file);
-      setProfileImage(imageURL);
-    }
-  };
+  const dispatch = useDispatch();
+
+  useEffect(()=>{
+    if (token && user) {
+            dispatch(fetchProfileImage(token));
+        }
+  }, [dispatch, token])
+
+ 
 
   return (
     <>
@@ -21,23 +27,8 @@ function Profile() {
         <div className="img-name h-[25%] w-full flex flex-col items-center">
           {/* Image Div */}
           <div className="img h-[60%] w-[30%] rounded-full mt-3 overflow-hidden relative group">
-            <img className="h-full w-full object-cover" src={profileImage} alt="Profile" />
-            {/* Overlay for Upload */}
-            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <label
-                htmlFor="imageUpload"
-                className="text-white text-sm rounded cursor-pointer"
-              >
-                Upload Image
-              </label>
-              <input
-                id="imageUpload"
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageUpload}
-              />
-            </div>
+          <img className="h-full w-full object-cover" src={image || require("../../assets/default-profile.jpg")} alt="image" />
+        
           </div>
 
           {/* Name */}
