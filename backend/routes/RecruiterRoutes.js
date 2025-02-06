@@ -9,14 +9,15 @@ const {
     updateJob,
     deleteJob,
     getJobRecruiter,
-    logoutRecruiter
+    logoutRecruiter,
+    getUserDetailsForRecruiter
     
 } = require("../controllers/RecruiterControl")
 
 const { auth , isRecruiter} = require("../middleware/auth");
 
 
-router.post("/loginrecruiter",loginRecruiter)
+router.post("/login",loginRecruiter)
 router.get("/logout",logoutRecruiter)
 
 router.post("/createjob",auth,isRecruiter,createJob)
@@ -32,6 +33,8 @@ router.put("/updatejob",auth,isRecruiter,updateJob)
 router.delete("/deletejob",auth,isRecruiter,deleteJob)
 
 router.get("/getjobrecruiter",auth,isRecruiter,getJobRecruiter)
+
+router.get("/grantAccess",auth,isRecruiter,getUserDetailsForRecruiter)
 // {
 //     "name":"Jacks",
 //     "email":"jack66@gmail.com",

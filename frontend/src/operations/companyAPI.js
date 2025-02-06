@@ -115,7 +115,7 @@ export function updateCompanyDetail(token,updatedData){
             }
 
             const updatedUser = { ...response.data.comp };
-            dispatch(setUser(updatedUser));
+            dispatch(setCompany(updatedUser));
 
             localStorage.setItem("company", JSON.stringify(updatedUser));
             toast.success('Company_Profile updated successfully!');
@@ -153,6 +153,35 @@ export function deleteCompanys(token,navigate){
             dispatch(setLoading(false));
         }
     }
+}
+
+export function fetchCompany(token) {
+    return async (dispatch) => {
+        const toastId = toast.loading("Fetching Company data...");
+        try {
+            const response = await apiConnector(
+                "GET",
+                getalldetailsCompany_api,
+                null,
+                {
+                    Authorization: `Bearer ${token}`
+                }
+            );
+            
+            if (!response.data.url) {
+                throw new Error(response.data.message);
+            }
+            
+            dispatch(setCompany(response.data.data));
+            toast.success("Company fetched successfully");
+
+        } catch (error) {
+            console.log("FETCH_PROFILE_IMAGE_API ERROR............", error);
+            toast.error("Could not fetch profile image");
+        } finally {
+            toast.dismiss(toastId);
+        }
+    };
 }
 
 export function logout(navigate) {

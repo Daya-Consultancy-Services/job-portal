@@ -7,6 +7,7 @@ const userRoute = require("./routes/UserRoutes")
 const profileRoute = require("./routes/ProfileRoutes")
 const companyRoute = require("./routes/CompanyRoutes")
 const recruiterRoute = require("./routes/RecruiterRoutes");
+const adminRoute =  require("./routes/AdminRoutes")
 const fileUpload = require("express-fileupload")
 
 // database fetch
@@ -40,6 +41,7 @@ app.use("/api/v1/user", userRoute);
 app.use("/api/v1/profile", profileRoute);
 app.use("/api/v1/company", companyRoute);
 app.use("/api/v1/recruiter", recruiterRoute);
+app.use("/api/v1/admin", adminRoute);
 
 
 

@@ -111,7 +111,7 @@ exports.loginCompany = async (req,res) => {
             company.password = undefined
 
             const options = {
-                expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),  // Expires in 3 days
+                expires: new Date(Date.now() + 24 * 60 * 60 * 1000),  // Expires in 1 days
                 httpOnly: true,                                           // Ensures the cookie is not accessible via JavaScript
             };
             return res.cookie("token",token,options).status(200).json({
@@ -253,12 +253,37 @@ exports.getAllDetailCompany = async (req,res) => {
     try {
         const id = req.user.id
 
-        const companyDetail = await Company.findById(id).populate("recruiter").exec();
+        // const companyDetail = await Company.findById(id)
+        //         .select("name email role website location logo companyfield recruiter")
+        //         .populate({
+        //             path: "recruiter",
+        //             select: "name email contactNumber image role description job",
+        //             populate:{
+        //                 path:"job",
+        //                 select: "jobTitle description skillRequired jobType salaryRange jobLocation", 
+        //             },
+        //         })
+        //         .exec();
+
+        // const companyDetail =  await Company.findById(id)
+        //         .select("name email role website location logo companyfield recruiter")
+        //         .populate({
+        //             path:"recruiter",
+        //             select:"name email contactNumber image role description job"
+        //         })
+        //         .exec();
+        const companyDetail =  await Company.findById(id).populate("recruiter").exec();
+                // .select("name email role website location logo companyfield recruiter")
+                // .populate({
+                //     path:"recruiter",
+                //     select:"name email contactNumber image role description job"
+                // })
+                // .exec();
 
         return res.status(200).json({
             success:true,
             message:"Company Detail Fetched Successfully",
-            data:companyDetail.recruiter
+            data:companyDetail
         });
 
     } catch (error) {
@@ -440,3 +465,25 @@ exports.getAlldetail = async (req, res) => {
         })
     }
 }
+
+exports.logoutCompany = async (req, res) => {
+    try {
+        // Clear the authentication token by setting an expired cookie
+        return res
+            .cookie("token", "", {
+                expires: new Date(0),  // Expire the cookie immediately
+                httpOnly: true,
+            })
+            .status(200)
+            .json({
+                success: true,
+                message: "Logout successful",
+            });
+    } catch (error) {
+        console.error("Logout Error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Logout failed, please try again",
+        });
+    }
+};
