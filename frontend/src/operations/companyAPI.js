@@ -1,23 +1,251 @@
-import { toast } from 'react-hot-toast'
+// import { toast } from 'react-hot-toast'
 
+// import { setCompanyLogo, setLoading, setToken } from '../slices/companySlice'
+// import { setCompany } from '../slices/companySlice'
+// import { apiConnector } from '../services/apiConnector'
+// import { companyPoint } from './apis'
+// import { logout } from './userAPI'
+
+// const {
+
+//     signupCompany_api,
+//     loginCompany_api,
+//     updateCompany_api,
+//     deleteCompany_api,
+//     // getalldetailsCompany_api
+//     uploadCompanyLogo
+    
+
+// } = companyPoint
+
+
+// export function signupCompany(
+//     name,
+//     description,
+//     email,
+//     password,
+//     role,
+//     website,
+//     location,
+//     logo,
+//     companyfield,
+// ){
+//     return async (dispatch) => {
+//         const toastId = toast.loading("Loading...");
+//         dispatch(setLoading(true));
+//         try {
+//             const response = await apiConnector("POST",signupCompany_api,{
+//                 name,
+//                 description,
+//                 email,
+//                 password,
+//                 role,
+//                 website,
+//                 location,
+//                 logo,
+//                 companyfield,
+//             });
+//             console.log("Signup Company_API response........", response); // Log API response
+//             if (!response.data.success) {
+
+//                 throw new Error(response.data.message);
+
+//             }
+//             toast.success("Signup Successful!!!");
+//             //navigate("/components/auth/User/login"); // Navigate to login page
+//         } catch (error) {
+//             console.error("Signup Error for company.....", error);
+//             toast.error("Signup for company Failed, Try again.");
+//         } finally {
+//             dispatch(setLoading(false)); 
+//             toast.dismiss(toastId);
+//         }
+//     }
+// }
+
+// export function loginCompany(
+//     email,
+//     password,
+//     navigate
+// ){
+//     return async (dispatch) => {
+//         const toastId = toast.loading("Loading......")
+//         dispatch(setLoading(true))
+//         try {
+//             const response = await apiConnector("POST",loginCompany_api,{
+//                 email,
+//                 password,
+//             })
+//             console.log("Login Company_Api Response.......", response)
+
+//             dispatch(setToken(response.data.token))
+//             dispatch(setCompany(response.data.company));
+
+//             localStorage.setItem("token", JSON.stringify(response.data.token));
+//             localStorage.setItem("company", JSON.stringify(response.data.company));
+
+//             if (!response.data.success) {
+//                 throw new Error(response.data.message);
+//             }
+//             toast.success("Login Successful")
+//             navigate("/home")
+
+
+//         } catch (error) {
+//             console.log("Login Company_Api error...............", error)
+//             toast.error("Login failed")
+//         } finally {
+//             dispatch(setLoading(false))
+//             toast.dismiss(toastId)
+//         }
+//     }
+// }
+
+// export function updateCompanyDetail(token,updatedData){
+//     return async (dispatch) => {
+//         console.log(updatedData)
+//         const toastId = toast.loading('Updating profile...');
+//         dispatch(setLoading(true))
+//         try {
+//             const response = await apiConnector('PUT', updateCompany_api, updatedData, {
+//                 Authorization: `Bearer ${token}`,
+//             });
+//             console.log("UPDATE_Company_API RESPONSE............", response);
+
+//             if (!response.data.success) {
+//                 throw new Error(response.data.message);
+//             }
+
+//             const updatedUser = { ...response.data.comp };
+//             dispatch(setCompany(updatedUser));
+
+//             localStorage.setItem("company", JSON.stringify(updatedUser));
+//             toast.success('Company_Profile updated successfully!');
+//         } catch (error) {
+//             console.error('Error updating profile:', error);
+//             toast.error('Failed to update profile.');
+//         } finally {
+//             dispatch(setLoading(false))
+//             toast.dismiss(toastId)
+//         }
+//     }
+// }
+
+// export function deleteCompanys(token,navigate){
+//     return async (dispatch) => {
+//         const toastId = toast.loading("Processing...");
+//         dispatch(setLoading(true));
+//         try {
+//              const response = await apiConnector("DELETE", deleteCompany_api, null, {
+//                 Authorization: `Bearer ${token}`,
+//             });
+//             console.log("DELETE_Company_API RESPONSE............", response);
+
+//             if (!response.data.success) {
+//                 throw new Error(response.data.message);
+//             }
+
+//             toast.success("Company deleted successfully!");
+//             dispatch(logout(navigate));
+//         } catch (error) {
+//             console.error("Delete_Company_API error:", error);
+//             toast.error("Could not delete Company.");
+//         } finally {
+//             toast.dismiss(toastId);
+//             dispatch(setLoading(false));
+//         }
+//     }
+// }
+
+// export function uploadCompanyLogos( file) {
+//     return async (dispatch) => {
+//         const toastId = toast.loading("Uploading Logo...");
+       
+//         dispatch(setLoading(true));
+//         try {
+//             // Create FormData object to handle file upload
+//             // const formData = new FormData();
+//             // formData.append('logo', file);
+//             console.log("formdata", file);
+// export function fetchCompany(token) {
+//     return async (dispatch) => {
+//         const toastId = toast.loading("Fetching Company data...");
+//         try {
+//             const response = await apiConnector(
+//                 "GET",
+//                 getalldetailsCompany_api,
+//                 null,
+//                 {
+//                     Authorization: `Bearer ${token}`
+//                 }
+//             );
+            
+//             if (!response.data.url) {
+//                 throw new Error(response.data.message);
+//             }
+            
+//             dispatch(setCompany(response.data.data));
+//             toast.success("Company fetched successfully");
+
+//         } catch (error) {
+//             console.log("FETCH_PROFILE_IMAGE_API ERROR............", error);
+//             toast.error("Could not fetch profile image");
+//         } finally {
+//             toast.dismiss(toastId);
+//         }
+//     };
+// }
+
+// export function logout(navigate) {
+
+//             const response = await apiConnector("POST", uploadCompanyLogo, file, {
+//                 // Authorization: `Bearer ${token}`,
+//                 'Content-Type': 'multipart/form-data',
+//             });
+
+//             console.log("UPLOAD_COMPANY_LOGO_API RESPONSE............", response);
+
+//             if (!response.data.url) {
+//                 throw new Error(response.data.message);
+//             }
+//             dispatch(setCompanyLogo(response.data.url));
+//             toast.success("Logo uploaded successfully!");
+//         } catch (error) {
+//             console.error("UPLOAD_COMPANY_LOGO_API error:", error);
+//             toast.error("Could not upload Logo.");
+//         } finally {
+//             toast.dismiss(toastId);
+//             dispatch(setLoading(false));
+//         }
+//     }
+// }
+
+// // export function logout(navigate) {
+
+// //     return (dispatch) => {
+// //         dispatch(setToken(null))
+// //         dispatch(setCompany(null))
+// //         localStorage.removeItem("token")
+// //         localStorage.removeItem("company")
+// //         toast.success("Logged Out")
+// //         navigate("/")
+
+// //     }
+// // }
+import { toast } from 'react-hot-toast'
 import { setCompanyLogo, setLoading, setToken } from '../slices/companySlice'
 import { setCompany } from '../slices/companySlice'
 import { apiConnector } from '../services/apiConnector'
 import { companyPoint } from './apis'
-import { logout } from './userAPI'
 
 const {
-
     signupCompany_api,
     loginCompany_api,
     updateCompany_api,
     deleteCompany_api,
-    // getalldetailsCompany_api
+    getalldetailsCompany_api,
     uploadCompanyLogo
-    
-
 } = companyPoint
-
 
 export function signupCompany(
     name,
@@ -29,12 +257,12 @@ export function signupCompany(
     location,
     logo,
     companyfield,
-){
+) {
     return async (dispatch) => {
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true));
         try {
-            const response = await apiConnector("POST",signupCompany_api,{
+            const response = await apiConnector("POST", signupCompany_api, {
                 name,
                 description,
                 email,
@@ -45,38 +273,35 @@ export function signupCompany(
                 logo,
                 companyfield,
             });
-            console.log("Signup Company_API response........", response); // Log API response
+            console.log("Signup Company_API response........", response);
             if (!response.data.success) {
-
                 throw new Error(response.data.message);
-
             }
             toast.success("Signup Successful!!!");
-            //navigate("/components/auth/User/login"); // Navigate to login page
         } catch (error) {
             console.error("Signup Error for company.....", error);
             toast.error("Signup for company Failed, Try again.");
         } finally {
-            dispatch(setLoading(false)); 
+            dispatch(setLoading(false));
             toast.dismiss(toastId);
         }
     }
 }
 
-export function loginCompany(
-    email,
-    password,
-    navigate
-){
+export function loginCompany(email, password, navigate) {
     return async (dispatch) => {
         const toastId = toast.loading("Loading......")
         dispatch(setLoading(true))
         try {
-            const response = await apiConnector("POST",loginCompany_api,{
+            const response = await apiConnector("POST", loginCompany_api, {
                 email,
                 password,
             })
             console.log("Login Company_Api Response.......", response)
+
+            if (!response.data.success) {
+                throw new Error(response.data.message);
+            }
 
             dispatch(setToken(response.data.token))
             dispatch(setCompany(response.data.company));
@@ -84,12 +309,8 @@ export function loginCompany(
             localStorage.setItem("token", JSON.stringify(response.data.token));
             localStorage.setItem("company", JSON.stringify(response.data.company));
 
-            if (!response.data.success) {
-                throw new Error(response.data.message);
-            }
             toast.success("Login Successful")
             navigate("/home")
-
 
         } catch (error) {
             console.log("Login Company_Api error...............", error)
@@ -101,7 +322,7 @@ export function loginCompany(
     }
 }
 
-export function updateCompanyDetail(token,updatedData){
+export function updateCompanyDetail(token, updatedData) {
     return async (dispatch) => {
         console.log(updatedData)
         const toastId = toast.loading('Updating profile...');
@@ -131,12 +352,12 @@ export function updateCompanyDetail(token,updatedData){
     }
 }
 
-export function deleteCompanys(token,navigate){
+export function deleteCompanys(token, navigate) {
     return async (dispatch) => {
         const toastId = toast.loading("Processing...");
         dispatch(setLoading(true));
         try {
-             const response = await apiConnector("DELETE", deleteCompany_api, null, {
+            const response = await apiConnector("DELETE", deleteCompany_api, null, {
                 Authorization: `Bearer ${token}`,
             });
             console.log("DELETE_Company_API RESPONSE............", response);
@@ -157,16 +378,33 @@ export function deleteCompanys(token,navigate){
     }
 }
 
-export function uploadCompanyLogos( file) {
+export function uploadCompanyLogos(file) {
     return async (dispatch) => {
         const toastId = toast.loading("Uploading Logo...");
-       
         dispatch(setLoading(true));
         try {
-            // Create FormData object to handle file upload
-            // const formData = new FormData();
-            // formData.append('logo', file);
             console.log("formdata", file);
+            const response = await apiConnector("POST", uploadCompanyLogo, file, {
+                'Content-Type': 'multipart/form-data',
+            });
+
+            console.log("UPLOAD_COMPANY_LOGO_API RESPONSE............", response);
+
+            if (!response.data.url) {
+                throw new Error(response.data.message);
+            }
+            dispatch(setCompanyLogo(response.data.url));
+            toast.success("Logo uploaded successfully!");
+        } catch (error) {
+            console.error("UPLOAD_COMPANY_LOGO_API error:", error);
+            toast.error("Could not upload Logo.");
+        } finally {
+            toast.dismiss(toastId);
+            dispatch(setLoading(false));
+        }
+    }
+}
+
 export function fetchCompany(token) {
     return async (dispatch) => {
         const toastId = toast.loading("Fetching Company data...");
@@ -197,39 +435,12 @@ export function fetchCompany(token) {
 }
 
 export function logout(navigate) {
-
-            const response = await apiConnector("POST", uploadCompanyLogo, file, {
-                // Authorization: `Bearer ${token}`,
-                'Content-Type': 'multipart/form-data',
-            });
-
-            console.log("UPLOAD_COMPANY_LOGO_API RESPONSE............", response);
-
-            if (!response.data.url) {
-                throw new Error(response.data.message);
-            }
-            dispatch(setCompanyLogo(response.data.url));
-            toast.success("Logo uploaded successfully!");
-        } catch (error) {
-            console.error("UPLOAD_COMPANY_LOGO_API error:", error);
-            toast.error("Could not upload Logo.");
-        } finally {
-            toast.dismiss(toastId);
-            dispatch(setLoading(false));
-        }
+    return (dispatch) => {
+        dispatch(setToken(null))
+        dispatch(setCompany(null))
+        localStorage.removeItem("token")
+        localStorage.removeItem("company")
+        toast.success("Logged Out")
+        navigate("/")
     }
 }
-
-// export function logout(navigate) {
-
-//     return (dispatch) => {
-//         dispatch(setToken(null))
-//         dispatch(setCompany(null))
-//         localStorage.removeItem("token")
-//         localStorage.removeItem("company")
-//         toast.success("Logged Out")
-//         navigate("/")
-
-//     }
-// }
-

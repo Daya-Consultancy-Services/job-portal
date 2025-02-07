@@ -133,6 +133,6 @@ export function fetchCertificates(token) {
         } finally {
             dispatch(setLoading(false));
         }
-    };
+    }
 }
 
