@@ -135,7 +135,7 @@ exports.isRecruiter = async (req, res, next) => {
 //isAdmin
 exports.isAdmin = async (req, res, next) => {
     try{    
-           if(req.user.role !== "Admin") {                      // to check if the Admin is jobseeker Role or not in User Schema
+           if(req.user.role !== "admin") {                      // to check if the Admin is jobseeker Role or not in User Schema
                return res.status(401).json({
                    success:false,
                    message:'This is a protected route for Admin only',

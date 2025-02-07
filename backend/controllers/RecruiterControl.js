@@ -1,4 +1,5 @@
 const Recruiter = require("../models/recruiter");
+const User = require("../models/User")
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -43,7 +44,7 @@ exports.loginRecruiter = async(req,res) => {
             recruiter.password = undefined
 
             const options = {
-                expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),  // Expires in 3 days
+                expires: new Date(Date.now() + 24 * 60 * 60 * 1000),  // Expires in 1 days
                 httpOnly: true,                                           // Ensures the cookie is not accessible via JavaScript
             };
             return res.cookie("token",token,options).status(200).json({
@@ -292,3 +293,149 @@ exports.logoutRecruiter = async (req, res) => {
         });
     }
 };
+
+
+exports.getUserDetailsForRecruiter = async (req, res) => {
+    try {
+        const recruiterId = req.user.id;
+        const { userId } = req.body; // Recruiter selects a specific user
+
+        if (!userId) {
+            return res.status(400).json({
+                success: false,
+                message: "User ID is required",
+            });
+        }
+
+        // Fetch recruiter and verify existence
+        const recruiter = await Recruiter.findById(recruiterId).populate("job");
+        if (!recruiter) {
+            return res.status(404).json({
+                success: false,
+                message: "Recruiter not found",
+            });
+        }
+
+        // Check recruiter access permissions
+        if (!recruiter.permanentAccess && recruiter.userDetailAccessCount <= 0) {
+            return res.status(403).json({
+                success: false,
+                message: "Access Denied: You do not have permission to view user details",
+            });
+        }
+
+        // Fetch the user and check if they applied to any of the recruiter's jobs
+        const user = await User.findById(userId)
+            .select("firstName lastName email workstatus profile appliedJobs")
+            .populate({
+                path: "profile",
+                select: "contactNumber resume resumeHeadline profileSummary location image personalDetails onlineProfiles certificates skillsProfile project careerProfile educationProfile employProfile",
+                populate: {
+                    path: "personalDetails onlineProfiles certificates skillsProfile project careerProfile educationProfile employProfile",
+                },
+            });
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        // Check if the user applied to any job created by this recruiter
+        const hasAppliedToRecruiterJob = user.appliedJobs.some(jobId =>
+            recruiter.job.some(recruiterJob => recruiterJob._id.toString() === jobId.toString())
+        );
+
+        if (!hasAppliedToRecruiterJob) {
+            return res.status(403).json({
+                success: false,
+                message: "Access Denied: This user has not applied to your jobs",
+            });
+        }
+
+        // Reduce access count if not permanent
+        if (!recruiter.permanentAccess) {
+            recruiter.userDetailAccessCount -= 1;
+            await recruiter.save();
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "User details fetched successfully",
+            user,
+        });
+
+    } catch (error) {
+        console.error("Error fetching user details:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error while fetching user details. Please try again.",
+        });
+    }
+};
+
+
+// exports.getUserDetailsForRecruiter = async (req, res) => {
+//     try {
+//         const recruiterId = req.user.id;
+//         const { jobId } = req.body; // Recruiter requests access for a specific job
+
+//         if (!jobId) {
+//             return res.status(400).json({
+//                 success: false,
+//                 message: "Job ID is required",
+//             });
+//         }
+
+//         // Fetch recruiter data with access control
+//         const recruiter = await Recruiter.findById(recruiterId);
+//         if (!recruiter) {
+//             return res.status(404).json({
+//                 success: false,
+//                 message: "Recruiter not found",
+//             });
+//         }
+
+//         // Check access permissions
+//         if (!recruiter.permanentAccess && recruiter.userDetailAccessCount <= 0) {
+//             return res.status(403).json({
+//                 success: false,
+//                 message: "Access Denied: You do not have permission to view user details",
+//             });
+//         }
+
+//         // Fetch user details related to this job (Assuming Users apply to jobs)
+//         const userDetails = await User.find({ appliedJobs: jobId })
+//                 .select("firstName lastName email workstatus profile")
+//                 .populate({
+//                     path:"profile",
+//                     select:"contactNumber resume resumeHeadline profileSummary location image personalDetails onlineProfiles certificates skillsProfile project careerProfile educationProfile employProfile",
+//                     populate:{
+//                         path: "personalDetails onlineProfiles certificates skillsProfile project careerProfile educationProfile employProfile"
+//                     }
+//                 })
+//         .limit(
+//             recruiter.permanentAccess ? 1000 : recruiter.userDetailAccessCount
+//         );
+
+//         // Reduce access count if not permanent
+//         if (!recruiter.permanentAccess) {
+//             recruiter.userDetailAccessCount -= userDetails.length;
+//             await recruiter.save();
+//         }
+
+//         return res.status(200).json({
+//             success: true,
+//             message: "User details fetched successfully",
+//             users: userDetails,
+//         });
+
+//     } catch (error) {
+//         console.error("Error fetching user details:", error);
+//         return res.status(500).json({
+//             success: false,
+//             message: "Error while fetching user details. Please try again.",
+//         });
+//     }
+// };

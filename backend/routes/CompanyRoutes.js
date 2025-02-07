@@ -12,6 +12,8 @@ const {
     createRecruiter,
     updateRecruiterDetail,
     getAlldetail,
+    logoutCompany
+    getAlldetail,
 
 } = require("../controllers/Companycontrol") 
 
@@ -56,6 +58,8 @@ router.post("/upload-logo", auth, isCompany,
      upload.single('logo'),
       uploadCompanyLogo
     );
+router.get("/logoutcompany",logoutCompany);  // get all the detail for the company with the recruiter details
+
 // recruiter **********************************************************************************************
 router.post("/createrecruiter",auth,createRecruiter);
 router.put("/updaterecruiter",auth,isRecruiter,updateRecruiterDetail)

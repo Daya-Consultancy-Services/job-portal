@@ -37,17 +37,23 @@ const recruiterSchema = new mongoose.Schema({
             ref:"Jobs"
         }
     ],
-    // association:{
-    //     type:String,
-    //     enum:["assign","freelance"],
-    // },
     description:{
         type:String
     },
     token:{
         type:String,
     },
- 
+    //  New Fields for Admin Control
+    userDetailAccessCount: 
+    { 
+        type: Number, 
+        default: 0 
+    }, // Custom number of user details they can see
+    permanentAccess: 
+    { 
+        type: Boolean, 
+        default: false 
+    },  // If true, recruiter has unlimited access
 })
 
 module.exports = mongoose.model("Recruiter",recruiterSchema);

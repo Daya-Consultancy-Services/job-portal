@@ -167,6 +167,36 @@ export function uploadCompanyLogos( file) {
             // const formData = new FormData();
             // formData.append('logo', file);
             console.log("formdata", file);
+export function fetchCompany(token) {
+    return async (dispatch) => {
+        const toastId = toast.loading("Fetching Company data...");
+        try {
+            const response = await apiConnector(
+                "GET",
+                getalldetailsCompany_api,
+                null,
+                {
+                    Authorization: `Bearer ${token}`
+                }
+            );
+            
+            if (!response.data.url) {
+                throw new Error(response.data.message);
+            }
+            
+            dispatch(setCompany(response.data.data));
+            toast.success("Company fetched successfully");
+
+        } catch (error) {
+            console.log("FETCH_PROFILE_IMAGE_API ERROR............", error);
+            toast.error("Could not fetch profile image");
+        } finally {
+            toast.dismiss(toastId);
+        }
+    };
+}
+
+export function logout(navigate) {
 
             const response = await apiConnector("POST", uploadCompanyLogo, file, {
                 // Authorization: `Bearer ${token}`,
@@ -202,3 +232,4 @@ export function uploadCompanyLogos( file) {
 
 //     }
 // }
+
