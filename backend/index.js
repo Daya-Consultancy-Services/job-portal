@@ -25,12 +25,12 @@ const PORT = process.env.PORT || 5000 ;
 app.use(express.json())
 app.use(cookieParser())
 
-app.use("/api/v1/profile/upload-image",fileUpload({
-    useTempFiles: true,
-}))
-app.use("/api/v1/upload-logo",fileUpload({
-    useTempFile: true,
-}))
+app.use(
+    ["/api/v1/profile/upload-image", "/api/v1/company/upload-logo"],
+    fileUpload({
+        useTempFiles: true,
+    })
+);
 app.use(
     cors({
         origin:"http://localhost:3000",

@@ -11,8 +11,8 @@ const {
     uploadCompanyLogo,
     createRecruiter,
     updateRecruiterDetail,
-    getAlldetail,
-    logoutCompany,
+    getAlldetailRecruiter,
+    logoutCompany
 
 } = require("../controllers/Companycontrol") 
 
@@ -54,15 +54,12 @@ router.delete("/delete",auth,isCompany,deleteCompany);
 
 
 router.get("/companydetails",auth,getAllDetailCompany);  // get all the detail for the company with the recruiter details
-router.post("/upload-logo", auth, isCompany,
-     upload.single('logo'),
-      uploadCompanyLogo
-    );
-router.get("/logoutcompany",logoutCompany);  // get all the detail for the company with the recruiter details
+router.post("/upload-logo", auth, isCompany,uploadCompanyLogo);
+router.get("/logout",logoutCompany);  // get all the detail for the company with the recruiter details
 
 // recruiter **********************************************************************************************
 router.post("/createrecruiter",auth,createRecruiter);
-router.put("/updaterecruiter",auth,isRecruiter,updateRecruiterDetail)
-router.get("/getrecruiter",auth,isRecruiter,getAlldetail)
+router.put("/updaterecruiter",auth,isCompany,updateRecruiterDetail)
+router.get("/getrecruiter",auth,isCompany,getAlldetailRecruiter)
 
 module.exports = router

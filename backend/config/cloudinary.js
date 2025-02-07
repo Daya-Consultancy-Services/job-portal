@@ -153,7 +153,7 @@ const uploadCompanyLogoToCloudinary = async (file) => {
             ],
             // Additional options for logos
             colors: true, // Extract dominant colors
-            background_removal: 'auto' // Optional: remove background if needed
+            // background_removal: 'auto' // Optional: remove background if needed
         };
 
         let uploadResponse;
