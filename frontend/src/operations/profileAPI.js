@@ -12,7 +12,6 @@ const {
     deleteresume,
     getresume,
     uploadimage,
-    getimage,
     getimageresume
     
     
@@ -215,13 +214,13 @@ export function uploadProfileImage(token, imageFile) {
             }
             
             // Update Redux store with new image URL
-            dispatch(fetchProfileImage(token));
+            // dispatch(fetchProfileImage(token));
+            dispatch(fetchImageResume(token))
             toast.success("Profile image updated successfully");
             
         } catch (error) {
             console.log("UPLOAD_PROFILE_IMAGE_API ERROR............", error);
             toast.error("Could not upload profile image");
-            throw error; // Re-throw to handle in the component
         } finally {
             toast.dismiss(toastId);
         }
@@ -230,33 +229,32 @@ export function uploadProfileImage(token, imageFile) {
 
 
 // This is already implemented in your action creators
-export function fetchProfileImage(token) {
-    return async (dispatch) => {
-        const toastId = toast.loading("Fetching profile image...");
-        try {
-            const response = await apiConnector(
-                "GET",
-                getimage,
-                null,
-                {
-                    Authorization: `Bearer ${token}`
-                }
-            );
+// export function fetchProfileImage(token) {
+//     return async (dispatch) => {
+//         const toastId = toast.loading("Fetching profile image...");
+//         try {
+//             const response = await apiConnector(
+//                 "GET",
+//                 getimage,
+//                 null,
+//                 {
+//                     Authorization: `Bearer ${token}`
+//                 }
+//             );
             
-            if (!response.data.url) {
-                throw new Error("No image URL received from server");
-            }
+//             if (!response.data.url) {
+//                 throw new Error("No image URL received from server");
+//             }
             
-            // This dispatches the URL to the Redux store
-            // dispatch(setImage(response.data.url));
+//             // This dispatches the URL to the Redux store
+//             // dispatch(setImage(response.data.url));
             
 
-        } catch (error) {
-            console.log("FETCH_PROFILE_IMAGE_API ERROR............", error);
-            toast.error("Could not fetch profile image");
-            throw error;
-        } finally {
-            toast.dismiss(toastId);
-        }
-    };
-}
+//         } catch (error) {
+//             console.log("FETCH_PROFILE_IMAGE_API ERROR............", error);
+//             toast.error("Could not fetch profile image");
+//         } finally {
+//             toast.dismiss(toastId);
+//         }
+//     };
+// }
