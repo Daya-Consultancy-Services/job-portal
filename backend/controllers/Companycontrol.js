@@ -16,7 +16,7 @@ exports.companySignup = async (req,res) => {
             role,
             website,
             location,
-            logo,
+            //logo,
             companyfield,
         }= req.body
 
@@ -28,7 +28,7 @@ exports.companySignup = async (req,res) => {
             !role ||
             !website ||
             !location ||
-            !logo ||
+            //!logo ||
             !companyfield
         ){
             return res.status(403).json({
@@ -55,7 +55,7 @@ exports.companySignup = async (req,res) => {
             role,
             website,
             location,
-            logo,
+            //logo,
             companyfield
         });
 
@@ -148,7 +148,7 @@ exports.updateCompanyDetail = async (req,res) => {
             email,
             website,
             location,
-            logo,
+            //logo,
             companyfield
         } = req.body
 
@@ -166,7 +166,7 @@ exports.updateCompanyDetail = async (req,res) => {
             !email ||
             !website ||
             !location ||
-            !logo ||
+            //!logo ||
             !companyfield
         )
         {
@@ -184,19 +184,11 @@ exports.updateCompanyDetail = async (req,res) => {
                 email:email,
                 website:website,
                 location:location,
-                logo:logo,
+                //logo:logo,
                 companyfield:companyfield
             },
             {new:true}
         );
-
-        // comp.name = name;
-        // comp.description = description;
-        // comp.email = email;
-        // comp.website = website;
-        // comp.location = location;
-        // comp.logo = logo;
-        // comp.companyfield = companyfield;
 
         await comp.save();
 
@@ -273,13 +265,13 @@ exports.getAllDetailCompany = async (req,res) => {
         //             select:"name email contactNumber image role description job"
         //         })
         //         .exec();
-        const companyDetail =  await Company.findById(id).populate("recruiter").exec();
-                // .select("name email role website location logo companyfield recruiter")
-                // .populate({
-                //     path:"recruiter",
-                //     select:"name email contactNumber image role description job"
-                // })
-                // .exec();
+        const companyDetail =  await Company.findById(id).populate("recruiter")
+                .select("name email role website location logo companyfield recruiter")
+                .populate({
+                    path:"recruiter",
+                    select:"name email contactNumber image role description job"
+                })
+                .exec();
 
         return res.status(200).json({
             success:true,
@@ -300,16 +292,18 @@ exports.uploadCompanyLogo = async (req, res)=>{
     try {
         const compId = req.user.id
         const companyDetail = await Company.findById(compId);
-        if(!req.file){
+
+        const file =  req.files?.logo || req.file
+        if(!file){
             return res.status(400).json({
                 success:false,
                 message: "No file uploaded"
             });
         }
 
-        const cloudinaryResponse = await uploadCompanyLogoToCloudinary(req.file);
+        const cloudinaryResponse = await uploadCompanyLogoToCloudinary(file);
 
-        if(!cloudinaryResponse.success){
+        if(!cloudinaryResponse){
             return res.status(500).json({
                 success:false,
                 message: "Error while uploading file to cloudinary"
@@ -329,7 +323,7 @@ exports.uploadCompanyLogo = async (req, res)=>{
         return res.status(200).json({
             success: true,
             message: "Company Logo Uploaded Successfully",
-            data: companyDetail.logo
+            url: cloudinaryResponse.url
         });
     } catch (error) {
         console.error("logo upload error", error);
@@ -348,7 +342,7 @@ exports.createRecruiter = async (req,res) => {
             email,
             password,
             contactNumber,
-            image,
+            //image,
             description,
             role
         } = req.body
@@ -358,7 +352,7 @@ exports.createRecruiter = async (req,res) => {
             !email ||
             !password ||
             !contactNumber ||
-            !image ||
+            //!image ||
             !description ||
             !role
         )
@@ -391,7 +385,7 @@ exports.createRecruiter = async (req,res) => {
             email,
             password:hashedPassword,
             contactNumber,
-            image,
+            //image,
             companyId:compId._id,
             description,
             role:"recruiter"
@@ -420,7 +414,7 @@ exports.updateRecruiterDetail = async (req,res) => {
             name,
             email,
             contactNumber,
-            image,
+            //image,
             description,
             
         } = req.body
@@ -429,7 +423,7 @@ exports.updateRecruiterDetail = async (req,res) => {
             !name ||
             !email ||
             !contactNumber ||
-            !image ||
+            //!image ||
             !description
         )
         {
@@ -461,7 +455,7 @@ exports.updateRecruiterDetail = async (req,res) => {
             name,
             email,
             contactNumber,
-            image,
+            //image,
             description,
         };
         
@@ -484,7 +478,7 @@ exports.updateRecruiterDetail = async (req,res) => {
     }
 }
 
-exports.getAlldetail = async (req, res) => {
+exports.getAlldetailRecruiter = async (req, res) => {
     try {
         const compId = req.user.id
 
