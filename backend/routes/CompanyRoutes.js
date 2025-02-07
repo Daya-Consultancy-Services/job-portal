@@ -12,8 +12,7 @@ const {
     createRecruiter,
     updateRecruiterDetail,
     getAlldetail,
-    logoutCompany
-    getAlldetail,
+    logoutCompany,
 
 } = require("../controllers/Companycontrol") 
 
@@ -40,6 +39,7 @@ router.post("/signup",companySignup);
 router.post("/login",loginCompany);
 
 router.put("/update",auth,isCompany,updateCompanyDetail);
+
 // {
 //     "name":"Tcs",
 //     "description":"New service  company",
@@ -50,7 +50,7 @@ router.put("/update",auth,isCompany,updateCompanyDetail);
 //     "companyfield":"Training It"
 // }
 
-router.delete("/delete",auth,isCompany,deleteCompany); // delete the company profile 
+router.delete("/delete",auth,isCompany,deleteCompany); 
 
 
 router.get("/companydetails",auth,getAllDetailCompany);  // get all the detail for the company with the recruiter details
