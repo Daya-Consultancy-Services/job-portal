@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
-
+const upload = require("../config/multer");
 
 const {
     companySignup,
@@ -9,9 +8,10 @@ const {
     updateCompanyDetail,
     deleteCompany,
     getAllDetailCompany,
+    uploadCompanyLogo,
     createRecruiter,
     updateRecruiterDetail,
-    getAlldetail
+    getAlldetail,
 
 } = require("../controllers/Companycontrol") 
 
@@ -52,7 +52,10 @@ router.delete("/delete",auth,isCompany,deleteCompany); // delete the company pro
 
 
 router.get("/companydetails",auth,getAllDetailCompany);  // get all the detail for the company with the recruiter details
-
+router.post("/upload-logo", auth, isCompany,
+     upload.single('logo'),
+      uploadCompanyLogo
+    );
 // recruiter **********************************************************************************************
 router.post("/createrecruiter",auth,createRecruiter);
 router.put("/updaterecruiter",auth,isRecruiter,updateRecruiterDetail)

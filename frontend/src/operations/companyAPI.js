@@ -1,6 +1,6 @@
 import { toast } from 'react-hot-toast'
 
-import { setLoading, setToken } from '../slices/companySlice'
+import { setCompanyLogo, setLoading, setToken } from '../slices/companySlice'
 import { setCompany } from '../slices/companySlice'
 import { apiConnector } from '../services/apiConnector'
 import { companyPoint } from './apis'
@@ -12,7 +12,9 @@ const {
     loginCompany_api,
     updateCompany_api,
     deleteCompany_api,
-    getalldetailsCompany_api
+    // getalldetailsCompany_api
+    uploadCompanyLogo
+    
 
 } = companyPoint
 
@@ -115,7 +117,7 @@ export function updateCompanyDetail(token,updatedData){
             }
 
             const updatedUser = { ...response.data.comp };
-            dispatch(setUser(updatedUser));
+            dispatch(setCompany(updatedUser));
 
             localStorage.setItem("company", JSON.stringify(updatedUser));
             toast.success('Company_Profile updated successfully!');
@@ -155,15 +157,48 @@ export function deleteCompanys(token,navigate){
     }
 }
 
-export function logout(navigate) {
+export function uploadCompanyLogos( file) {
+    return async (dispatch) => {
+        const toastId = toast.loading("Uploading Logo...");
+       
+        dispatch(setLoading(true));
+        try {
+            // Create FormData object to handle file upload
+            // const formData = new FormData();
+            // formData.append('logo', file);
+            console.log("formdata", file);
 
-    return (dispatch) => {
-        dispatch(setToken(null))
-        dispatch(setCompany(null))
-        localStorage.removeItem("token")
-        localStorage.removeItem("company")
-        toast.success("Logged Out")
-        navigate("/")
+            const response = await apiConnector("POST", uploadCompanyLogo, file, {
+                // Authorization: `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data',
+            });
 
+            console.log("UPLOAD_COMPANY_LOGO_API RESPONSE............", response);
+
+            if (!response.data.url) {
+                throw new Error(response.data.message);
+            }
+            dispatch(setCompanyLogo(response.data.url));
+            toast.success("Logo uploaded successfully!");
+        } catch (error) {
+            console.error("UPLOAD_COMPANY_LOGO_API error:", error);
+            toast.error("Could not upload Logo.");
+        } finally {
+            toast.dismiss(toastId);
+            dispatch(setLoading(false));
+        }
     }
 }
+
+// export function logout(navigate) {
+
+//     return (dispatch) => {
+//         dispatch(setToken(null))
+//         dispatch(setCompany(null))
+//         localStorage.removeItem("token")
+//         localStorage.removeItem("company")
+//         toast.success("Logged Out")
+//         navigate("/")
+
+//     }
+// }

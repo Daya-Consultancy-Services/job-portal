@@ -720,6 +720,7 @@ function UserProfile() {
 
         try {
             // Upload to server
+           
             await dispatch(uploadProfileImage(token, file));
 
         } catch (error) {

@@ -25,8 +25,10 @@ app.use(express.json())
 app.use(cookieParser())
 
 app.use("/api/v1/profile/upload-image",fileUpload({
-
     useTempFiles: true,
+}))
+app.use("/api/v1/upload-logo",fileUpload({
+    useTempFile: true,
 }))
 app.use(
     cors({

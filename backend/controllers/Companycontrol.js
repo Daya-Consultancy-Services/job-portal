@@ -1,3 +1,4 @@
+const { uploadCompanyLogoToCloudinary } = require("../config/cloudinary");
 const Company = require("../models/company");
 const Recruiter = require("../models/recruiter");
 require("dotenv").config();
@@ -270,6 +271,50 @@ exports.getAllDetailCompany = async (req,res) => {
     }
 }
 
+exports.uploadCompanyLogo = async (req, res)=>{
+    try {
+        const compId = req.user.id
+        const companyDetail = await Company.findById(compId);
+        if(!req.file){
+            return res.status(400).json({
+                success:false,
+                message: "No file uploaded"
+            });
+        }
+
+        const cloudinaryResponse = await uploadCompanyLogoToCloudinary(req.file);
+
+        if(!cloudinaryResponse.success){
+            return res.status(500).json({
+                success:false,
+                message: "Error while uploading file to cloudinary"
+            });
+        }
+
+        if(!companyDetail){
+            return res.status(404).json({
+                success:false,
+                message: "Company not found"
+            });
+        }
+
+        companyDetail.logo = cloudinaryResponse.url;
+        await companyDetail.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Company Logo Uploaded Successfully",
+            data: companyDetail.logo
+        });
+    } catch (error) {
+        console.error("logo upload error", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error while uploading logo"
+        });
+    }
+} 
+
 exports.createRecruiter = async (req,res) => {
     try {
         const companyId =  req.user.id
@@ -440,3 +485,4 @@ exports.getAlldetail = async (req, res) => {
         })
     }
 }
+

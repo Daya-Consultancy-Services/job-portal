@@ -1,5 +1,4 @@
 
-
 const cloudinary = require('cloudinary').v2;
 
 cloudinary.config({
@@ -122,4 +121,86 @@ const uploadResumeToCloudinary = async (file) => {
     }
 };
 
-module.exports = { uploadToCloudinary, uploadResumeToCloudinary };
+const uploadCompanyLogoToCloudinary = async (file) => {
+    try {
+        if (!file) {
+            throw new Error('No logo file provided');
+        }
+
+        console.log('Received company logo:', {
+            hasFile: !!file,
+            fileProperties: file ? Object.keys(file) : null,
+            mimetype: file?.mimetype,
+            size: file?.size
+        });
+
+        const uploadOptions = {
+            resource_type: 'image',
+            folder: 'company_logos',
+            allowed_formats: ['jpg', 'jpeg', 'png', 'svg'],
+            public_id: `company_logo_${Date.now()}`,
+            tags: ['company', 'logo'],
+            transformation: [
+                {
+                    width: 400,
+                    height: 400,
+                    crop: 'fill',
+                    gravity: 'center'
+                },
+                { quality: 'auto' },
+                { fetch_format: 'auto' },
+                { flags: 'preserve_transparency' }
+            ],
+            // Additional options for logos
+            colors: true, // Extract dominant colors
+            background_removal: 'auto' // Optional: remove background if needed
+        };
+
+        let uploadResponse;
+
+        // Handle different file upload methods
+        if (file.tempFilePath) {
+            console.log('Using tempFilePath for logo upload');
+            uploadResponse = await cloudinary.uploader.upload(file.tempFilePath, uploadOptions);
+        } else if (file.path) {
+            console.log('Using file path for logo upload');
+            uploadResponse = await cloudinary.uploader.upload(file.path, uploadOptions);
+        } else if (file.buffer) {
+            console.log('Using buffer for logo upload');
+            const fileStr = file.buffer.toString('base64');
+            uploadResponse = await cloudinary.uploader.upload(
+                `data:${file.mimetype};base64,${fileStr}`,
+                uploadOptions
+            );
+        } else if (file.data) {
+            console.log('Using file data for logo upload');
+            const fileStr = file.data.toString('base64');
+            uploadResponse = await cloudinary.uploader.upload(
+                `data:${file.mimetype};base64,${fileStr}`,
+                uploadOptions
+            );
+        } else {
+            throw new Error('Unsupported file format for logo - received properties: ' + JSON.stringify(Object.keys(file)));
+        }
+
+        return {
+            success: true,
+            url: uploadResponse.secure_url,
+            public_id: uploadResponse.public_id,
+            format: uploadResponse.format,
+            created_at: uploadResponse.created_at,
+            width: uploadResponse.width,
+            height: uploadResponse.height,
+            dominant_colors: uploadResponse.colors // If colors option is enabled
+        };
+
+    } catch (error) {
+        console.error('Company logo upload to Cloudinary failed:', error);
+        return {
+            success: false,
+            error: error.message || 'Failed to upload company logo'
+        };
+    }
+};
+
+module.exports = { uploadToCloudinary, uploadResumeToCloudinary, uploadCompanyLogoToCloudinary };
