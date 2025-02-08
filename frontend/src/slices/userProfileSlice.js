@@ -66,7 +66,7 @@ const profileSlice = createSlice({
         },
         setPersonalDetails(state, action){
             state.personalDetails = action.payload;
-            console.log("in slice",state.personalDetails);
+            console.log("in slice",action);
         }
       
       
