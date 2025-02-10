@@ -33,10 +33,6 @@ const companySchema = new mongoose.Schema({
         type:mongoose.Schema.ObjectId,
         ref:"Recruiter"
     },
-    userId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'User',
-    },
     companyfield:[
         {
             type:String,

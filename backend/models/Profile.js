@@ -14,7 +14,6 @@ const profileSchema = new mongoose.Schema({
     resumePublicId: {
         type: String  // Store Cloudinary public ID for deletion
     },
-
     resumeHeadline:{
         type:String
     },

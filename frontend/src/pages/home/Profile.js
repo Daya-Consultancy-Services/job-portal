@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 import { IoBriefcaseOutline } from "react-icons/io5";
 import { TbBuildings } from "react-icons/tb";
 import { LuBookOpen } from "react-icons/lu";
-import { fetchProfileImage } from '../../operations/profileAPI';
+import { fetchImageResume, fetchProfileImage } from '../../operations/profileAPI';
 import { useDispatch, useSelector } from 'react-redux';
 function Profile() {
-  const image = useSelector((state) => state.profile.imageResume?.image,)
+  const image = useSelector((state) => state.profile.imageResume?.image)
   const token = useSelector((state)=> state.user.token)
   const user = useSelector((state)=> state.profile.user)
 
@@ -15,7 +15,7 @@ function Profile() {
 
   useEffect(()=>{
     if (token && user) {
-            dispatch(fetchProfileImage(token));
+            dispatch(fetchImageResume(token));
         }
   }, [dispatch, token])
 

@@ -66,7 +66,6 @@ const profileSlice = createSlice({
         },
         setPersonalDetails(state, action){
             state.personalDetails = action.payload;
-            console.log("in slice",state.personalDetails);
         }
       
       
@@ -86,10 +85,10 @@ export const {
     setEducation,
     setProject,
     setEmpProfile,
-    setResume,
-    clearResume,
-    setImage,
-    setImageResume,
+    //setResume,
+    //clearResume,
+    //setImage,
+    setExtraProfile,
     setPersonalDetails
 
 } = profileSlice.actions;

@@ -1,5 +1,6 @@
 const User = require("../models/User")
 const Profile = require("../models/Profile")
+const personalDetail = require("../models/ExtraProfile/personalDetail");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -231,6 +232,7 @@ exports.deleteUser = async(req,res) => {
 
         //valid if the user exist or not
         const user = await User.findById(userid)
+        const profile =  await Profile.findById(user.profile)
         
         if(!user){   // check is user is there to delete
             return res.status(404).json({
@@ -240,17 +242,17 @@ exports.deleteUser = async(req,res) => {
         }
 
         // check if the user profile is there or not and if its null it will show it
-        if (!user.profile) {
+        if (!profile) {
             return res.status(401).json({
                 success:false,
                 message:"User Profile can't be found"
             });
         }
-        
+        await personalDetail.findByIdAndDelete(profile.personalDetails)
         // from the refrence of user schema the profile will be also deleted from the data base
         await Profile.findByIdAndDelete(user.profile);
        
-
+        
         // now delete the user
         await User.findByIdAndDelete(userid);
 

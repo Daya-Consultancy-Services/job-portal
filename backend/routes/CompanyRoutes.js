@@ -53,7 +53,7 @@ router.put("/update",auth,isCompany,updateCompanyDetail);
 router.delete("/delete",auth,isCompany,deleteCompany); 
 
 
-router.get("/companydetails",auth,getAllDetailCompany);  // get all the detail for the company with the recruiter details
+router.get("/companydetails",auth,isCompany,getAllDetailCompany);  // get all the detail for the company with the recruiter details
 router.post("/upload-logo", auth, isCompany,uploadCompanyLogo);
 router.get("/logout",logoutCompany);  // get all the detail for the company with the recruiter details
 

@@ -1,6 +1,6 @@
 import { toast } from "react-hot-toast"
 
-import { setUser,setResume,clearResume,setImage, setLoading, setImageResume } from "../slices/userProfileSlice"
+import { setUser,setResume,clearResume,setImage, setLoading, setExtraProfile } from "../slices/userProfileSlice"
 import { apiConnector } from "../services/apiConnector"
 import { profilePoint } from "../operations/apis"
 
@@ -12,8 +12,7 @@ const {
     deleteresume,
     getresume,
     uploadimage,
-    getimage,
-    getimageresume
+    getExtraprofile
     
     
     
@@ -42,18 +41,18 @@ const {
 //         }
 //     }
 // }
-export function fetchImageResume(token){
+export function fetchExtraProfile(token){
     return async (dispatch)=>{
         dispatch(setLoading(true));
         try {
-            const response = await apiConnector("GET", getimageresume, null, {
+            const response = await apiConnector("GET", getExtraprofile, null, {
                 Authorization: `Bearer ${token}`,
             })
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
             // dispatch(setUser({...response.data.data}))
-            dispatch(setImageResume(response.data.data));
+            dispatch(setExtraProfile(response.data.data));
             
         } catch (error) {
             console.log("profile error", error);
@@ -80,7 +79,8 @@ export function updateProfile(token,formdata){
             throw new Error(response.data.message)
         }
 
-        dispatch(setUser({...response.data.profileDetail}))
+        //dispatch(setUser({...response.data.profileDetail}))
+        dispatch(fetchExtraProfile(token))
         toast.success("Profile update Successfully")
 
     } catch (error) {
@@ -110,7 +110,7 @@ export function uploadResume(token, formData) {
 
             // Optionally, you can update the state with the uploaded resume data
             // dispatch(setResume(response.data.data));
-            dispatch(fetchImageResume(token));
+            dispatch(fetchExtraProfile(token));
 
             toast.success("Resume uploaded successfully!");
         } catch (error) {
@@ -138,7 +138,7 @@ export function deleteResume(token) {
 
             // If successful, clear the resume in the Redux state
             // dispatch(clearResume());
-            dispatch(fetchImageResume(token));
+            dispatch(fetchExtraProfile(token));
 
             toast.success("Resume deleted successfully!");
         } catch (error) {
@@ -215,13 +215,13 @@ export function uploadProfileImage(token, imageFile) {
             }
             
             // Update Redux store with new image URL
-            dispatch(fetchProfileImage(token));
+            // dispatch(fetchProfileImage(token));
+            dispatch(fetchExtraProfile(token))
             toast.success("Profile image updated successfully");
             
         } catch (error) {
             console.log("UPLOAD_PROFILE_IMAGE_API ERROR............", error);
             toast.error("Could not upload profile image");
-            throw error; // Re-throw to handle in the component
         } finally {
             toast.dismiss(toastId);
         }
@@ -230,33 +230,32 @@ export function uploadProfileImage(token, imageFile) {
 
 
 // This is already implemented in your action creators
-export function fetchProfileImage(token) {
-    return async (dispatch) => {
-        const toastId = toast.loading("Fetching profile image...");
-        try {
-            const response = await apiConnector(
-                "GET",
-                getimage,
-                null,
-                {
-                    Authorization: `Bearer ${token}`
-                }
-            );
+// export function fetchProfileImage(token) {
+//     return async (dispatch) => {
+//         const toastId = toast.loading("Fetching profile image...");
+//         try {
+//             const response = await apiConnector(
+//                 "GET",
+//                 getimage,
+//                 null,
+//                 {
+//                     Authorization: `Bearer ${token}`
+//                 }
+//             );
             
-            if (!response.data.url) {
-                throw new Error("No image URL received from server");
-            }
+//             if (!response.data.url) {
+//                 throw new Error("No image URL received from server");
+//             }
             
-            // This dispatches the URL to the Redux store
-            // dispatch(setImage(response.data.url));
+//             // This dispatches the URL to the Redux store
+//             // dispatch(setImage(response.data.url));
             
 
-        } catch (error) {
-            console.log("FETCH_PROFILE_IMAGE_API ERROR............", error);
-            toast.error("Could not fetch profile image");
-            throw error;
-        } finally {
-            toast.dismiss(toastId);
-        }
-    };
-}
+//         } catch (error) {
+//             console.log("FETCH_PROFILE_IMAGE_API ERROR............", error);
+//             toast.error("Could not fetch profile image");
+//         } finally {
+//             toast.dismiss(toastId);
+//         }
+//     };
+// }

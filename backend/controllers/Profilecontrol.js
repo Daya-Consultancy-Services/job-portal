@@ -15,20 +15,20 @@ exports.updateProfile = async (req,res) => {
                 //image 
             } = req.body
 
-            if( 
-                !about || 
-                !contactNumber || 
-                !resumeHeadline ||
-                !profileSummary ||
-                !location 
-                //!image
-            )
-                {
-                    return res.status(400).json({
-                        success:false,
-                        message:"All field are Required"
-                    });
-                }
+            // if( 
+            //     !about || 
+            //     !contactNumber || 
+            //     !resumeHeadline ||
+            //     !profileSummary ||
+            //     !location 
+            //     //!image
+            // )
+            //     {
+            //         return res.status(400).json({
+            //             success:false,
+            //             message:"All field are Required"
+            //         });
+            //     }
             
             const Id = req.user.id
             const userDetail = await User.findById(Id);
@@ -46,6 +46,7 @@ exports.updateProfile = async (req,res) => {
                     message: "Profile not found",
                 });
             }
+            const oldProfile = await Profile.findById(profileId);
 
             const updatedProfile = {
                 about,
@@ -59,7 +60,8 @@ exports.updateProfile = async (req,res) => {
                 updatedProfile.resume = req.file.buffer;  // Assuming file is uploaded as buffer
             }
 
-            const profileDetail = await Profile.findByIdAndUpdate(profileId,updatedProfile,{new:true}) 
+            const profileDetail = await Profile.findByIdAndUpdate(profileId,updatedProfile,{new:true})
+                
 
             if (!profileDetail) {
                 return res.status(404).json({
@@ -68,12 +70,18 @@ exports.updateProfile = async (req,res) => {
                 });
             }         
         
-            await profileDetail.save();
+            const updatedFields = {};
+            for (const key in updatedProfile) {
+                if (updatedProfile[key] !== oldProfile[key]) {
+                    updatedFields[key] = updatedProfile[key];
+                }
+            }
+           
 
             return res.status(200).json({
                 success:true,
                 message:"Profile Updated Successfully !!",
-                profileDetail,
+                data:updatedFields,
             })
 
         } catch (error) {
@@ -336,7 +344,7 @@ exports.downloadResume = async (req, res) => {
 //     }
 // };
 
-exports.getImageAndResume = async (req, res) => {
+exports.getExtraProfile = async (req, res) => {
     try {
         const id = req.user.id;
 
@@ -344,7 +352,7 @@ exports.getImageAndResume = async (req, res) => {
         const userDetail = await User.findById(id)
             .populate({
                 path: "profile",
-                select: "image resume" // Select only the required fields
+                select: "image resume about contactNumber resumeHeadline profileSummary location" // Select only the required fields
             })
             .exec();
 

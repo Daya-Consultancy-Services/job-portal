@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { GoBellFill } from "react-icons/go";
 import { CiSearch } from "react-icons/ci";
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProfileImage } from '../../operations/profileAPI';
+import { fetchImageResume, fetchProfileImage } from '../../operations/profileAPI';
 
 function HomeHeader() {
     const image = useSelector((state) => state.profile.imageResume?.image)
