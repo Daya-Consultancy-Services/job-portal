@@ -57,8 +57,9 @@ const profileSlice = createSlice({
         // clearResume(state) {
         //     state.resume = null; 
         // },
-        setImageResume(state, action){
-            state.imageResume = action.payload;  
+        setExtraProfile(state, action){
+            state.extraprofile = action.payload;
+            //console.log("userprofileslice",action)  
         },
         setPersonalDetails(state, action){
             state.personalDetails = action.payload;
