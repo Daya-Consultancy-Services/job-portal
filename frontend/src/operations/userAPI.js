@@ -159,18 +159,18 @@ export function deleteUser(token, navigate) {
 export function logout(navigate) {
 
     return (dispatch) => {
-        dispatch(setToken(null))
-        dispatch(setUser(null))
-        dispatch(setOnlineprofile(null));
-        dispatch(setCertificate(null));
-        dispatch(setImageResume(null));
-        dispatch(setCertificate(null))
-        dispatch(setskillprofiles(null))
-        dispatch(setCareers(null))
+        // dispatch(setToken(null))
+        // dispatch(setUser(null))
+        // dispatch(setOnlineprofile(null));
+        // dispatch(setCertificate(null));
+        // dispatch(setImageResume(null));
+        // dispatch(setCertificate(null))
+        // dispatch(setskillprofiles(null))
+        // dispatch(setCareers(null))
         // dispatch(setEducation(null))
         // dispatch(setProject(null))
-        dispatch(setEmpProfile(null))
-        dispatch(setResume(null))
+        // dispatch(setEmpProfile(null))
+        // dispatch(setResume(null))
         // dispatch(setImage(null))
         localStorage.removeItem("token")
         localStorage.removeItem("user")

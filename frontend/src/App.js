@@ -10,6 +10,7 @@ import Login from "./components/auth/User/Login";
 import CompanyLogin from "./components/auth/Company/CompanyLogin";
 import CompanySignUp from "./components/auth/Company/CompanySignUp";
 import Profile from "./components/profiles/UserProfile";
+import CompanyProfile from "./components/profiles/CompanyProfiles/CompanyProfile";
 
 
 function App() {
@@ -22,6 +23,8 @@ function App() {
         <Route path="/components/auth/Company/login" element={<CompanyLogin/>}/>
         <Route path="/components/auth/Company/register" element={<CompanySignUp/>}/>
         <Route path="/components/profiles/UserProfile" element={<Profile/>}/>
+        <Route path="/components/profiles/CompanyProfiles/CompanyProfile" element={<CompanyProfile/>}/>
+
         <Route path="/home" element={<Home/>}/>
         <Route path="/jobs" element={<FindaJob/>}/>
         <Route path="/company" element={<Company/>}/>

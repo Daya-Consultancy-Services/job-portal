@@ -9,10 +9,10 @@ const initialState = {
     education: [],
     projects : [],
     empProfile: [],
-    resume : null,
+    // resume : null,
     loading: false,
     Onlineprofile : null,
-    image: null,
+    // image: null,
     imageResume:null,
     personalDetails:null
 
@@ -55,12 +55,12 @@ const profileSlice = createSlice({
         setEmpProfile(state,action){
             state.empProfile = action.payload
         },
-        setResume(state, action) {  
-            state.resume = action.payload;  
-        },
-        clearResume(state) {
-            state.resume = null; 
-        },
+        // setResume(state, action) {  
+        //     state.resume = action.payload;  
+        // },
+        // clearResume(state) {
+        //     state.resume = null; 
+        // },
         setImageResume(state, action){
             state.imageResume = action.payload;  
         },

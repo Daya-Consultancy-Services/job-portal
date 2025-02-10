@@ -8,7 +8,6 @@ import { signupCompany, uploadCompanyLogos } from '../../../operations/companyAP
 function CompanySignUp() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const token = useSelector((state)=> state.company.token)
 
     const [formData, setFormData] = useState({
         companyName: '',
@@ -18,8 +17,6 @@ function CompanySignUp() {
         description: '',
         website: '',
         location: '',
-        logo: null,
-        logoUrl: '',
         recruiter: '',
         companyfield: '',
         role: ROLE_TYPE.COMPANY
@@ -31,13 +28,9 @@ function CompanySignUp() {
 
     const handleChange = (e) => {
         const { name, value, files } = e.target;
-        if (name === 'logo' && files[0]) {
-            const file = files[0];
-            setFormData(prev => ({ ...prev, logo: file }));
-            setPreviewUrl(URL.createObjectURL(file));
-        } else {
+       
             setFormData(prev => ({ ...prev, [name]: value }));
-        }
+        
     };
 
     const validateForm = () => {
@@ -95,16 +88,7 @@ function CompanySignUp() {
         if (validateForm()) {
             try {
                 setIsUploading(true);
-
-                // Handle logo upload first if a logo is selected
-                let logoUrl = '';
-                if (formData.logo) {
-                    
-                   
-                    // Dispatch logo upload action
-                    await dispatch(uploadCompanyLogos( formData.logo));
-                }
-
+    
                 // Prepare company registration data
                 const companyData = {
                     name: formData.companyName,
@@ -113,25 +97,19 @@ function CompanySignUp() {
                     description: formData.description,
                     website: formData.website,
                     location: formData.location,
-                    logo: logoUrl, // This will be updated by the uploadCompanyLogos action
                     recruiter: formData.recruiter,
-                    companyfield: [formData.companyfield],
+                    companyfield: [formData.companyfield], // Ensure it's an array
                     role: formData.role
                 };
-
+    
                 // Dispatch company registration
-                console.log("company data", companyData);
                 await dispatch(signupCompany(companyData, navigate));
                 
-                console.log("Registration successful!");
-                navigate('/login'); // or wherever you want to redirect after successful registration
-
             } catch (error) {
                 console.error('Registration failed:', error);
-                console.error(error.message || 'Registration failed. Please try again.');
                 setErrors(prev => ({
                     ...prev,
-                    submit: error.message || 'Registration failed. Please try again.'
+                    submit: error.response?.data?.message || 'Registration failed. Please try again.'
                 }));
             } finally {
                 setIsUploading(false);
@@ -346,28 +324,7 @@ function CompanySignUp() {
                                 )}
                             </div>
 
-                            {/* Logo Upload */}
-                            <div>
-                                <label className="block text-gray-700 font-medium mb-2">
-                                    Company Logo
-                                </label>
-                                <input
-                                    type="file"
-                                    name="logo"
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-2 border rounded-lg"
-                                    accept="image/*"
-                                />
-                                {previewUrl && (
-                                    <div className="mt-2">
-                                        <img
-                                            src={previewUrl}
-                                            alt="Logo preview"
-                                            className="h-20 w-20 object-contain"
-                                        />
-                                    </div>
-                                )}
-                            </div>
+                           
 
                             {/* Terms and Conditions */}
                             <div className="text-sm text-gray-600">
