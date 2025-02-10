@@ -9,10 +9,12 @@ const initialState = {
     education: [],
     projects : [],
     empProfile: [],
+    // resume : null,
     loading: false,
     Onlineprofile : null,
-    personalDetails:null,
-    extraprofile:null
+    // image: null,
+    imageResume:null,
+    personalDetails:null
 
 
 

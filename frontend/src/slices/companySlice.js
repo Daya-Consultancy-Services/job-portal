@@ -5,7 +5,6 @@ const initialState = {
     loading : false,
     token : localStorage.getItem("token") ? JSON.parse(localStorage.getItem("token")) : null,
     company: localStorage.getItem("company") ? JSON.parse(localStorage.getItem("company")) : null,
-    companyLogo:null,
 };
 
 const companySlice = createSlice({
@@ -24,12 +23,9 @@ const companySlice = createSlice({
         setCompany(state,value){
             state.company =  value.payload
         },
-        setCompanyLogo(state, value){
-            console.log("company logo", value.payload)
-            state.companyLogo = value.payload
-        }
+     
     }
 });
 
-export const { setSignupData, setLoading, setToken, setCompany, setCompanyLogo } = companySlice.actions;
+export const { setSignupData, setLoading, setToken, setCompany } = companySlice.actions;
 export default companySlice.reducer;

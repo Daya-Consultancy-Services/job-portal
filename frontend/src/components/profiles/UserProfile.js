@@ -99,11 +99,9 @@ function UserProfile() {
       }
       if (token && user) {
         dispatch(fetchImageResume(token));
-
     }
     if(personalDetail && personalDetail.length === 0) {
       dispatch(fetchPersonalDetails(token));
-     
       }
     }
   }, [dispatch, token]);
