@@ -15,10 +15,6 @@ const initialState = {
     // image: null,
     imageResume:null,
     personalDetails:null
-
-
-
-    
 }
 
 const profileSlice = createSlice({
