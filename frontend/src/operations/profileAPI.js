@@ -1,6 +1,6 @@
 import { toast } from "react-hot-toast"
 
-import { setUser,setResume,clearResume,setImage, setLoading, setImageResume } from "../slices/userProfileSlice"
+import { setUser,setResume,clearResume,setImage, setLoading, setExtraProfile } from "../slices/userProfileSlice"
 import { apiConnector } from "../services/apiConnector"
 import { profilePoint } from "../operations/apis"
 
@@ -12,7 +12,7 @@ const {
     deleteresume,
     getresume,
     uploadimage,
-    getimageresume
+    getExtraprofile
     
     
     
@@ -41,18 +41,18 @@ const {
 //         }
 //     }
 // }
-export function fetchImageResume(token){
+export function fetchExtraProfile(token){
     return async (dispatch)=>{
         dispatch(setLoading(true));
         try {
-            const response = await apiConnector("GET", getimageresume, null, {
+            const response = await apiConnector("GET", getExtraprofile, null, {
                 Authorization: `Bearer ${token}`,
             })
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
             // dispatch(setUser({...response.data.data}))
-            dispatch(setImageResume(response.data.data));
+            dispatch(setExtraProfile(response.data.data));
             
         } catch (error) {
             console.log("profile error", error);
@@ -79,7 +79,8 @@ export function updateProfile(token,formdata){
             throw new Error(response.data.message)
         }
 
-        dispatch(setUser({...response.data.profileDetail}))
+        //dispatch(setUser({...response.data.profileDetail}))
+        dispatch(fetchExtraProfile(token))
         toast.success("Profile update Successfully")
 
     } catch (error) {
@@ -109,7 +110,7 @@ export function uploadResume(token, formData) {
 
             // Optionally, you can update the state with the uploaded resume data
             // dispatch(setResume(response.data.data));
-            dispatch(fetchImageResume(token));
+            dispatch(fetchExtraProfile(token));
 
             toast.success("Resume uploaded successfully!");
         } catch (error) {
@@ -137,7 +138,7 @@ export function deleteResume(token) {
 
             // If successful, clear the resume in the Redux state
             // dispatch(clearResume());
-            dispatch(fetchImageResume(token));
+            dispatch(fetchExtraProfile(token));
 
             toast.success("Resume deleted successfully!");
         } catch (error) {
@@ -215,7 +216,7 @@ export function uploadProfileImage(token, imageFile) {
             
             // Update Redux store with new image URL
             // dispatch(fetchProfileImage(token));
-            dispatch(fetchImageResume(token))
+            dispatch(fetchExtraProfile(token))
             toast.success("Profile image updated successfully");
             
         } catch (error) {

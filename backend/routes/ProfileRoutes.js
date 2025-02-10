@@ -13,7 +13,7 @@ const {
     uploadProfileImage,
     getProfileImage,
     // getResume
-    getImageAndResume
+    getExtraProfile
 
 } = require("../controllers/Profilecontrol")
 
@@ -113,7 +113,7 @@ router.post("/upload-resume", auth, isJobseeker,
 );
 router.delete("/delete-resume", auth, isJobseeker, deleteResume);
 router.get("/download-resume", auth, isJobseeker, downloadResume);
-router.get("/get-imageresume", auth, isJobseeker, getImageAndResume);
+router.get("/getextraprofile", auth, isJobseeker, getExtraProfile);
 
 
 // Personal Details routes***********************************************************************************************

@@ -213,8 +213,8 @@ exports.getPersonalDetails = async (req, res) => {
         const Id = req.user.id;
         
         // Find user by ID
-        const userId = await User.findById(Id);
-        if (!userId) {
+        const user = await User.findById(Id);
+        if (!user) {
             return res.status(404).json({
                 success: false,
                 message: "User not found"
@@ -222,27 +222,27 @@ exports.getPersonalDetails = async (req, res) => {
         }
 
         // Find profile using user's profile reference
-        const profileId = await Profile.findById(userId.profile);
-        if (!profileId) {
+        const profile = await Profile.findById(user.profile).populate("personalDetails").exec();
+        if (!profile) {
             return res.status(400).json({
                 success: false,
                 message: "Profile doesn't exist"
             });
         }
 
-        // Find personal details using profile's personal details reference
-        const personalDetails = await personalDetail.findById(profileId.personalDetails);
-        if (!personalDetails) {
-            return res.status(404).json({
-                success: false,
-                message: "Personal details not found"
-            });
-        }
+        // // Find personal details using profile's personal details reference
+        // const personalDetails = await personalDetail.findById(profileId.personalDetails);
+        // if (!personalDetails) {
+        //     return res.status(404).json({
+        //         success: false,
+        //         message: "Personal details not found"
+        //     });
+        // }
 
         return res.status(200).json({
             success: true,
             message: "Personal details fetched successfully",
-            data: personalDetails
+            data: profile.personalDetails
         });
 
     } catch (error) {

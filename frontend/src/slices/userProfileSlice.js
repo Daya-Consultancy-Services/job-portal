@@ -9,12 +9,10 @@ const initialState = {
     education: [],
     projects : [],
     empProfile: [],
-    resume : null,
     loading: false,
     Onlineprofile : null,
-    image: null,
-    imageResume:null,
-    personalDetails:null
+    personalDetails:null,
+    extraprofile:null
 
 
 
@@ -55,18 +53,18 @@ const profileSlice = createSlice({
         setEmpProfile(state,action){
             state.empProfile = action.payload
         },
-        setResume(state, action) {  
-            state.resume = action.payload;  
-        },
-        clearResume(state) {
-            state.resume = null; 
-        },
-        setImageResume(state, action){
-            state.imageResume = action.payload;  
+        // setResume(state, action) {  
+        //     state.resume = action.payload;  
+        // },
+        // clearResume(state) {
+        //     state.resume = null; 
+        // },
+        setExtraProfile(state, action){
+            state.extraprofile = action.payload;
+            console.log("userprofileslice",action)  
         },
         setPersonalDetails(state, action){
             state.personalDetails = action.payload;
-            console.log("in slice",action);
         }
       
       
@@ -86,10 +84,10 @@ export const {
     setEducation,
     setProject,
     setEmpProfile,
-    setResume,
-    clearResume,
-    setImage,
-    setImageResume,
+    //setResume,
+    //clearResume,
+    //setImage,
+    setExtraProfile,
     setPersonalDetails
 
 } = profileSlice.actions;

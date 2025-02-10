@@ -336,7 +336,7 @@ exports.downloadResume = async (req, res) => {
 //     }
 // };
 
-exports.getImageAndResume = async (req, res) => {
+exports.getExtraProfile = async (req, res) => {
     try {
         const id = req.user.id;
 
@@ -344,7 +344,7 @@ exports.getImageAndResume = async (req, res) => {
         const userDetail = await User.findById(id)
             .populate({
                 path: "profile",
-                select: "image resume" // Select only the required fields
+                select: "image resume about contactNumber resumeHeadline profileSummary location" // Select only the required fields
             })
             .exec();
 
