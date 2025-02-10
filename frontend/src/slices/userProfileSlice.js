@@ -61,7 +61,7 @@ const profileSlice = createSlice({
         // },
         setExtraProfile(state, action){
             state.extraprofile = action.payload;
-            console.log("userprofileslice",action)  
+            //console.log("userprofileslice",action)  
         },
         setPersonalDetails(state, action){
             state.personalDetails = action.payload;
