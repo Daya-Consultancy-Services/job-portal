@@ -22,6 +22,7 @@ export function createRecruiter(formdata,navigate) {
     return async (dispatch) => {
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true)); // Use dispatch directly
+        console.log("in api formdata", formdata);
         try {
             const response = await apiConnector("POST", createRecruiter_api,formdata);
 

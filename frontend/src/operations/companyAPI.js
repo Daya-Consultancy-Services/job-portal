@@ -27,7 +27,7 @@ export function signupCompany(companyData, navigate) {
                 role: companyData.role,
                 website: companyData.website,
                 location: companyData.location,
-                recruiter: companyData.recruiter,
+                // recruiter: companyData.recruiter,
                 companyfield: companyData.companyfield
             });
 
@@ -57,6 +57,8 @@ export function loginCompany(email, password, navigate) {
     return async (dispatch) => {
         const toastId = toast.loading("Loading......")
         dispatch(setLoading(true))
+
+        
         try {
             const response = await apiConnector("POST", loginCompany_api, {
                 email,

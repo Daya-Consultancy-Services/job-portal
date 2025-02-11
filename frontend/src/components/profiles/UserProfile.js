@@ -921,11 +921,6 @@ function UserProfile() {
                         <span className={`text-md font-medium `}>{location ? location : "enter your location"}</span>
                         <FaPencilAlt onClick={() => handleEditClick("location", "New York")} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
-                      {/* <div className="type flex gap-5 items-center group">
-                                                <HiOutlineBriefcase />
-                                                <span className="text-md font-medium text-black">enter type</span>
-                                                <FaPencilAlt onClick={() => togglePopup('type')} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                            </div> */}
                       <div className="email flex gap-5 items-center group ">
                         <CiMail />
                         <span className="text-md font-medium text-black"> {user?.email?.length > 8 ? `${user.email.slice(0, 12)}...` : user?.email}</span>

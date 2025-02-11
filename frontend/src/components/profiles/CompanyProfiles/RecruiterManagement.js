@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { PlusCircle, Trash2, Users } from 'lucide-react';
 import { useDispatch } from 'react-redux';
+import { createRecruiter } from '../../../operations/recruiterAPI';
+
 
 const RecruiterManagement = () => {
   const [recruiters, setRecruiters] = useState([]);
@@ -32,6 +34,7 @@ const RecruiterManagement = () => {
     }
 
     const newRecruiterData = {
+     
       ...newRecruiter,
     };
 
@@ -41,9 +44,9 @@ const RecruiterManagement = () => {
     setFormData(prevFormData => [...prevFormData, newRecruiterData]);
 
     // Log the formData to see the collected data
-    console.log('Updated FormData:', [...formData, newRecruiterData]);
+    console.log('Updated FormData:',newRecruiterData);
 
-    dispatch(formdata);
+    dispatch(createRecruiter(newRecruiterData));
 
     setNewRecruiter({ name: "", email: "", password: "", contactNumber: "", description: ""});
     setAlertMessage("Recruiter added successfully");

@@ -43,6 +43,8 @@ function CompanyLogin() {
     try {
       const response =  dispatch(loginCompany(email, password, navigate));
 
+      console.log("response login", response);
+
       if (response && response.token) {
         localStorage.setItem("token", response.token);
         console.log("company token",response.token);

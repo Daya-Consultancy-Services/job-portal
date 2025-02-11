@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ROLE_TYPE } from '../../../slices/constant';
 import { signupCompany, uploadCompanyLogos } from '../../../operations/companyAPI';
+
 function CompanySignUp() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -17,7 +18,7 @@ function CompanySignUp() {
         description: '',
         website: '',
         location: '',
-        recruiter: '',
+        // recruiter: '',
         companyfield: '',
         role: ROLE_TYPE.COMPANY
     });
@@ -71,9 +72,9 @@ function CompanySignUp() {
             newErrors.location = 'Location is required';
         }
 
-        if (!formData.recruiter.trim()) {
-            newErrors.recruiter = 'Recruiter name is required';
-        }
+        // if (!formData.recruiter.trim()) {
+        //     newErrors.recruiter = 'Recruiter name is required';
+        // }
 
         if (!formData.companyfield.trim()) {
             newErrors.companyfield = 'Company field is required';
@@ -97,9 +98,9 @@ function CompanySignUp() {
                     description: formData.description,
                     website: formData.website,
                     location: formData.location,
-                    recruiter: formData.recruiter,
+                    // recruiter: formData.recruiter,
                     companyfield: [formData.companyfield], // Ensure it's an array
-                    role: formData.role
+                  role:ROLE_TYPE.COMPANY,
                 };
     
                 // Dispatch company registration

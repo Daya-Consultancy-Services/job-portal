@@ -20,9 +20,11 @@ const companySlice = createSlice({
         },
         setToken(state, value){
             state.token = value.payload
+            console.log("token in slice", state.token)
         },
         setCompany(state,value){
             state.company =  value.payload
+            console.log("token in slice", state.company)
         },
         setRecruiter(state,actions){
             state.recruiter = actions.payload
