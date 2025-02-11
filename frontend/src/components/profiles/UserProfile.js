@@ -1,29 +1,27 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Header from '../../pages/home/Header';
 import Footer from '../Footer';
-import { FaPencilAlt, FaTimes } from "react-icons/fa";
-import { IoClose, IoLocationOutline } from "react-icons/io5";
-import { SlCalender } from "react-icons/sl";
+import { FaPencilAlt } from "react-icons/fa";
+import {  IoLocationOutline } from "react-icons/io5";
 import { MdLocalPhone } from "react-icons/md";
 import { CiMail } from "react-icons/ci";
 import { TbDeviceMobileCheck } from "react-icons/tb";
 import EducationForm from './EducationForm';
 import SkillsForm from './SkillForm';
 import ProjectForm from './ProjectForm';
-import ProfileSummery from './ProfileSummery';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteUser, logout, updateDetail } from '../../operations/userAPI';
 import ExtraProfile from './ExtraProfile';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { fetchImageResume, fetchProfileImage, getAllDetail, updateProfile, uploadProfileImage } from '../../operations/profileAPI';
+import { fetchExtraProfile, uploadProfileImage } from '../../operations/profileAPI';
 import ProfileForm from './ProfileForm';
-import FORM_CONFIGS, { ModalComponent } from './Accomplishment';
-import { deleteOnlineProfiles, onlineProfiles, updateonlineProfiles, getOnlineProfiles } from '../../operations/onlineprofileAPI';
+import  { ModalComponent } from './Accomplishment';
+import { deleteOnlineProfiles, updateonlineProfiles, getOnlineProfiles } from '../../operations/onlineprofileAPI';
 import { Calendar, Globe, MapPin, Pencil, PencilIcon, Trash2, Trash2Icon, User } from 'lucide-react';
 import { deleteCertificates, fetchCertificates, updateCertificates } from '../../operations/certificateAPI';
 import { deleteSkillProfiles, fetchSkillProfiles } from '../../operations/skillprofileAPI';
-import { onlineProfile } from '../../operations/apis';
+// import { onlineProfile } from '../../operations/apis';
 import CareerProfileModal from './CareerProfileModal';
 import { deleteCareers, fetchCareers } from '../../operations/careerAPI';
 import { deleteProjects, fetchProject } from '../../operations/projectAPI';
@@ -31,7 +29,7 @@ import EmploymentForm from './EmployeementForm';
 import { deleteEmploymentProfiles, fetchEmploymentProfile } from '../../operations/employmentprofileAPI';
 import { deleteEducationProfiles, fetchEducationProfile } from '../../operations/educationprofileAPI';
 import ResumeUpload from './ResumeUpload';
-import { deletePersonaldetails, fetchPersonalDetails, updatePersonaldetails } from '../../operations/personaldetailAPI';
+import { deletePersonaldetails, fetchPersonalDetails } from '../../operations/personaldetailAPI';
 
 
 
@@ -45,8 +43,13 @@ function UserProfile() {
     selectProjectProfiles: (state) => state.profile.projects,
     selectEmployeeProfiles: (state) => state.profile.empProfile,
     selectEducationProfiles: (state) => state.profile.education,
-    selectImage: (state) => state.profile.imageResume?.image,
+    selectImage: (state) => state.profile.extraprofile?.image,
     selectPersonalDetails: (state) => state.profile.personalDetails,
+    selectAbout: (state) => state.profile.extraprofile?.about,
+    selectLocation: (state) => state.profile.extraprofile?.location,
+    selectContactNumber: (state) => state.profile.extraprofile?.contactNumber,
+    selectProfileSummery: (state) => state.profile.extraprofile?.profileSummary,
+    selectResumeHeadline: (state) => state.profile.extraprofile?.resumeHeadline
   }), []);
 
   const user = useSelector(selectors.selectUser);
@@ -60,18 +63,24 @@ function UserProfile() {
   const educationProfiles = useSelector(selectors.selectEducationProfiles);
   const imageUrl = useSelector(selectors.selectImage);
   const personalDetail = useSelector(selectors.selectPersonalDetails);
+  const about = useSelector(selectors.selectAbout);
+  const location = useSelector(selectors.selectLocation);
+  const contactNumber = useSelector(selectors.selectContactNumber);
+  const profileSummery = useSelector(selectors.selectProfileSummery);
+  const resumeHeadline = useSelector(selectors.selectResumeHeadline);
 
 
 
 
-  
 
- 
+
+
+
 
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   // Fetch certificates on component mount
   useEffect(() => {
     if (token && user) {
@@ -98,10 +107,10 @@ function UserProfile() {
         dispatch(fetchEducationProfile(token));
       }
       if (token && user) {
-        dispatch(fetchImageResume(token));
-    }
-    if(personalDetail && personalDetail.length === 0) {
-      dispatch(fetchPersonalDetails(token));
+        dispatch(fetchExtraProfile(token));
+      }
+      if (personalDetail && personalDetail.length === 0) {
+        dispatch(fetchPersonalDetails(token));
       }
     }
   }, [dispatch, token]);
@@ -159,7 +168,7 @@ function UserProfile() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [initialValue, setInitialValue] = useState("");
   const [openModal, setOpenModal] = useState(null);
-  const [openEmpForm, setOpenEmpForm] = useState(null);
+  // const [openEmpForm, setOpenEmpForm] = useState(null);
 
 
 
@@ -198,7 +207,7 @@ function UserProfile() {
 
 
   //------------------------------ updation and deletion of personal detail-----------------------------------
- 
+
   const [showModal, setShowModal] = useState(false);
   const handleDelete = () => {
 
@@ -214,7 +223,7 @@ function UserProfile() {
 
   const handleModalClose = () => {
     setShowModal(false);
-};
+  };
 
   // --------------------------------------------------------------------------------------------------------------
 
@@ -708,25 +717,25 @@ function UserProfile() {
 
 
   const mainSectionRef = useRef(null);
-  
+
 
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
-        const tempImageURL = URL.createObjectURL(file);
-        setProfileImage(tempImageURL);
+      const tempImageURL = URL.createObjectURL(file);
+      setProfileImage(tempImageURL);
 
-        try {
-            // Upload to server
-           
-            await dispatch(uploadProfileImage(token, file));
+      try {
+        // Upload to server
 
-        } catch (error) {
-            console.error("Error uploading image:", error);
-            setProfileImage(user?.image || require("../../assets/default-profile.jpg"));
-        }
+        await dispatch(uploadProfileImage(token, file));
+
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        setProfileImage(user?.image || require("../../assets/default-profile.jpg"));
+      }
     }
-};
+  };
 
   const togglePopup = (field) => {
     setPopupType(field);
@@ -898,8 +907,8 @@ function UserProfile() {
                       <h1 className='w-fit h-fit text-3xl font-semibold'>{user?.firstName} {user?.lastName}</h1>
                       <FaPencilAlt onClick={() => togglePopupForName()} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
-                    <div className='about flex gap-5 items-center pt-4 group'>
-                      <h3 className='text-zinc-400'>{profileData.about}</h3>
+                    <div className='about flex gap-5  items-center pt-4 group'>
+                      <h2 className='text-zinc-600 text-lg'>{about ? about : "enter your profile"}</h2>
                       <FaPencilAlt onClick={() => togglePopup("about")} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
 
@@ -909,7 +918,7 @@ function UserProfile() {
                     <div className="left-div h-full w-[50%] flex flex-col gap-3 p-2">
                       <div className="location flex gap-5 items-center group">
                         <IoLocationOutline />
-                        <span className={`text-md font-medium `}>{profileData.location}</span>
+                        <span className={`text-md font-medium `}>{location ? location : "enter your location"}</span>
                         <FaPencilAlt onClick={() => handleEditClick("location", "New York")} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
                       {/* <div className="type flex gap-5 items-center group">
@@ -917,24 +926,20 @@ function UserProfile() {
                                                 <span className="text-md font-medium text-black">enter type</span>
                                                 <FaPencilAlt onClick={() => togglePopup('type')} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </div> */}
-                      <div className="join flex gap-5 items-center group">
-                        <SlCalender />
-                        <span className="text-md font-medium text-black">enter join</span>
-                        <FaPencilAlt onClick={() => handleEditClick("join", "enter the joing type")} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="email flex gap-5 items-center group ">
+                        <CiMail />
+                        <span className="text-md font-medium text-black"> {user?.email?.length > 8 ? `${user.email.slice(0, 12)}...` : user?.email}</span>
+                        <FaPencilAlt onClick={() => handleEditClick("email", "Enter your email id")} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
                     </div>
 
                     <div className="right-div h-full w-[50%] flex flex-col gap-3 p-2">
                       <div className="p-number flex gap-5 items-center group">
                         <MdLocalPhone />
-                        <span className="text-md font-medium text-black">{profileData.contactNumber}</span>
+                        <span className="text-md font-medium text-black">{contactNumber}</span>
                         <FaPencilAlt onClick={() => handleEditClick("contactNumber", "123-456-7890")} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
-                      <div className="email flex gap-5 items-center group">
-                        <CiMail />
-                        <span className="text-md font-medium text-black"> {user?.email?.length > 8 ? `${user.email.slice(0, 10)}...` : user?.email}</span>
-                        <FaPencilAlt onClick={() => handleEditClick("email", "Enter your email id")} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </div>
+
                     </div>
                     {/* Popup Component */}
                     <ProfileForm
@@ -967,7 +972,7 @@ function UserProfile() {
                   <button className='px-3 py-2 rounded-full bg-orange-500 text-white ' >Add missing details</button>
                 </div>
               </div>
-              {showExtraProfile && <ExtraProfile  token={token} />}
+              {showExtraProfile && <ExtraProfile token={token} />}
             </div>
 
             <div className=" min-h-[600px] w-full flex gap-3 rounded-xl  ">
@@ -1014,7 +1019,19 @@ function UserProfile() {
                     <div className="flex justify-between px-2 h-fit w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Resume headline</h1> <p className='text-green-400'>Add 8%</p></div>
                     <h1 className='text-blue-700 font-semibold cursor-pointer' onClick={() => togglePopup('add resume headlines')}>Add resume headline</h1>
                   </div>
-                  <p className='text-zinc-400 px-6'>Add a summary of your resume to introduce yourself to recruiters</p>
+                  {!resumeHeadline ? (
+                    <p className='text-zinc-400 px-6'>Add a summary of your resume to introduce yourself to recruiters</p>
+
+                  ) : (
+                    <div className=' p-6 mt-5 border'>
+
+                      <p>
+                        {resumeHeadline}
+                      </p>
+                    </div>
+
+
+                  )}
                 </div>
                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='key-skills'>
                   <div className="head flex w-full justify-between px-4">
@@ -1218,21 +1235,23 @@ function UserProfile() {
                     <h1 className='text-blue-700 font-semibold cursor-pointer'
                       onClick={handleButtonClick4}>Add profile summery</h1>
                   </div>
-                  <p className='text-zinc-400 px-6'>Highlight your key career achievements to help employers know your potential</p>
-                  {isPersonalDetailsVisible && (
-                    <ProfileSummery
-                      onSave={handlePersonalDetailsSaved}
-                      initialDetails={personalDetails}
-                    />
-                  )}
 
+                  {!profileSummery ? (
+                    <p className='text-zinc-400 px-6'>Highlight your key career achievements to help employers know your potential</p>
 
-                  {personalDetails && (
-                    <div className="personal-details-display mt-6 px-4">
-                      <h2 className='text-xl font-semibold'>Your Personal Details</h2>
-                      <p className='text-zinc-600 mt-2'>{personalDetails}</p>
+                  ) : (
+                    <div className=' p-6 mt-5 border'>
+
+                      <p>
+                        {profileSummery}
+                      </p>
                     </div>
+
+
                   )}
+
+
+
 
                 </div>
 
@@ -1511,97 +1530,97 @@ function UserProfile() {
                   <p className='text-zinc-400 px-6'>This information is important for employers to know you better</p>
                 </div> */}
 
-<div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id="Personal-details">
-                <div className="head flex w-full justify-between px-4">
+                <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id="Personal-details">
+                  <div className="head flex w-full justify-between px-4">
                     <div className="flex justify-between px-2 w-fit gap-5 items-center">
-                        <h1 className="font-semibold text-2xl">Personal details</h1>
-                        <p className="text-green-400">
-                            Add 18%
-                        </p>
+                      <h1 className="font-semibold text-2xl">Personal details</h1>
+                      <p className="text-green-400">
+                        Add 18%
+                      </p>
                     </div>
                     <button
-                        className="text-blue-700 font-semibold cursor-pointer hover:text-blue-800"
-                        onClick={() => setShowModal(true)}
+                      className="text-blue-700 font-semibold cursor-pointer hover:text-blue-800"
+                      onClick={() => setShowModal(true)}
                     >
-                        {personalDetail ? 'Edit personal details' : 'Add personal details'}
+                      {personalDetail ? 'Edit personal details' : 'Add personal details'}
                     </button>
-                </div>
-                
-                <p className="text-zinc-400 px-6 mb-4">
-                    This information is important for employers to know you better
-                </p>
-                
-                {personalDetail && (
-      <div className="px-6 space-y-3 relative">
-        <button
-          onClick={handleDelete}
-          className="absolute top-0 right-0 p-2 text-red-500 transition-colors"
-          aria-label="Delete personal details"
-        >
-          <Trash2 className="w-5 h-5" />
-        </button>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex items-center gap-2">
-            <User className="w-5 h-5 text-gray-500" />
-            <div>
-              <p className="text-sm text-gray-500">Gender</p>
-              <p className="font-medium">{personalDetail.gender}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-gray-500" />
-            <div>
-              <p className="text-sm text-gray-500">Date of Birth</p>
-              <p className="font-medium">{personalDetail.dateOfBirth}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <User className="w-5 h-5 text-gray-500" />
-            <div>
-              <p className="text-sm text-gray-500">Martial Status</p>
-              <p className="font-medium">{personalDetail.martialStatus}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-gray-500" />
-            <div>
-              <p className="text-sm text-gray-500">Current Address</p>
-              <p className="font-medium">{personalDetail.address}</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-gray-500" />
-            <div>
-              <p className="text-sm text-gray-500">Permanent Address</p>
-              <p className="font-medium">
-                {personalDetail.permanentAddress}
-                {personalDetail.pincode && ` - ${personalDetail.pincode}`}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Globe className="w-5 h-5 text-gray-500" />
-            <div>
-              <p className="text-sm text-gray-500">Languages</p>
-              <p className="font-medium">
-                {personalDetail.language?.join(', ')}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    )}
+                  </div>
 
-                {showModal && (
+                  <p className="text-zinc-400 px-6 mb-4">
+                    This information is important for employers to know you better
+                  </p>
+
+                  {personalDetail && (
+                    <div className="px-6 space-y-3 relative">
+                      <button
+                        onClick={handleDelete}
+                        className="absolute top-0 right-0 p-2 text-red-500 transition-colors"
+                        aria-label="Delete personal details"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex items-center gap-2">
+                          <User className="w-5 h-5 text-gray-500" />
+                          <div>
+                            <p className="text-sm text-gray-500">Gender</p>
+                            <p className="font-medium">{personalDetail.gender}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-5 h-5 text-gray-500" />
+                          <div>
+                            <p className="text-sm text-gray-500">Date of Birth</p>
+                            <p className="font-medium">{personalDetail.dateOfBirth}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <User className="w-5 h-5 text-gray-500" />
+                          <div>
+                            <p className="text-sm text-gray-500">Martial Status</p>
+                            <p className="font-medium">{personalDetail.martialStatus}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <MapPin className="w-5 h-5 text-gray-500" />
+                          <div>
+                            <p className="text-sm text-gray-500">Current Address</p>
+                            <p className="font-medium">{personalDetail.address}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <MapPin className="w-5 h-5 text-gray-500" />
+                          <div>
+                            <p className="text-sm text-gray-500">Permanent Address</p>
+                            <p className="font-medium">
+                              {personalDetail.permanentAddress}
+                              {personalDetail.pincode && ` - ${personalDetail.pincode}`}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Globe className="w-5 h-5 text-gray-500" />
+                          <div>
+                            <p className="text-sm text-gray-500">Languages</p>
+                            <p className="font-medium">
+                              {personalDetail.language?.join(', ')}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {showModal && (
                     <ExtraProfile
-                        isEdit={!!personalDetail}
-                        initialData={personalDetail}
-                        onSave={(data) => {
-                            handleModalClose();
-                        }}
+                      isEdit={!!personalDetail}
+                      initialData={personalDetail}
+                      onSave={(data) => {
+                        handleModalClose();
+                      }}
                     />
-                )}
-            </div>
+                  )}
+                </div>
 
 
 

@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom'
 import { GoBellFill } from "react-icons/go";
 import { CiSearch } from "react-icons/ci";
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchImageResume, fetchProfileImage } from '../../operations/profileAPI';
+import {  fetchExtraProfile } from '../../operations/profileAPI';
 
 function HomeHeader() {
-    const image = useSelector((state) => state.profile.imageResume?.image)
+    const image = useSelector((state) => state.profile.extraprofile?.image)
     const token = useSelector((state) => state.user.token)
     const user = useSelector((state) => state.profile.user)
     const dispatch = useDispatch();
@@ -16,7 +16,7 @@ function HomeHeader() {
 
     useEffect(() => {
         if (token && user) {
-            dispatch(fetchProfileImage(token));
+            dispatch(fetchExtraProfile(token));
         }
     }, [dispatch, token, user])
 

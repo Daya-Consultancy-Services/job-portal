@@ -65,18 +65,7 @@ const ProfileForm = ({ isOpen, onClose, onSave, popupType, initialValue }) => {
               className="border p-2 rounded w-full"
             />
           </div>
-          <div>
-            <label htmlFor="resume" className="block text-sm font-medium text-gray-700">
-              Upload Resume
-            </label>
-            <input
-              id="resume"
-              type="text"
-              {...register("resume", { required: true })}
-              accept=".pdf,.doc,.docx"
-              className="border p-2 rounded w-full"
-            />
-          </div>
+
           <div>
             <label htmlFor="resumeHeadline" className="block text-sm font-medium text-gray-700">
               Resume Headline

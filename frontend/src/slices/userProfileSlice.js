@@ -13,7 +13,7 @@ const initialState = {
     loading: false,
     Onlineprofile : null,
     // image: null,
-    imageResume:null,
+    extraprofile:null,
     personalDetails:null
 }
 

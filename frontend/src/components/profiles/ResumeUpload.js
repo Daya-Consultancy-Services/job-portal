@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { downloadResume, uploadResume, deleteResume, fetchImageResume } from '../../operations/profileAPI';
+import { downloadResume, uploadResume, deleteResume, fetchExtraProfile } from '../../operations/profileAPI';
 import { toast } from 'react-hot-toast';
 
 const ResumeUpload = () => {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.profile.token);
-  const resumeData = useSelector((state) => state.profile.imageResume?.resume);
+  const resumeData = useSelector((state) => state.profile.extraprofile?.resume);
   const [resumeName, setResumeName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -17,7 +17,7 @@ const ResumeUpload = () => {
       if (token) {
         setIsLoading(true);
         try {
-          await dispatch(fetchImageResume(token));
+          await dispatch(fetchExtraProfile(token));
         } catch (error) {
           toast.error('Failed to fetch resume data');
         } finally {
