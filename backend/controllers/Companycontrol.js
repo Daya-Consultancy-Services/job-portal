@@ -380,7 +380,7 @@ exports.createRecruiter = async (req,res) => {
             });
         }
 
-        const createRecruiter = await Recruiter.create({
+        const recruiter = await Recruiter.create({
             name,
             email,
             password:hashedPassword,
@@ -391,13 +391,13 @@ exports.createRecruiter = async (req,res) => {
             role:"recruiter"
         });
 
-        compId.recruiter =  createRecruiter._id
+        compId.recruiter =  recruiter._id
         await compId.save();
 
         return res.status(200).json({
             success:true,
             message:"Recruiter Register Successfully",
-            createRecruiter,
+            recruiter,
         })
     } catch (error) {
         console.log(error);
@@ -466,7 +466,7 @@ exports.updateRecruiterDetail = async (req,res) => {
         return res.status(200).json({
             success:true,
             message:"Updated Recruiter Successfully !!",
-            data:recruiterDetail
+            recruiterDetail
         })
         
     } catch (error) {
@@ -475,6 +475,38 @@ exports.updateRecruiterDetail = async (req,res) => {
                 success:false,
                 message:"Error while updating recruiterDetail"
             })
+    }
+}
+exports.deleteRecruiter = async (req,res) => {
+    try {
+        const compid = req.user.id
+
+        const comp = await Company.findById(compid)
+
+        if(!comp){
+            return res.status(404).json({
+                success:false,
+                message:"Company Doesn't exist"
+            });
+        }
+        if(!comp.recruiter){
+            return res.status(401).json({
+                success:false,
+                message:"Company Recruiter can't be found"
+            });
+        }
+        await Recruiter.findByIdAndDelete(comp.recruiter);
+
+        return res.status(200).json({
+            success:true,
+            message:"Recruiter Deleted Successfully"
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:"Error while Deleting Recruiter Account"
+        })
     }
 }
 

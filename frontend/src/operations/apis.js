@@ -76,6 +76,14 @@ export const companyPoint = {
 }
 
 export const recruiterPoint = {
-    updateRecruiter_api       : BASE_URL + "/recruiter/update",
-    getAllDetailRecruiter_api : BASE_URL + "/recruiter/getdetail"
+    createRecruiter_api : BASE_URL + "/company/createrecruiter",
+    updateRecruiter_api : BASE_URL + "/company/updaterecruiter",
+    getRecruiter_api    : BASE_URL + "/company/getrecruiter",
+    deleteRecruiter_api : BASE_URL + "/company/deleterecruiter",
+    loginRecruiter_api  : BASE_URL + "/recruiter/login",
+    createJob_api       : BASE_URL + "/recruiter/createjob",
+    updateJob_api       : BASE_URL + "/recruiter/updatejob",
+    deleteJob_api       : BASE_URL + "/recruiter/deletejob",
+    getJob_api          : BASE_URL + "/recruiter/getjobrecruiter",
+
 }
