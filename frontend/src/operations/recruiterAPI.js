@@ -174,12 +174,15 @@ export function fetchRecruiter(token) {
     };
 }
 
-export function createJob(formdata,navigate) {
+export function createJob(token,formdata,navigate) {
     return async (dispatch) => {
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true)); // Use dispatch directly
         try {
-            const response = await apiConnector("POST", createJob_api,formdata);
+            const response = await apiConnector("POST", createJob_api,formdata,
+            {
+                Authorization: `Bearer ${token}`,
+            });
 
             console.log("createJob API response........", response); 
 
