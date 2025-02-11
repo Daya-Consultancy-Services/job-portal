@@ -29,10 +29,12 @@ const companySchema = new mongoose.Schema({
     logo:{
         type:String // URL to company logo
     },
-    recruiter:{
-        type:mongoose.Schema.ObjectId,
-        ref:"Recruiter"
-    },
+    recruiter:[
+        {
+            type:mongoose.Schema.ObjectId,
+            ref:"Recruiter"
+        }
+    ],
     companyfield:[
         {
             type:String,
