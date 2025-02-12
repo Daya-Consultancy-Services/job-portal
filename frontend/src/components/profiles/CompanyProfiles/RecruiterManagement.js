@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { PlusCircle, Trash2, Users } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { createRecruiter } from '../../../operations/recruiterAPI';
+import { createRecruiter, deleteRecruiter, fetchRecruiter } from '../../../operations/recruiterAPI';
 
 
 const RecruiterManagement = () => {
   const token = useSelector((state)=>state.company?.token);
+  const recruiter = useSelector((state) => state.company?.recruiters);
+
   
-  const [recruiters, setRecruiters] = useState([]);
+  // const [recruiters, setRecruiters] = useState([]);
 
   const [newRecruiter, setNewRecruiter] = useState({ name: "", email: "", password: "", contactNumber: "", description: ""});
   const [showAlert, setShowAlert] = useState(false);
@@ -15,6 +17,16 @@ const RecruiterManagement = () => {
   const [formData, setFormData] = useState([]);
 
   const dispatch = useDispatch();
+
+  
+  useEffect(() => {
+    if (token) { 
+      dispatch(fetchRecruiter(token));
+    }
+  }, [token, dispatch]);
+  
+
+  console.log("Recruiters:", recruiter);
 
 
 
@@ -28,8 +40,8 @@ const RecruiterManagement = () => {
     return () => clearTimeout(timer);
   }, [showAlert]);
 
-  const handleAddRecruiter = () => {
-    if (!newRecruiter.name || !newRecruiter.email || !newRecruiter.password || !newRecruiter.contactNumber || !newRecruiter.description ) {
+  const handleAddRecruiter = async () => {
+    if (!newRecruiter.name || !newRecruiter.email || !newRecruiter.password || !newRecruiter.contactNumber || !newRecruiter.description) {
       setAlertMessage("Please fill in all recruiter fields");
       setShowAlert(true);
       return;
@@ -37,28 +49,39 @@ const RecruiterManagement = () => {
 
     const newRecruiterData = {
       token,
-      role:"recruiter",
+      role: "recruiter",
       ...newRecruiter,
     };
 
+    try {
+        const response = await dispatch(createRecruiter(newRecruiterData, token));
 
-    // Update both recruiters and formData
-    setRecruiters(prevRecruiters => [...prevRecruiters, newRecruiterData]);
-    setFormData(prevFormData => [...prevFormData, newRecruiterData]);
+        console.log("Response from Redux (handleAddRecruiter):", response);
 
-    // Log the formData to see the collected data
-    console.log('Updated FormData:',newRecruiterData);
+        // if (response && response._id) { 
+        //     setRecruiters(prevRecruiters => [...prevRecruiters, response]);
+        //     setFormData(prevFormData => [...prevFormData, response]);
+        // } else {
+        //     console.error("Recruiter response missing `_id`:", response);
+        // }
 
-    dispatch(createRecruiter(newRecruiterData));
+        setNewRecruiter({ name: "", email: "", password: "", contactNumber: "", description: "" });
+        setAlertMessage("Recruiter added successfully");
+        setShowAlert(true);
+    } catch (error) {
+        console.error("Error adding recruiter:", error);
+        setAlertMessage("Failed to add recruiter");
+        setShowAlert(true);
+    }
+};
 
-    setNewRecruiter({ name: "", email: "", password: "", contactNumber: "", description: ""});
-    setAlertMessage("Recruiter added successfully");
-    setShowAlert(true);
-  };
 
   const handleDeleteRecruiter = (id) => {
+    console.log("recruiter id", id);
+    dispatch(deleteRecruiter( token, id));
     setRecruiters(prevRecruiters => prevRecruiters.filter(recruiter => recruiter.id !== id));
     setFormData(prevFormData => prevFormData.filter(data => data.id !== id));
+
     setAlertMessage("Recruiter deleted successfully");
     setShowAlert(true);
   };
@@ -129,27 +152,35 @@ const RecruiterManagement = () => {
 
           {/* Recruiters List */}
           <div className="space-y-4">
-            {recruiters.map((recruiter) => (
-              <div
-                key={recruiter.id}
-                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-              >
-                <div className="space-y-1 flex-1">
-                  <h4 className="font-medium">{recruiter.name}</h4>
-                  <p className="text-sm text-gray-600">Email: {recruiter.email}</p>
-                  <p className="text-sm text-gray-600">Password: {recruiter.password}</p>
-                  <p className="text-sm text-gray-600">Contact: {recruiter.contactNumber}</p>
-                  <p className="text-sm text-gray-600">Description: {recruiter.description}</p>
-                </div>
-                <button
-                  onClick={() => handleDeleteRecruiter(recruiter.id)}
-                  className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 flex items-center gap-2 h-10"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  Delete
-                </button>
+            {recruiter && recruiter.length > 0 ? (
+              <div className="recruiter mt-6 px-4">
+                  {recruiter.map((recruiter) => (
+                    <div
+                      key={recruiter._id}
+                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                    >
+                      <div className="space-y-1 flex-1">
+                        <h4 className="font-medium">{recruiter.name}</h4>
+                        <p className="text-sm text-gray-600">Email: {recruiter.email}</p>
+                        <p className="text-sm text-gray-600">Password: {recruiter.password}</p>
+                        <p className="text-sm text-gray-600">Contact: {recruiter.contactNumber}</p>
+                        <p className="text-sm text-gray-600">Description: {recruiter.description}</p>
+                      </div>
+                      <button
+                        onClick={() => handleDeleteRecruiter(recruiter._id)}
+                        className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 flex items-center gap-2 h-10"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        Delete
+                      </button>
+                    </div>
+                  ))}
               </div>
-            ))}
+            
+            ):(
+              <p className="text-center text-gray-600">No recruiters found</p>
+            )}
+        
           </div>
         </div>
       </div>
