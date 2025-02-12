@@ -1,6 +1,7 @@
 import { toast } from 'react-hot-toast'
 import { setLoading, setToken } from '../slices/recruiterSlice'
 import { setRecruiter,setRecruiterData } from '../slices/recruiterSlice'
+import { setRecruiters } from '../slices/companySlice'
 import { apiConnector } from '../services/apiConnector'
 import { recruiterPoint } from './apis'
 
@@ -64,13 +65,7 @@ export function createRecruiter(formdata, token, navigate) {
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
-
-            const recruiter = response.data.recruiter;
-            console.log("New Recruiter from API:", recruiter); 
-
-            dispatch(setRecruiter(recruiter));
-            localStorage.setItem("recruiter", JSON.stringify(recruiter));
-
+            dispatch(fetchRecruiter(token))
             toast.success("Signup Successful!!!");
 
             return recruiter; 
@@ -138,7 +133,7 @@ export function updateRecruiter(token,recruiterId, formdata) {
 
             // Update the recruiter in the Redux state
             const updatedrecruiter = { ...response.data.recruiterDetail };
-            dispatch(setRecruiter(updatedrecruiter));
+            dispatch(setRecruiters(updatedrecruiter));
             
 
             // Persist the updated recruiter to localStorage
@@ -228,7 +223,7 @@ export function fetchRecruiter(token) {
             }
             
             dispatch(setRecruiterData(response.data.data));
-            toast.success("Recruiter data fetched successfully");
+            toast.success("recruiterData fetched successfully");
 
         } catch (error) {
             console.log("RecruiterData ERROR:", error);
