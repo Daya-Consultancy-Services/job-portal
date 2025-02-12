@@ -360,4 +360,4 @@ function CompanySignUp() {
                             );
                         }
 
-                        export default CompanySignUp
+    export default CompanySignUp

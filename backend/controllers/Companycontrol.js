@@ -336,7 +336,7 @@ exports.uploadCompanyLogo = async (req, res)=>{
 
 exports.createRecruiter = async (req,res) => {
     try {
-        // const companyId =  req.user.id
+        const companyId =  req.user.id
         const {
             name,
             email,
@@ -372,13 +372,13 @@ exports.createRecruiter = async (req,res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password,10); // hassing password for recruiter
-        // const compId = await Company.findById(companyId);
-        // if (!compId) {
-        //     return res.status(404).json({
-        //         success: false,
-        //         message: "Company not found"
-        //     });
-        // }
+        const compId = await Company.findById(companyId);
+        if (!compId) {
+            return res.status(404).json({
+                success: false,
+                message: "Company not found"
+            });
+        }
 
         const recruiter = await Recruiter.create({
             name,
@@ -386,7 +386,7 @@ exports.createRecruiter = async (req,res) => {
             password:hashedPassword,
             contactNumber,
             //image,
-            companyId,
+            companyId:compId._id,
             description,
             role:"recruiter"
         });
