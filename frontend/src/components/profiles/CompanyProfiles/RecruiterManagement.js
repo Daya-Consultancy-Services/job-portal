@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { PlusCircle, Trash2, Users } from 'lucide-react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createRecruiter } from '../../../operations/recruiterAPI';
 
 
 const RecruiterManagement = () => {
+  const token = useSelector((state)=>state.company?.token);
+  
   const [recruiters, setRecruiters] = useState([]);
 
   const [newRecruiter, setNewRecruiter] = useState({ name: "", email: "", password: "", contactNumber: "", description: ""});
@@ -27,14 +29,15 @@ const RecruiterManagement = () => {
   }, [showAlert]);
 
   const handleAddRecruiter = () => {
-    if (!newRecruiter.name || !newRecruiter.email || !newRecruiter.password || !newRecruiter.contactNumber || !newRecruiter.description) {
+    if (!newRecruiter.name || !newRecruiter.email || !newRecruiter.password || !newRecruiter.contactNumber || !newRecruiter.description ) {
       setAlertMessage("Please fill in all recruiter fields");
       setShowAlert(true);
       return;
     }
 
     const newRecruiterData = {
-     
+      token,
+      role:"recruiter",
       ...newRecruiter,
     };
 

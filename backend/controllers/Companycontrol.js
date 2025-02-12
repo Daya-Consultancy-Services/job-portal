@@ -344,7 +344,7 @@ exports.createRecruiter = async (req,res) => {
             contactNumber,
             //image,
             description,
-            // role
+            role
         } = req.body
 
         if(
@@ -353,8 +353,8 @@ exports.createRecruiter = async (req,res) => {
             !password ||
             !contactNumber ||
             //!image ||
-            !description 
-            // !role
+            !description ||
+            !role
         )
         {
             return res.status(400).json({
@@ -391,7 +391,7 @@ exports.createRecruiter = async (req,res) => {
             role:"recruiter"
         });
 
-        compId.recruiter =  recruiter._id
+        compId.recruiter.push(recruiter.id)
         await compId.save();
 
         return res.status(200).json({
@@ -411,6 +411,7 @@ exports.createRecruiter = async (req,res) => {
 exports.updateRecruiterDetail = async (req,res) => {
     try {
         const {
+            recruiterId,
             name,
             email,
             contactNumber,
@@ -420,6 +421,7 @@ exports.updateRecruiterDetail = async (req,res) => {
         } = req.body
 
         if(
+            !recruiterId ||
             !name ||
             !email ||
             !contactNumber ||
@@ -440,14 +442,6 @@ exports.updateRecruiterDetail = async (req,res) => {
             return res.status(404).json({
                 success: false,
                 message: "Company not found",
-            });
-        }
-
-        const recruiterId  = compId.recruiter._id
-        if (!recruiterId) {
-            return res.status(404).json({
-                success: false,
-                message: "recruiter not found",
             });
         }
 
@@ -477,8 +471,16 @@ exports.updateRecruiterDetail = async (req,res) => {
             })
     }
 }
+
 exports.deleteRecruiter = async (req,res) => {
     try {
+        const {recruiterId} = req.body;
+        if(!recruiterId){
+            return res.status(403).json({
+                success:false,
+                message:"recruiterId is required for delete"
+            });
+        }
         const compid = req.user.id
 
         const comp = await Company.findById(compid)
@@ -495,7 +497,12 @@ exports.deleteRecruiter = async (req,res) => {
                 message:"Company Recruiter can't be found"
             });
         }
-        await Recruiter.findByIdAndDelete(comp.recruiter);
+        comp.recruiter = comp.recruiter.filter(
+            (id) => id.toString() !== recruiterId
+        )
+
+        await comp.save();
+        await Recruiter.findByIdAndDelete(recruiterId);
 
         return res.status(200).json({
             success:true,

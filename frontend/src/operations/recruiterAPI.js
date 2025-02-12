@@ -18,13 +18,15 @@ const {
 
  } = recruiterPoint
 
-export function createRecruiter(formdata,navigate) {
+export function createRecruiter(formdata,token,navigate) {
     return async (dispatch) => {
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true)); // Use dispatch directly
         console.log("in api formdata", formdata);
         try {
-            const response = await apiConnector("POST", createRecruiter_api,formdata);
+            const response = await apiConnector("POST", createRecruiter_api,formdata,{
+                Authorization: `Bearer ${token}`,
+            });
 
             console.log("Signup API response........", response); 
 
@@ -78,14 +80,14 @@ export function loginRecruiter(email,password,navigate)
     }
 }
 
-export function updateRecruiter(token, updatedData) {
+export function updateRecruiter(token,recruiterId, formdata) {
     return async (dispatch) => {
-        console.log(updatedData);
+        console.log(formdata);
 
         const toastId = toast.loading('Updating recruiter...');
         dispatch(setLoading(true))
         try {
-           
+            const updatedData = { ...formdata, recruiterId };
             const response = await apiConnector('PUT',updateRecruiter_api, updatedData, {
                 Authorization: `Bearer ${token}`,
             });
@@ -116,12 +118,12 @@ export function updateRecruiter(token, updatedData) {
 
 };
 
-export function deleteRecruiter(token, navigate) {
+export function deleteRecruiter(token,recruiterId, navigate) {
     return async (dispatch) => {
         const toastId = toast.loading("Processing...");
         dispatch(setLoading(true));
         try {
-            const response = await apiConnector("DELETE", deleteRecruiter_api, null, {
+            const response = await apiConnector("DELETE", deleteRecruiter_api, {recruiterId}, {
                 Authorization: `Bearer ${token}`,
             });
             console.log("RECRUITER_DELETE_API RESPONSE............", response);
@@ -131,7 +133,7 @@ export function deleteRecruiter(token, navigate) {
             }
 
             toast.success("recruiter deleted successfully!");
-            dispatch(logout(navigate));
+            dispatch(fetchRecruiter(token));
 
         } catch (error) {
             console.error("Delete_recruiter_API error:", error);
@@ -172,12 +174,15 @@ export function fetchRecruiter(token) {
     };
 }
 
-export function createJob(formdata,navigate) {
+export function createJob(token,formdata,navigate) {
     return async (dispatch) => {
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true)); // Use dispatch directly
         try {
-            const response = await apiConnector("POST", createJob_api,formdata);
+            const response = await apiConnector("POST", createJob_api,formdata,
+            {
+                Authorization: `Bearer ${token}`,
+            });
 
             console.log("createJob API response........", response); 
 

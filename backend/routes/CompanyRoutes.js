@@ -59,7 +59,7 @@ router.post("/upload-logo", auth, isCompany,uploadCompanyLogo);
 router.get("/logout",logoutCompany);  // get all the detail for the company with the recruiter details
 
 // recruiter **********************************************************************************************
-router.post("/createrecruiter",auth,isCompany,createRecruiter);
+router.post("/createrecruiter",auth,createRecruiter);
 router.put("/updaterecruiter",auth,isCompany,updateRecruiterDetail)
 router.get("/getrecruiter",auth,isCompany,getAlldetailRecruiter)
 router.delete("/deleterecruiter",auth,isCompany,deleteRecruiter)
