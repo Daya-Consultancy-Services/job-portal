@@ -19,33 +19,66 @@ const {
 
  } = recruiterPoint
 
-export function createRecruiter(formdata,token,navigate) {
+// export function createRecruiter(formdata,token,navigate) {
+//     return async (dispatch) => {
+//         const toastId = toast.loading("Loading...");
+//         dispatch(setLoading(true)); // Use dispatch directly
+       
+//         try {
+//             const response = await apiConnector("POST", createRecruiter_api,formdata,{
+//                 Authorization: `Bearer ${token}`,
+//             });
+
+//             console.log("Signup API response........", response); 
+
+//             if (!response.data.success) {
+//                 throw new Error(response.data.message);
+//             }
+
+//             dispatch(setRecruiter(response.data.recruiter));
+//             localStorage.setItem("recruiter", JSON.stringify(response.data.recruiter));
+
+//             toast.success("Signup Successful!!!");
+//              //navigate("/components/auth/User/login"); // Navigate to login page
+//         } catch (error) {
+//              console.error("Signup Error for createRecuiter.....", error);
+//              toast.error("Signup Failed, Try again.");
+//         } finally {
+//              dispatch(setLoading(false)); 
+//              toast.dismiss(toastId);
+//         }
+//     };
+// }
+
+export function createRecruiter(formdata, token, navigate) {
     return async (dispatch) => {
         const toastId = toast.loading("Loading...");
-        dispatch(setLoading(true)); // Use dispatch directly
-        console.log("in api formdata", formdata);
+        dispatch(setLoading(true)); 
+        
         try {
-            const response = await apiConnector("POST", createRecruiter_api,formdata,{
+            const response = await apiConnector("POST", createRecruiter_api, formdata, {
                 Authorization: `Bearer ${token}`,
             });
 
-            console.log("Signup API response........", response); 
+            console.log("Signup API response:", response); 
 
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
             dispatch(fetchRecruiter(token))
             toast.success("Signup Successful!!!");
-             //navigate("/components/auth/User/login"); // Navigate to login page
+
+            return recruiter; 
         } catch (error) {
-             console.error("Signup Error for createRecuiter.....", error);
-             toast.error("Signup Failed, Try again.");
+            console.error("Signup Error for createRecruiter:", error);
+            toast.error("Signup Failed, Try again.");
         } finally {
-             dispatch(setLoading(false)); 
-             toast.dismiss(toastId);
+            dispatch(setLoading(false)); 
+            toast.dismiss(toastId);
         }
     };
 }
+
 
 export function loginRecruiter(email,password,navigate) 
 {
@@ -146,34 +179,61 @@ export function deleteRecruiter(token,recruiterId, navigate) {
     };
 }
 
+// export function fetchRecruiter(token) {
+//     return async (dispatch) => {
+//         const toastId = toast.loading("Fetching Recruiter data...");
+//         try {
+//             const response = await apiConnector(
+//                 "GET",
+//                 getRecruiter_api,
+//                 null,
+//                 {
+//                     Authorization: `Bearer ${token}`
+//                 }
+//             );
+            
+//             if (!response.data.url) {
+//                 throw new Error(response.data.message);
+//             }
+            
+//             dispatch(setRecruiterData(response.data.data));
+//             toast.success("recruiterData fetched successfully");
+
+//         } catch (error) {
+//             console.log("RecruiterData ERROR............", error);
+//             toast.error("Could not fetch recruiterData");
+//         } finally {
+//             toast.dismiss(toastId);
+//         }
+//     };
+// }
+
 export function fetchRecruiter(token) {
     return async (dispatch) => {
         const toastId = toast.loading("Fetching Recruiter data...");
         try {
-            const response = await apiConnector(
-                "GET",
-                getRecruiter_api,
-                null,
-                {
-                    Authorization: `Bearer ${token}`
-                }
-            );
-            
-            if (!response.data.url) {
-                throw new Error(response.data.message);
+            const response = await apiConnector("GET", getRecruiter_api, null, {
+                Authorization: `Bearer ${token}`
+            });
+
+            console.log("Raw API Response:", response); 
+
+            if (!response.data || !response.data.data) {  
+                throw new Error("Invalid API response structure");
             }
             
-            dispatch(setRecruiters(response.data.data));
+            dispatch(setRecruiterData(response.data.data));
             toast.success("recruiterData fetched successfully");
 
         } catch (error) {
-            console.log("RecruiterData ERROR............", error);
-            toast.error("Could not fetch recruiterData");
+            console.log("RecruiterData ERROR:", error);
+            toast.error("Could not fetch recruiter data");
         } finally {
             toast.dismiss(toastId);
         }
     };
 }
+
 
 export function createJob(token,formdata,navigate) {
     return async (dispatch) => {
