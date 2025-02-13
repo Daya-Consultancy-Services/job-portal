@@ -13,7 +13,8 @@ const {
     updateRecruiterDetail,
     deleteRecruiter,
     getAlldetailRecruiter,
-    logoutCompany
+    logoutCompany,
+    getAllJobsForCompany
 
 } = require("../controllers/Companycontrol") 
 
@@ -57,6 +58,7 @@ router.delete("/delete",auth,isCompany,deleteCompany);
 router.get("/companydetails",auth,isCompany,getAllDetailCompany);  // get all the detail for the company with the recruiter details
 router.post("/upload-logo", auth, isCompany,uploadCompanyLogo);
 router.get("/logout",logoutCompany);  // get all the detail for the company with the recruiter details
+router.get("/getalljobs",auth,isCompany,getAllJobsForCompany)
 
 // recruiter **********************************************************************************************
 router.post("/createrecruiter",auth,createRecruiter);

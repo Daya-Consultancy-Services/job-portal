@@ -1,6 +1,7 @@
 const { uploadCompanyLogoToCloudinary } = require("../config/cloudinary");
 const Company = require("../models/company");
 const Recruiter = require("../models/recruiter");
+const Jobs = require("../models/jobs")
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -562,6 +563,49 @@ exports.logoutCompany = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Logout failed, please try again",
+        });
+    }
+};
+
+
+exports.getAllJobsForCompany = async (req, res) => {
+    try {
+        const companyId = req.user.id; // Assuming company is logged in
+
+        // Find the company and get its recruiter IDs
+        const company = await Company.findById(companyId).populate("recruiter");
+        if (!company) {
+            return res.status(404).json({
+                success: false,
+                message: "Company not found",
+            });
+        }
+
+        const recruiterIds = company.recruiter.map(recruiter => recruiter._id);
+
+        // Find all jobs created by those recruiters
+        const jobs = await Jobs.find({ recruiterId: { $in: recruiterIds } })
+            .populate("recruiterId", "name email description") // Populate recruiter info
+            .exec();
+
+        if (jobs.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "No jobs found for this company.",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "All jobs fetched successfully",
+            data: jobs
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Error while fetching jobs for company"
         });
     }
 };
