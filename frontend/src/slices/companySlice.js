@@ -7,8 +7,7 @@ const initialState = {
     company: localStorage.getItem("company") ? JSON.parse(localStorage.getItem("company")) : null,
     recruiter: localStorage.getItem("recruiter") ? JSON.parse(localStorage.getItem("recruiter")) : null,
     recruiters : null,
-    companylog:null
-    
+    allJobs : null
 };
 
 const companySlice = createSlice({
@@ -34,13 +33,10 @@ const companySlice = createSlice({
         },
         setRecruiters(state,action){
             state.recruiters =action.payload
-        },
-        setCompanyLogo(state,action){
-            state.logo = action.payload
         }
      
     }
 });
 
-export const { setSignupData, setLoading, setToken, setCompany,setRecruiter,setRecruiters, setCompanyLogo } = companySlice.actions;
+export const { setSignupData, setLoading, setToken, setCompany,setRecruiter,setRecruiters } = companySlice.actions;
 export default companySlice.reducer;

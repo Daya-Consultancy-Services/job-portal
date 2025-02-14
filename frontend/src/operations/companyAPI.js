@@ -1,7 +1,7 @@
 
 import { toast } from 'react-hot-toast'
-import {  setCompanyLogo, setLoading, setToken } from '../slices/companySlice'
-import { setCompany } from '../slices/companySlice'
+import { setLoading, setToken } from '../slices/companySlice'
+import { setCompany , setallJobs} from '../slices/companySlice'
 import { apiConnector } from '../services/apiConnector'
 import { companyPoint } from './apis'
 
@@ -11,7 +11,6 @@ const {
     updateCompany_api,
     deleteCompany_api,
     getalldetailsCompany_api,
-    uploadCompanyLogo
 } = companyPoint
 
 export function signupCompany(companyData, navigate) {
@@ -220,4 +219,33 @@ export function logout() {
         toast.success("Logged Out")
         
     }
+}
+
+export function fetchCompanyJobs(token) {
+    return async (dispatch) => {
+        const toastId = toast.loading("Fetching Company jobs...");
+        try {
+            const response = await apiConnector(
+                "GET",
+                getallJobs_api,
+                null,
+                {
+                    Authorization: `Bearer ${token}`
+                }
+            );
+            
+            if (!response.data.url) {
+                throw new Error(response.data.message);
+            }
+            
+            dispatch(setallJobs(response.data.data));
+            toast.success("fetched all Company Jobs successfully");
+
+        } catch (error) {
+            console.log("FETCH_companyjobs_API ERROR............", error);
+            toast.error("Could not fetch alljobs company");
+        } finally {
+            toast.dismiss(toastId);
+        }
+    };
 }

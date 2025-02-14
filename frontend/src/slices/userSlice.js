@@ -5,6 +5,7 @@ const initialState = {
     loading: false,
     token: localStorage.getItem("token") ? JSON.parse(localStorage.getItem("token")) : null,
     user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null,
+    alljob:null
 };
 
 const userSlice = createSlice({
@@ -25,8 +26,11 @@ const userSlice = createSlice({
             state.user = action.payload;
             console.log("value : ",action);
         },
+        setalljob(state,action){
+            state.alljob = action.payload
+        }
     },
 });
 
-export const { setSignupData, setLoading, setToken, setUser } = userSlice.actions;
+export const { setSignupData, setLoading, setToken, setUser,setalljob } = userSlice.actions;
 export default userSlice.reducer;

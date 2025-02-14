@@ -1,9 +1,10 @@
 import { toast } from 'react-hot-toast'
 
 import { setLoading, setToken } from '../slices/userSlice'
-import { setUser } from '../slices/userSlice'
+import { setUser,setalljob } from '../slices/userSlice'
 import { apiConnector } from '../services/apiConnector'
 import { userPoint } from './apis'
+import { fetchJob } from './companyAPI'
 // import {setCertificate, , setOnlineprofile} from '../slices/userProfileSlice'
 import {setCertificate,setImageResume, setOnlineprofile,setskillprofiles,setCareers,setEducation,setProject,setEmpProfile,setResume,setImage} from '../slices/userProfileSlice'
 
@@ -13,7 +14,9 @@ const {
     signup_api,
     login_api,
     updateUser_api,
-    deleteUser_api
+    deleteUser_api,
+    getalljob,
+    applyjob
 
 } = userPoint
 
@@ -178,4 +181,59 @@ export function logout(navigate) {
         navigate("/")
 
     }
+}
+
+export function fetchallJob(token) {
+    return async (dispatch) => {
+        const toastId = toast.loading("Fetching all job data...");
+        try {
+            const response = await apiConnector(
+                "GET",
+                getalljob,
+                null,
+                {
+                    Authorization: `Bearer ${token}`
+                }
+            );
+            
+            if (!response.data.url) {
+                throw new Error(response.data.message);
+            }
+            
+            dispatch(setalljob(response.data.data));
+            toast.success("User job fetched successfully");
+
+        } catch (error) {
+            console.log("FETCH_user_alljob_API ERROR............", error);
+            toast.error("Could not fetch useralljob");
+        } finally {
+            toast.dismiss(toastId);
+        }
+    };
+}
+
+export function applyJob(token,jobId) {
+    return async (dispatch) => {
+        const toastId = toast.loading("User apply job data...");
+        try {
+            const response = await apiConnector("POST",applyjob,{jobId},
+            {
+                Authorization: `Bearer ${token}`
+            
+            });
+            
+            if (!response.data.url) {
+                throw new Error(response.data.message);
+            }
+            
+            toast.success("User apply job successfully");
+            dispatch(fetchallJob(token)) //updating the job it already appllied
+            dispatch(fetchJob(token)) //updating in recruiter jobs that this user apply
+        } catch (error) {
+            console.log("user_applyjob_API ERROR............", error);
+            toast.error("Could not apply user job");
+        } finally {
+            toast.dismiss(toastId);
+        }
+    };
 }
