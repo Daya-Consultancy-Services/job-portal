@@ -72,7 +72,7 @@ export const companyPoint = {
     updateCompany_api        : BASE_URL + "/company/update",
     deleteCompany_api        : BASE_URL + "/company/delete",
     getalldetailsCompany_api : BASE_URL + "/company/companydetails",
-    uploadCompanyLogo        : BASE_URL + "/upload-logo",
+    uploadCompanyLogo        : BASE_URL + "/company/upload-logo",
 }
 
 export const recruiterPoint = {

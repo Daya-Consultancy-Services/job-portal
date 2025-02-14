@@ -22,10 +22,13 @@ function HomeHeader() {
 
     // Determine profile link based on userType
     const getProfileLink = () => {
-        return userType === 'Company' 
+        if (userType === 'Recruiter') {
+            return "/components/profiles/RecruiterDashboard/Dashboard";
+        }
+        return userType === 'Company'
             ? "/components/profiles/CompanyProfiles/CompanyProfile"
             : "/components/profiles/UserProfile";
-    }
+    };
 
     return (
         <div className="fixed bg-white h-[80px] w-full flex items-center justify-center shadow-md">

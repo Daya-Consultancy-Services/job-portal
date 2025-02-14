@@ -11,6 +11,8 @@ import CompanyLogin from "./components/auth/Company/CompanyLogin";
 import CompanySignUp from "./components/auth/Company/CompanySignUp";
 import Profile from "./components/profiles/UserProfile";
 import CompanyProfile from "./components/profiles/CompanyProfiles/CompanyProfile";
+import CompanyRecruiterLogin from "./components/auth/Recruiter/CompanyRecruiterLogin";
+import Dashboard from "./components/profiles/RecruiterDashboard/Dashboard";
 
 
 function App() {
@@ -22,6 +24,8 @@ function App() {
         <Route path="/components/auth/User/login" element={<Login/>}/>
         <Route path="/components/auth/Company/login" element={<CompanyLogin/>}/>
         <Route path="/components/auth/Company/register" element={<CompanySignUp/>}/>
+        <Route path="/components/auth/Recruiter/login" element={<CompanyRecruiterLogin/>}/>
+        <Route path="/components/profiles/RecruiterDashboard/Dashboard" element={<Dashboard/>}/>
         <Route path="/components/profiles/UserProfile" element={<Profile/>}/>
         <Route path="/components/profiles/CompanyProfiles/CompanyProfile" element={<CompanyProfile/>}/>
 

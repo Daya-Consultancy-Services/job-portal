@@ -1,34 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { PlusCircle, Trash2, Users } from 'lucide-react';
+import { PlusCircle, Trash2, Users, Pencil } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { createRecruiter, deleteRecruiter, fetchRecruiter } from '../../../operations/recruiterAPI';
-
+import { createRecruiter, deleteRecruiter, fetchRecruiter, updateRecruiter } from '../../../operations/recruiterAPI';
 
 const RecruiterManagement = () => {
   const token = useSelector((state)=>state.company?.token);
   const recruiter = useSelector((state) => state.company?.recruiters);
-
   
-  // const [recruiters, setRecruiters] = useState([]);
-
   const [newRecruiter, setNewRecruiter] = useState({ name: "", email: "", password: "", contactNumber: "", description: ""});
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
-  const [formData, setFormData] = useState([]);
+  const [editingId, setEditingId] = useState(null);
+  const [editData, setEditData] = useState({});
+  const [localRecruiters, setLocalRecruiters] = useState([]);
 
   const dispatch = useDispatch();
-
   
   useEffect(() => {
     if (token) { 
       dispatch(fetchRecruiter(token));
     }
   }, [token, dispatch]);
+
   
-
-  console.log("Recruiters:", recruiter);
-
-
 
   useEffect(() => {
     let timer;
@@ -54,36 +48,63 @@ const RecruiterManagement = () => {
     };
 
     try {
-        const response = await dispatch(createRecruiter(newRecruiterData, token));
-
-        console.log("Response from Redux (handleAddRecruiter):", response);
-
-        // if (response && response._id) { 
-        //     setRecruiters(prevRecruiters => [...prevRecruiters, response]);
-        //     setFormData(prevFormData => [...prevFormData, response]);
-        // } else {
-        //     console.error("Recruiter response missing `_id`:", response);
-        // }
-
-        setNewRecruiter({ name: "", email: "", password: "", contactNumber: "", description: "" });
-        setAlertMessage("Recruiter added successfully");
-        setShowAlert(true);
+      const response = await dispatch(createRecruiter(newRecruiterData, token));
+     
+      // Update local state immediately with the new recruiter
+      if (response && response.data) {
+        setLocalRecruiters(prevRecruiters => [...prevRecruiters, response.data]);
+      }
+      dispatch(fetchRecruiter(token));
+      setNewRecruiter({ name: "", email: "", password: "", contactNumber: "", description: "" });
+      setAlertMessage("Recruiter added successfully");
+      setShowAlert(true);
     } catch (error) {
-        console.error("Error adding recruiter:", error);
-        setAlertMessage("Failed to add recruiter");
-        setShowAlert(true);
+      console.error("Error adding recruiter:", error);
+      setAlertMessage("Failed to add recruiter");
+      setShowAlert(true);
     }
-};
+  };
 
+  const handleEditClick = (recruiterData) => {
+    setEditingId(recruiterData._id);
+    setEditData(recruiterData);
+  };
 
-  const handleDeleteRecruiter = (id) => {
-    console.log("recruiter id", id);
-    dispatch(deleteRecruiter( token, id));
-    setRecruiters(prevRecruiters => prevRecruiters.filter(recruiter => recruiter.id !== id));
-    setFormData(prevFormData => prevFormData.filter(data => data.id !== id));
+  const handleSaveEdit = async () => {
+    try {
+      // You'll need to implement the updateRecruiter API call
+      // await dispatch(updateRecruiter(token, editingId, editData));
+      dispatch(updateRecruiter(token, editingId, editData));
+      setEditingId(null);
+      dispatch(fetchRecruiter(token));
+      setEditData({});
+      setAlertMessage("Recruiter updated successfully");
+      setShowAlert(true);
+    } catch (error) {
+      console.error("Error updating recruiter:", error);
+      setAlertMessage("Failed to update recruiter");
+      setShowAlert(true);
+    }
+  };
 
-    setAlertMessage("Recruiter deleted successfully");
-    setShowAlert(true);
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditData({});
+  };
+
+  const handleDeleteRecruiter = async (id) => {
+    try {
+      await dispatch(deleteRecruiter(token, id));
+      // Update local state immediately
+      dispatch(fetchRecruiter(token));
+
+      setAlertMessage("Recruiter deleted successfully");
+      setShowAlert(true);
+    } catch (error) {
+      console.error("Error deleting recruiter:", error);
+      setAlertMessage("Failed to delete recruiter");
+      setShowAlert(true);
+    }
   };
 
   return (
@@ -96,7 +117,7 @@ const RecruiterManagement = () => {
       </div>
       <div className="p-6">
         {showAlert && (
-          <div className={`mb-4 p-4 rounded-lg bg-blue-50 text-blue-700`}>
+          <div className="mb-4 p-4 rounded-lg bg-blue-50 text-blue-700">
             {alertMessage}
           </div>
         )}
@@ -121,21 +142,21 @@ const RecruiterManagement = () => {
               />
               <input 
                 type="password"
-                placeholder='Enter password' 
+                placeholder="Enter password" 
                 value={newRecruiter.password} 
                 onChange={(e) => setNewRecruiter({...newRecruiter, password: e.target.value})}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <input 
                 type="number"
-                placeholder='Enter your number' 
+                placeholder="Enter your number" 
                 value={newRecruiter.contactNumber} 
                 onChange={(e) => setNewRecruiter({...newRecruiter, contactNumber: e.target.value})}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <input 
                 type="text"
-                placeholder='Enter the description' 
+                placeholder="Enter the description" 
                 value={newRecruiter.description} 
                 onChange={(e) => setNewRecruiter({...newRecruiter, description: e.target.value})}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -154,33 +175,91 @@ const RecruiterManagement = () => {
           <div className="space-y-4">
             {recruiter && recruiter.length > 0 ? (
               <div className="recruiter mt-6 px-4">
-                  {recruiter.map((recruiter) => (
-                    <div
-                      key={recruiter._id}
-                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-                    >
-                      <div className="space-y-1 flex-1">
-                        <h4 className="font-medium">{recruiter.name}</h4>
-                        <p className="text-sm text-gray-600">Email: {recruiter.email}</p>
-                        <p className="text-sm text-gray-600">Password: {recruiter.password}</p>
-                        <p className="text-sm text-gray-600">Contact: {recruiter.contactNumber}</p>
-                        <p className="text-sm text-gray-600">Description: {recruiter.description}</p>
-                      </div>
+                {recruiter.map((recruiterItem) => (
+                  <div
+                    key={recruiterItem._id}
+                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg mb-4"
+                  >
+                    <div className="space-y-1 flex-1">
+                      {editingId === recruiterItem._id ? (
+                        <div className="space-y-2">
+                          <input
+                            type="text"
+                            value={editData.name}
+                            onChange={(e) => setEditData({...editData, name: e.target.value})}
+                            className="w-full px-3 py-1 border rounded"
+                          />
+                          <input
+                            type="email"
+                            value={editData.email}
+                            onChange={(e) => setEditData({...editData, email: e.target.value})}
+                            className="w-full px-3 py-1 border rounded"
+                          />
+                          <input
+                            type="text"
+                            value={editData.password}
+                            onChange={(e) => setEditData({...editData, password: e.target.value})}
+                            className="w-full px-3 py-1 border rounded"
+                          />
+                          <input
+                            type="text"
+                            value={editData.contactNumber}
+                            onChange={(e) => setEditData({...editData, contactNumber: e.target.value})}
+                            className="w-full px-3 py-1 border rounded"
+                          />
+                          <input
+                            type="text"
+                            value={editData.description}
+                            onChange={(e) => setEditData({...editData, description: e.target.value})}
+                            className="w-full px-3 py-1 border rounded"
+                          />
+                          <div className="flex gap-2">
+                            <button
+                              onClick={handleSaveEdit}
+                              className="px-3 py-1 bg-green-600 text-white rounded"
+                            >
+                              Save
+                            </button>
+                            <button
+                              onClick={handleCancelEdit}
+                              className="px-3 py-1 bg-gray-600 text-white rounded"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <h4 className="font-medium">{recruiterItem.name}</h4>
+                          <p className="text-sm text-gray-600">Email: {recruiterItem.email}</p>
+                          <p className="text-sm text-gray-600">Password: {recruiterItem.password}</p>
+                          <p className="text-sm text-gray-600">Contact: {recruiterItem.contactNumber}</p>
+                          <p className="text-sm text-gray-600">Description: {recruiterItem.description}</p>
+                        </>
+                      )}
+                    </div>
+                    <div className="flex gap-2">
                       <button
-                        onClick={() => handleDeleteRecruiter(recruiter._id)}
+                        onClick={() => handleEditClick(recruiterItem)}
+                        className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center gap-2 h-10"
+                      >
+                        <Pencil className="h-4 w-4" />
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteRecruiter(recruiterItem._id)}
                         className="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 flex items-center gap-2 h-10"
                       >
                         <Trash2 className="h-4 w-4" />
                         Delete
                       </button>
                     </div>
-                  ))}
+                  </div>
+                ))}
               </div>
-            
-            ):(
+            ) : (
               <p className="text-center text-gray-600">No recruiters found</p>
             )}
-        
           </div>
         </div>
       </div>

@@ -1,26 +1,33 @@
+
+
+
 import React, { useState } from 'react';
-import { Building, Mail, Globe, MapPin, Upload, Edit2, Check, X } from 'lucide-react';
+import { Building, Mail, Globe, MapPin, Upload, Edit2, Check, X, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import RecruiterManagement from './RecruiterManagement';
 import CompanyHeader from './CompanyHeader';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { logout, updateCompanyDetail, uploadCompanyLogos } from '../../../operations/companyAPI';
 
 const CompanyProfile = () => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [company, setCompany] = useState({
-    name: "TechCorp Inc",
-    description: "Leading technology solutions provider",
-    email: "contact@techcorp.com",
-    website: "www.techcorp.com",
-    location: "San Francisco, CA",
-    companyfield: ["IT", "Sales"],
-    logo: "/api/placeholder/100/100"
-  });
+   const token = useSelector((state)=>state.company?.token);
+   const company = useSelector((state)=>state.company?.company)
+   const navigate = useNavigate();
+   const dispatch = useDispatch();
+   const [isEditing, setIsEditing] = useState(false);
+   const [editedCompany, setEditedCompany] = useState(company);
+   const [newField, setNewField] = useState("");
 
-  const [editedCompany, setEditedCompany] = useState(company);
-  const [newField, setNewField] = useState("");
+   const handleLogout = () => {
+     dispatch(logout()); 
+     navigate('/components/auth/Company/login'); // Navigate to login page
+   };
 
   const handleLogoUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
+      dispatch(uploadCompanyLogos(token,file));
       const imageUrl = URL.createObjectURL(file);
       setEditedCompany(prev => ({
         ...prev,
@@ -40,9 +47,8 @@ const CompanyProfile = () => {
   };
 
   const handleSave = () => {
-    setCompany(editedCompany);
+    dispatch(updateCompanyDetail(token,editedCompany));
     setIsEditing(false);
-    // Here you would typically make an API call to update the company information
   };
 
   const handleAddField = () => {
@@ -64,48 +70,59 @@ const CompanyProfile = () => {
 
   return (
     <>
-      
-      <div className="min-h-[100vh] relative w-full flex items-center flex-col space-y-6 bg-slate-100">
       <CompanyHeader />
-        <div className="bg-white rounded-lg shadow-md w-[60%]   ">
+      <div className="min-h-[100vh] top-20 pt-10 pb-10 relative w-full flex items-center flex-col space-y-6 bg-slate-100">
+        <div className="bg-white rounded-lg shadow-md w-[60%]">
           <div className="p-4 border-b flex justify-between items-center">
             <h2 className="text-xl font-semibold flex items-center gap-2">
               <Building className="h-6 w-6" />
               Company Information
             </h2>
-            {!isEditing ? (
-              <button 
-                onClick={handleEdit}
-                className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2"
-              >
-                <Edit2 className="h-4 w-4" />
-                Edit Company
-              </button>
-            ) : (
-              <div className="flex gap-2">
-                <button 
-                  onClick={handleSave}
-                  className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center gap-2"
-                >
-                  <Check className="h-4 w-4" />
-                  Save
-                </button>
-                <button 
-                  onClick={handleCancel}
-                  className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2"
-                >
-                  <X className="h-4 w-4" />
-                  Cancel
-                </button>
-              </div>
-            )}
+            <div className="flex gap-2">
+              {!isEditing ? (
+                <>
+                  <button 
+                    onClick={handleEdit}
+                    className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2"
+                  >
+                    <Edit2 className="h-4 w-4" />
+                    Edit Company
+                  </button>
+                  <button 
+                    onClick={handleLogout}
+                    className="px-4 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 flex items-center gap-2"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <div className="flex gap-2">
+                  <button 
+                    onClick={handleSave}
+                    className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center gap-2"
+                  >
+                    <Check className="h-4 w-4" />
+                    Save
+                  </button>
+                  <button 
+                    onClick={handleCancel}
+                    className="px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-2"
+                  >
+                    <X className="h-4 w-4" />
+                    Cancel
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
+          {/* Rest of the component remains the same */}
           <div className="p-6 grid md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <div className="relative group">
                   <img
-                    src={isEditing ? editedCompany.logo : company.logo}
+                    src={isEditing ? editedCompany.logo : require("../../../assets/default-profile.jpg")}
                     alt="Company Logo"
                     className="w-24 h-24 rounded-lg object-cover border"
                   />

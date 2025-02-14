@@ -1,6 +1,6 @@
 
 import { toast } from 'react-hot-toast'
-import {  setLoading, setToken } from '../slices/companySlice'
+import {  setCompanyLogo, setLoading, setToken } from '../slices/companySlice'
 import { setCompany } from '../slices/companySlice'
 import { apiConnector } from '../services/apiConnector'
 import { companyPoint } from './apis'
@@ -11,6 +11,7 @@ const {
     updateCompany_api,
     deleteCompany_api,
     getalldetailsCompany_api,
+    uploadCompanyLogo
 } = companyPoint
 
 export function signupCompany(companyData, navigate) {
@@ -106,6 +107,7 @@ export function updateCompanyDetail(token, updatedData) {
 
             const updatedUser = { ...response.data.comp };
             dispatch(setCompany(updatedUser));
+            dispatch(fetchCompany(token));
 
             localStorage.setItem("company", JSON.stringify(updatedUser));
             toast.success('Company_Profile updated successfully!');
@@ -132,7 +134,7 @@ export function deleteCompanys(token, navigate) {
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
-
+            dispatch(fetchCompany(token));
             toast.success("Company deleted successfully!");
             dispatch(logout(navigate));
         } catch (error) {
@@ -145,32 +147,40 @@ export function deleteCompanys(token, navigate) {
     }
 }
 
-// export function uploadCompanyLogos(file) {
-//     return async (dispatch) => {
-//         const toastId = toast.loading("Uploading Logo...");
-//         dispatch(setLoading(true));
-//         try {
-//             console.log("formdata", file);
-//             const response = await apiConnector("POST", uploadCompanyLogo, file, {
-//                 'Content-Type': 'multipart/form-data',
-//             });
+export function uploadCompanyLogos(token, file) {
+    return async (dispatch) => {
+        const toastId = toast.loading("Uploading Logo...");
+        dispatch(setLoading(true));
+        try {
+            const formData = new FormData();
+            formData.append('logo', file);
+            console.log(formData);
+            const response = await apiConnector(
+                "POST",
+                 uploadCompanyLogo,
+                  formData,
+                   {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data',
+                    }
+        );
 
-//             console.log("UPLOAD_COMPANY_LOGO_API RESPONSE............", response);
+            console.log("UPLOAD_COMPANY_LOGO_API RESPONSE............", response);
 
-//             if (!response.data.url) {
-//                 throw new Error(response.data.message);
-//             }
-//             dispatch(setCompanyLogo(response.data.url));
-//             toast.success("Logo uploaded successfully!");
-//         } catch (error) {
-//             console.error("UPLOAD_COMPANY_LOGO_API error:", error);
-//             toast.error("Could not upload Logo.");
-//         } finally {
-//             toast.dismiss(toastId);
-//             dispatch(setLoading(false));
-//         }
-//     }
-// }
+            if (!response.data.url) {
+                throw new Error(response.data.message);
+            }
+            dispatch(setCompanyLogo(response.data.url));
+            toast.success("Logo uploaded successfully!");
+        } catch (error) {
+            console.error("UPLOAD_COMPANY_LOGO_API error:", error);
+            toast.error("Could not upload Logo.");
+        } finally {
+            toast.dismiss(toastId);
+            dispatch(setLoading(false));
+        }
+    }
+}
 
 export function fetchCompany(token) {
     return async (dispatch) => {
@@ -201,13 +211,13 @@ export function fetchCompany(token) {
     };
 }
 
-export function logout(navigate) {
+export function logout() {
     return (dispatch) => {
         dispatch(setToken(null))
-        dispatch(setCompany(null))
+        // dispatch(setCompany(null))
         localStorage.removeItem("token")
         localStorage.removeItem("company")
         toast.success("Logged Out")
-        navigate("/")
+        
     }
 }
