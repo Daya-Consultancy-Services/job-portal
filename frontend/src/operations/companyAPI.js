@@ -6,11 +6,14 @@ import { apiConnector } from '../services/apiConnector'
 import { companyPoint } from './apis'
 
 const {
+    
     signupCompany_api,
     loginCompany_api,
     updateCompany_api,
     deleteCompany_api,
     getalldetailsCompany_api,
+    getallJobs_api
+
 } = companyPoint
 
 export function signupCompany(companyData, navigate) {

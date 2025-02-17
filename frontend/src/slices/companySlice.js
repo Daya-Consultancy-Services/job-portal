@@ -34,12 +34,12 @@ const companySlice = createSlice({
         setRecruiters(state,action){
             state.recruiters =action.payload
         },
-        setAllJobs(state,action){
+        setallJobs(state,action){
             state.allJobs = action.payload
         }
      
     }
 });
 
-export const { setSignupData, setLoading, setToken, setCompany,setRecruiter,setRecruiters , setAllJobs} = companySlice.actions;
+export const { setSignupData, setLoading, setToken, setCompany,setRecruiter,setRecruiters,setallJobs } = companySlice.actions;
 export default companySlice.reducer;
