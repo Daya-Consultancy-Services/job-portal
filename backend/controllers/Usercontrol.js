@@ -371,3 +371,42 @@ exports.applyJobs = async (req, res) => {
         });
     }
 };
+
+
+exports.getAppliedJobs = async (req, res) => {
+    try {
+        const userId = req.user.id; // Assuming user ID is retrieved from authentication middleware
+
+        // Find user and populate appliedJobs
+        const user = await User.findById(userId)
+            .populate({
+                path: "appliedJobs",
+                select: "jobTitle description skillRequired jobType jobLocation salaryRange isClose companyId", // Select only required fields
+                populate: {
+                    path:"companyId",
+                    select : "name",
+                }
+            })
+            .exec();
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Applied jobs fetched successfully",
+            data: user.appliedJobs,
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Error while fetching applied jobs",
+        });
+    }
+};

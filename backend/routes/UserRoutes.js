@@ -12,7 +12,8 @@ const {
     deleteUser,
     getalldetail,
     getJobs,
-    applyJobs
+    applyJobs,
+    getAppliedJobs
     
 } = require("../controllers/Usercontrol")
 
@@ -33,6 +34,7 @@ router.get("/getdetail",auth,isJobseeker,getalldetail)
 router.get("/getjobs",getJobs)
 
 router.post("/applyjob",auth,isJobseeker,applyJobs)
+router.get("/getappliedjob",auth,isJobseeker,getAppliedJobs)
 
 
 

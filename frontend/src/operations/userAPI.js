@@ -1,7 +1,7 @@
 import { toast } from 'react-hot-toast'
 
 import { setLoading, setToken } from '../slices/userSlice'
-import { setUser,setalljob } from '../slices/userSlice'
+import { setUser,setalljob ,setappliedjobs } from '../slices/userSlice'
 import { apiConnector } from '../services/apiConnector'
 import { userPoint } from './apis'
 import { fetchJob } from './companyAPI'
@@ -16,7 +16,8 @@ const {
     updateUser_api,
     deleteUser_api,
     getalljob,
-    applyjob
+    applyjob,
+    appliedJob
 
 } = userPoint
 
@@ -232,6 +233,35 @@ export function applyJob(token,jobId) {
         } catch (error) {
             console.log("user_applyjob_API ERROR............", error);
             toast.error("Could not apply user job");
+        } finally {
+            toast.dismiss(toastId);
+        }
+    };
+}
+
+export function fetchallappliedJob(token) {
+    return async (dispatch) => {
+        const toastId = toast.loading("Fetching allapplied job data...");
+        try {
+            const response = await apiConnector(
+                "GET",
+                appliedJob,
+                null,
+                {
+                    Authorization: `Bearer ${token}`
+                }
+            );
+            
+            if (!response.data.url) {
+                throw new Error(response.data.message);
+            }
+            
+            dispatch(setappliedjobs(response.data.data));
+            toast.success("User Appliedjob fetched successfully");
+
+        } catch (error) {
+            console.log("FETCH_user_appliedjob_API ERROR............", error);
+            toast.error("Could not fetch userappliedjob");
         } finally {
             toast.dismiss(toastId);
         }

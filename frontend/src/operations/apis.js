@@ -6,7 +6,8 @@ export const userPoint = {
     updateUser_api : BASE_URL + "/user/update",
     deleteUser_api : BASE_URL + "/user/delete",
     getalljob      : BASE_URL + "/user/getjobs",
-    applyjob       : BASE_URL + "/user/applyjob"
+    applyjob       : BASE_URL + "/user/applyjob",
+    appliedJob     : BASE_URL + "/user/getappliedjob"
 } 
 
 export const profilePoint = {
@@ -75,7 +76,7 @@ export const companyPoint = {
     deleteCompany_api        : BASE_URL + "/company/delete",
     getalldetailsCompany_api : BASE_URL + "/company/companydetails",
     uploadCompanyLogo        : BASE_URL + "/upload-logo",
-    getallJobs               : BASE_URL + "/company/getalljobs"
+    getallJobs_api           : BASE_URL + "/company/getalljobs"
 }
 
 export const recruiterPoint = {
