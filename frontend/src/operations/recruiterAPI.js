@@ -1,7 +1,7 @@
 import { toast } from 'react-hot-toast'
 import { setLoading, setToken } from '../slices/recruiterSlice'
 import { setRecruiter,setRecruiterData } from '../slices/recruiterSlice'
-import { setRecruiters } from '../slices/companySlice'
+import { setAllJobs, setRecruiters } from '../slices/companySlice'
 import { apiConnector } from '../services/apiConnector'
 import { recruiterPoint } from './apis'
 import { useNavigate } from 'react-router-dom'
@@ -178,34 +178,6 @@ export function deleteRecruiter(token,recruiterId, navigate) {
     };
 }
 
-// export function fetchRecruiter(token) {
-//     return async (dispatch) => {
-//         const toastId = toast.loading("Fetching Recruiter data...");
-//         try {
-//             const response = await apiConnector(
-//                 "GET",
-//                 getRecruiter_api,
-//                 null,
-//                 {
-//                     Authorization: `Bearer ${token}`
-//                 }
-//             );
-            
-//             if (!response.data.url) {
-//                 throw new Error(response.data.message);
-//             }
-            
-//             dispatch(setRecruiterData(response.data.data));
-//             toast.success("recruiterData fetched successfully");
-
-//         } catch (error) {
-//             console.log("RecruiterData ERROR............", error);
-//             toast.error("Could not fetch recruiterData");
-//         } finally {
-//             toast.dismiss(toastId);
-//         }
-//     };
-// }
 
 export function fetchRecruiter(token) {
     return async (dispatch) => {
@@ -235,10 +207,12 @@ export function fetchRecruiter(token) {
 
 
 export function createJob(token,formdata,navigate) {
+    console.log("in api formdata", formdata);
     return async (dispatch) => {
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true)); // Use dispatch directly
         try {
+            
             const response = await apiConnector("POST", createJob_api,formdata,
             {
                 Authorization: `Bearer ${token}`,
@@ -249,7 +223,7 @@ export function createJob(token,formdata,navigate) {
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
-
+           
             toast.success("Job Created Successful!!!");
             dispatch(fetchJob(token));
         } catch (error) {
@@ -346,3 +320,33 @@ export function fetchJob(token) {
         }
     }
 }
+
+
+// export function fetchRecruiter(token) {
+//     return async (dispatch) => {
+//         const toastId = toast.loading("Fetching Recruiter data...");
+//         try {
+//             const response = await apiConnector(
+//                 "GET",
+//                 getRecruiter_api,
+//                 null,
+//                 {
+//                     Authorization: `Bearer ${token}`
+//                 }
+//             );
+            
+//             if (!response.data.url) {
+//                 throw new Error(response.data.message);
+//             }
+            
+//             dispatch(setRecruiterData(response.data.data));
+//             toast.success("recruiterData fetched successfully");
+
+//         } catch (error) {
+//             console.log("RecruiterData ERROR............", error);
+//             toast.error("Could not fetch recruiterData");
+//         } finally {
+//             toast.dismiss(toastId);
+//         }
+//     };
+// }

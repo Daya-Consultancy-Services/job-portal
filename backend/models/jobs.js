@@ -23,7 +23,7 @@ const jobSchema = new mongoose.Schema({
     ],
     jobType: {
         type:String,
-        enum:["WFH","WFO","Hybrid"] // full form WFH(work from home) WFO(Work from office) Hybrid(3 or 4 day office then leave)
+        // enum:["WFH","WFO","Hybrid"] // full form WFH(work from home) WFO(Work from office) Hybrid(3 or 4 day office then leave)
     },
     salaryRange: {
         type: String  // 2 lakhs - 4 lakhs

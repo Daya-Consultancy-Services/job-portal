@@ -9,6 +9,7 @@ import CompanyHeader from './CompanyHeader';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { logout, updateCompanyDetail, uploadCompanyLogos } from '../../../operations/companyAPI';
+import CompanyJobs from './CompanyJobs';
 
 const CompanyProfile = () => {
    const token = useSelector((state)=>state.company?.token);
@@ -257,7 +258,10 @@ const CompanyProfile = () => {
           </div>
         </div>
         <RecruiterManagement />
+        <CompanyJobs/>
       </div>
+
+    
     </>
   );
 };

@@ -1,6 +1,6 @@
 
 import { toast } from 'react-hot-toast'
-import { setLoading, setToken } from '../slices/companySlice'
+import { setAllJobs, setLoading, setToken } from '../slices/companySlice'
 import { setCompany , setallJobs} from '../slices/companySlice'
 import { apiConnector } from '../services/apiConnector'
 import { companyPoint } from './apis'
@@ -238,7 +238,7 @@ export function fetchCompanyJobs(token) {
                 throw new Error(response.data.message);
             }
             
-            dispatch(setallJobs(response.data.data));
+            dispatch(setAllJobs(response.data.data));
             toast.success("fetched all Company Jobs successfully");
 
         } catch (error) {

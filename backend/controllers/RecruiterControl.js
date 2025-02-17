@@ -246,8 +246,11 @@ exports.getJobRecruiter = async (req, res) => {
 
         // Find all jobs created by this recruiter and populate appliedUsers
         const jobs = await Job.find({ recruiterId })
-            .select("jobTitle appliedUsers") // Select only jobTitle and appliedUsers
-            .populate("appliedUsers", "firstName lastName email") // Populate user details
+            .select("jobTitle description skillRequired jobType salaryRange jobLocation isClose") 
+            .populate({
+                path:"appliedUsers",
+                select:"firstName lastName email",
+            }) 
             .exec();
 
         if (jobs.length === 0) {

@@ -19,13 +19,17 @@ const recruiterSlice = createSlice({
             state.loading = value.payload
         },
         setToken(state, value){
+            
             state.token = value.payload
+            console.log("in slice token", state.token);
         },
         setRecruiter(state,action){
             state.recruiter = action.payload
+            console.log("in slice user", state.recruiter);
         },
         setRecruiterData(state,action){
             state.recruiterData= action.payload
+            console.log("in slice recruiterData", state.recruiterData);
         }
     },
 });

@@ -4,7 +4,7 @@ import { setLoading, setToken } from '../slices/userSlice'
 import { setUser,setalljob } from '../slices/userSlice'
 import { apiConnector } from '../services/apiConnector'
 import { userPoint } from './apis'
-import { fetchJob } from './companyAPI'
+import { fetchJob } from './recruiterAPI'
 // import {setCertificate, , setOnlineprofile} from '../slices/userProfileSlice'
 import {setCertificate,setImageResume, setOnlineprofile,setskillprofiles,setCareers,setEducation,setProject,setEmpProfile,setResume,setImage} from '../slices/userProfileSlice'
 
