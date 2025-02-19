@@ -197,7 +197,7 @@ export function fetchallJob(token) {
                 }
             );
             
-            if (!response.data.url) {
+            if (!response.data.success) {
                 throw new Error(response.data.message);
             }
             

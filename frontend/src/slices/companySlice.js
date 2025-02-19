@@ -36,6 +36,8 @@ const companySlice = createSlice({
         },
         setallJobs(state,action){
             state.allJobs = action.payload
+            console.log("in company slice", state.allJobs)
+
         }
      
     }

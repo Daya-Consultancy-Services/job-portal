@@ -187,7 +187,7 @@ export function fetchRecruiter(token) {
                 Authorization: `Bearer ${token}`
             });
 
-            console.log("Raw API Response:", response); 
+       
 
             if (!response.data || !response.data.data) {  
                 throw new Error("Invalid API response structure");
@@ -311,10 +311,10 @@ export function fetchJob(token) {
             // Update Redux state with certificates
             dispatch(setRecruiterData(response.data.data));
 
-            toast.success("Certificates fetched successfully");
+            toast.success("jobs fetched successfully");
         } catch (error) {
-            console.error("Error fetching certificates:", error);
-            toast.error("Failed to fetch certificates");
+            console.error("Error fetching jobs:", error);
+            toast.error("Failed to fetch jobs");
         } finally {
             dispatch(setLoading(false));
         }

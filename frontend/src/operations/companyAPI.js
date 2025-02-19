@@ -1,7 +1,5 @@
-
 import { toast } from 'react-hot-toast'
-import { setAllJobs, setLoading, setToken } from '../slices/companySlice'
-import { setCompany , setallJobs} from '../slices/companySlice'
+import { setallJobs, setLoading, setToken, setCompany } from '../slices/companySlice'
 import { apiConnector } from '../services/apiConnector'
 import { companyPoint } from './apis'
 
@@ -185,6 +183,7 @@ export function uploadCompanyLogos(token, file) {
 }
 
 export function fetchCompany(token) {
+   
     return async (dispatch) => {
         const toastId = toast.loading("Fetching Company data...");
         try {
@@ -197,7 +196,7 @@ export function fetchCompany(token) {
                 }
             );
             
-            if (!response.data.url) {
+            if (!response.data.success) {
                 throw new Error(response.data.message);
             }
             
@@ -225,6 +224,7 @@ export function logout() {
 }
 
 export function fetchCompanyJobs(token) {
+    
     return async (dispatch) => {
         const toastId = toast.loading("Fetching Company jobs...");
         try {
@@ -237,11 +237,11 @@ export function fetchCompanyJobs(token) {
                 }
             );
             
-            if (!response.data.url) {
+            if (!response.data.success) {
                 throw new Error(response.data.message);
             }
             
-            dispatch(setAllJobs(response.data.data));
+            dispatch(setallJobs(response.data.data));
             toast.success("fetched all Company Jobs successfully");
 
         } catch (error) {
