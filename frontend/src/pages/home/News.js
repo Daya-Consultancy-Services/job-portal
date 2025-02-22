@@ -46,7 +46,7 @@ function News() {
   };
 
   return (
-    <div className='min-h-[100vh] w-full flex flex-col items-center mt-[46px] rounded-lg overflow-auto'>
+    <div className='min-h-[100vh] w-full flex flex-col items-center mt-[46px] rounded-lg overflow-auto relative z-[50]'>
       {newsData.map((news, index) => (
         <div key={index} className="news-card-1 h-[360px] w-[350px] shadow-lg bg-white rounded-xl overflow-hidden m-4">
           <div className="img h-[40%] w-full overflow-hidden">

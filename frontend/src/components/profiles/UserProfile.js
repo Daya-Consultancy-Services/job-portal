@@ -69,15 +69,6 @@ function UserProfile() {
   const profileSummery = useSelector(selectors.selectProfileSummery);
   const resumeHeadline = useSelector(selectors.selectResumeHeadline);
 
-
-
-
-
-
-
-
-
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -109,7 +100,7 @@ function UserProfile() {
       if (token && user) {
         dispatch(fetchExtraProfile(token));
       }
-      if (personalDetail && personalDetail.length === 0) {
+      if (token && user) {
         dispatch(fetchPersonalDetails(token));
       }
     }
@@ -160,8 +151,6 @@ function UserProfile() {
   const [activeLink, setActiveLink] = useState('resume');
   const [isSkillsVisible, setSkillsVisible] = useState(false);
   const [skillsData, setSkillsData] = useState([]);
-  const [isPersonalDetailsVisible, setPersonalDetailsVisible] = useState(false);
-  const [personalDetails, setPersonalDetails] = useState('');
   const [showExtraProfile, setShowExtraProfile] = useState(false);
   const [isNamePopupOpen, setIsNamePopupOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -227,7 +216,7 @@ function UserProfile() {
 
   // --------------------------------------------------------------------------------------------------------------
 
-  // ---------------------------------- save , edit, delete ---------------------------------------
+  // ---------------------------------- save , edit, delete of Accomplishments ---------------------------------------
 
   const handleSaveData = async (sectionType, data) => {
     try {
@@ -490,7 +479,7 @@ function UserProfile() {
     };
 
     return (
-      <div key={index} className="p-4 rounded-md bg-white shadow-sm">
+      <div key={index} className=" rounded-md bg-white shadow-sm">
         {Object.entries(item)
           .filter(([key, value]) =>
             profileFields[key] && value && value !== null && value !== ""
@@ -531,6 +520,8 @@ function UserProfile() {
 
 
   // ---------------------------------------------------------------------------------------------------------------------
+
+
 
   // ------------------------------- update and delete of career profile ---------------------------------------------
 
@@ -651,14 +642,8 @@ function UserProfile() {
   };
   // --------------------------------------------------------------------------------------------------------------------
 
-
-
-
-
-  // ---------------------------------------------------------------------------------------------------------------------
-
   const { register, handleSubmit } = useForm({
-
+    
   });
 
 
@@ -671,7 +656,7 @@ function UserProfile() {
     } catch (error) {
       console.log(error.message);
     }
-    setIsPopupOpen(false);
+    setIsNamePopupOpen(false);
   };
 
   const handleEditClick = (type, value) => {
@@ -704,16 +689,16 @@ function UserProfile() {
 
 
 
-  const handleButtonClick4 = () => {
-    setPersonalDetailsVisible(!isPersonalDetailsVisible);
-  };
+  // const handleButtonClick4 = () => {
+  //   setPersonalDetailsVisible(!isPersonalDetailsVisible);
+  // };
 
-  const handlePersonalDetailsSaved = (details) => {
-    if (details) {
-      setPersonalDetails(details);
-    }
-    setPersonalDetailsVisible(false);
-  };
+  // const handlePersonalDetailsSaved = (details) => {
+  //   if (details) {
+  //     setPersonalDetails(details);
+  //   }
+  //   setPersonalDetailsVisible(false);
+  // };
 
 
   const mainSectionRef = useRef(null);
@@ -787,15 +772,15 @@ function UserProfile() {
     </div>
   );
 
-  const TextArea = ({ label, placeholder }) => (
-    <div className="mb-4">
-      <label className="block text-sm font-medium mb-1">{label}</label>
-      <textarea
-        placeholder={placeholder}
-        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[100px]"
-      />
-    </div>
-  );
+  // const TextArea = ({ label, placeholder }) => (
+  //   <div className="mb-4">
+  //     <label className="block text-sm font-medium mb-1">{label}</label>
+  //     <textarea
+  //       placeholder={placeholder}
+  //       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[100px]"
+  //     />
+  //   </div>
+  // );
 
   const sections = [
     {
@@ -811,42 +796,8 @@ function UserProfile() {
       ),
 
     },
-    {
-      id: 'work-sample',
-      title: "Work sample",
-      description: "Link relevant work samples (e.g. Github, Behance)",
-      form: (
-        <>
-          <TextInput label="Project Title" placeholder="Enter project title" />
-          <TextInput label="Project URL" type="url" placeholder="Enter project URL" />
-          <TextArea label="Description" placeholder="Describe your work sample" />
-        </>
-      )
-    },
-    {
-      id: 'presentation',
-      title: "Presentation",
-      description: "Add links to your online presentations (e.g. Slide-share presentation links etc.)",
-      form: (
-        <>
-          <TextInput label="Presentation Title" placeholder="Enter presentation title" />
-          <TextInput label="Presentation URL" type="url" placeholder="Enter presentation URL" />
-        </>
-      )
-    },
-    {
-      id: 'patent',
-      title: "Patent",
-      description: "Add details of patents you have filed",
-      form: (
-        <>
-          <TextInput label="Patent Title" placeholder="Enter patent title" />
-          <TextInput label="Patent Number" placeholder="Enter patent number" />
-          <TextInput label="Filing Date" type="date" />
-          <TextArea label="Description" placeholder="Enter patent description" />
-        </>
-      )
-    },
+
+
     {
       id: 'certification',
       title: "Certification",
@@ -1060,13 +1011,13 @@ function UserProfile() {
                         educationProfiles.map((education, index) => (
                           <div key={index} className="flex justify-between px-2 w-full gap-5 items-start mt-5 border p-3 rounded-xl">
                             <div className="flex flex-col space-y-2">
-                              <p><strong>Institution Name:</strong> {education.institutionName}</p>
-                              <p><strong>Course Name:</strong> {education.courseName}</p>
-                              <p><strong>Course Type:</strong> {education.courseType}</p>
-                              <p><strong>Duration:</strong> {education.duration}</p>
-                              <p><strong>Marks:</strong> {education.marks}</p>
-                              <p><strong>Location:</strong> {education.location}</p>
-                              <p><strong>Education Level:</strong> {education.education}</p>
+                              <p className='font-medium'>Institution Name: {education.institutionName}</p>
+                              <p className='font-medium'>Course Name: {education.courseName}</p>
+                              <p className='font-medium'>Course Type: {education.courseType}</p>
+                              <p className='font-medium'>Duration: {education.duration}</p>
+                              <p className='font-medium'>Marks: {education.marks}</p>
+                              <p className='font-medium'>Location: {education.location}</p>
+                              <p className='font-medium'>Education Level: {education.education}</p>
                             </div>
                             <div className="flex items-center space-x-4">
                               <button
@@ -1123,11 +1074,11 @@ function UserProfile() {
                           className="flex justify-between items-center border p-3 mt-3 rounded-lg bg-white shadow-sm"
                         >
                           <div>
-                            <div className="font-semibold text-gray-800">
-                              <strong>Skill Name:</strong> {skill.skillName}
+                            <div className=" text-gray-800">
+                              <span className='font-medium'>Skill Name:</span> {skill.skillName}
                             </div>
-                            <div className="text-gray-800 font-semibold">
-                              <strong>Experience:</strong> {skill.experience} Years
+                            <div className="text-gray-800 ">
+                              <span className='font-medium'>Experience:</span> {skill.experience} Years
                             </div>
                           </div>
                           <div className="flex items-center space-x-4">
@@ -1191,13 +1142,13 @@ function UserProfile() {
                   <div className="projects-list mt-6">
                     {projectProfiles.length > 0 ? (
                       projectProfiles.map((project, index) => (
-                        <div key={index} className="project-entry flex justify-between p-2 border-b flex-col pl-5">
+                        <div key={index} className="project-entry flex justify-between pl-6 pr-4 pt-2 pb-2 border flex-col ">
                           <div className="w-full flex justify-between items-start">
                             <div className='w-full'>
-                              <p><strong>Project Title:</strong> {project.projectTitle}</p>
-                              <p><strong>Link:</strong> {project.projectLink}</p>
-                              <p><strong>Description:</strong> {project.projectDescription}</p>
-                              <p><strong>Skills Used:</strong> {project.projectSkills}</p>
+                              <p><span className='font-medium'>Project Title:</span> {project.projectTitle}</p>
+                              <p><span className="font-medium">Link:</span> {project.projectLink}</p>
+                              <p><span className='font-medium'>Description:</span> {project.projectDescription}</p>
+                              <p><span className='font-medium'>Skills:</span> {project.projectSkills}</p>
                             </div>
                             <div className="flex items-center space-x-4">
                               <button
@@ -1227,8 +1178,7 @@ function UserProfile() {
                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Profile-summery'>
                   <div className="head flex w-full justify-between px-4">
                     <div className="flex justify-between px-2 w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Profile summery</h1> <p className='text-green-400'>Add 10%</p></div>
-                    <h1 className='text-blue-700 font-semibold cursor-pointer'
-                      onClick={handleButtonClick4}>Add profile summery</h1>
+                    
                   </div>
 
                   {!profileSummery ? (
@@ -1330,128 +1280,130 @@ function UserProfile() {
                 </div>
 
 
-                <div className="p-6 space-y-4 shadow-lg">
-                  <h2 className="text-xl font-medium">Accomplishments</h2>
-                  <p className="text-gray-600 mb-4">
-                    Showcase your credentials by adding relevant certifications, work samples, online profiles, etc.
-                  </p>
+                <div className="p-6 shadow-lg">
+      <h2 className="text-xl font-medium">Accomplishments</h2>
+      <p className="text-gray-600 mb-4">
+        Showcase your credentials by adding relevant certifications, work samples, online profiles, etc.
+      </p>
 
-                  <div className="space-y-6">
-                    {sections.map((section) => (
-                      <div key={section.id}>
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h3 className="font-medium text-gray-800">{section.title}</h3>
-                            <p className="text-gray-600 text-sm mt-1">{section.description}</p>
-                          </div>
-                          <button
-                            className="text-blue-600 font-medium"
-                            onClick={() => setOpenModal(section.id)}
-                          >
-                            Add
-                          </button>
-                        </div>
+      <div className= 'space-y-6' >
+        {sections.map((section) => (
+          <div key={section.id} >
+            <div className="flex justify-between items-start">
+              <div >
+                <h3 className="font-medium text-gray-800">{section.title}</h3>
+                <p className="text-gray-600 text-sm mt-1">{section.description}</p>
+              </div>
+              <button
+                className="text-blue-600 font-medium"
+                onClick={() => setOpenModal(section.id)}
+              >
+                Add
+              </button>
+            </div>
 
-                        {sectionData[section.id] && sectionData[section.id].length > 0 && (
-                          <div className="mt-4">
-                            {sectionData[section.id].map((item, index) => (
-                              section.id === 'certification'
-                                ? renderCertificate(item, index, section.id)
-                                : renderOnlineProfile(item, index, section.id)
-                            ))}
-                          </div>
-                        )}
-                        {editModal.sectionId !== null && (
-                          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                            <div className="bg-white rounded-lg w-full max-w-xl p-6 relative">
-                              <button
-                                onClick={closeModal}
-                                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-                              >
-                                X
-                              </button>
-                              <h2 className="text-xl font-semibold mb-4">
-                                {editModal.sectionId === 'certification' ? 'Edit Certificate' : 'Edit Field'}
-                              </h2>
+            {sectionData[section.id]?.length > 0 && (
+  <div>
+    {sectionData[section.id].map((item, index) => (
+      section.id === 'certification'
+        ? renderCertificate(item, index, section.id)
+        : renderOnlineProfile(item, index, section.id)
+    ))}
+  </div>
+)}
+            
+            {editModal.sectionId !== null && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg w-full max-w-xl p-6 relative">
+                  <button
+                    onClick={closeModal}
+                    className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                  >
+                    X
+                  </button>
+                  <h2 className="text-xl font-semibold mb-4">
+                    {editModal.sectionId === 'certification' ? 'Edit Certificate' : 'Edit Field'}
+                  </h2>
 
-                              {editModal.sectionId === 'certification' ? (
-                                <div className="space-y-4">
-                                  <div>
-                                    <label className="block text-sm font-medium text-gray-700">
-                                      Certificate Name
-                                    </label>
-                                    <input
-                                      type="text"
-                                      className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-                                      value={editModal.certificateData.certificateName}
-                                      onChange={(e) => handleCertificateInputChange('certificateName', e.target.value)}
-                                    />
-                                  </div>
-                                  <div>
-                                    <label className="block text-sm font-medium text-gray-700">
-                                      Description
-                                    </label>
-                                    <input
-                                      type="text"
-                                      className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-                                      value={editModal.certificateData.certificateDescription}
-                                      onChange={(e) => handleCertificateInputChange('certificateDescription', e.target.value)}
-                                    />
-                                  </div>
-                                  <div>
-                                    <label className="block text-sm font-medium text-gray-700">
-                                      Certificate Link
-                                    </label>
-                                    <input
-                                      type="text"
-                                      className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-                                      value={editModal.certificateData.certificateLink}
-                                      onChange={(e) => handleCertificateInputChange('certificateLink', e.target.value)}
-                                    />
-                                  </div>
-                                </div>
-                              ) : (
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-700">
-                                    {editModal.fieldKey}
-                                  </label>
-                                  <input
-                                    type="text"
-                                    className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-                                    value={editModal.fieldValue}
-                                    onChange={(e) => setEditModal(prev => ({ ...prev, fieldValue: e.target.value }))}
-                                  />
-                                </div>
-                              )}
-
-                              <div className="flex justify-end gap-2 mt-6">
-                                <button
-                                  onClick={closeModal}
-                                  className="px-4 py-2 border rounded-md hover:bg-gray-50"
-                                >
-                                  Cancel
-                                </button>
-                                <button
-                                  onClick={handleUpdate}
-                                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                                >
-                                  Update
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                        <ModalComponent
-                          isOpen={openModal === section.id}
-                          onClose={() => setOpenModal(null)}
-                          sectionType={section.id}
-                          title={section.title}
-                          onSave={handleSaveData}
+                  {editModal.sectionId === 'certification' ? (
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                          Certificate Name
+                        </label>
+                        <input
+                          type="text"
+                          className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                          value={editModal.certificateData.certificateName}
+                          onChange={(e) => handleCertificateInputChange('certificateName', e.target.value)}
                         />
                       </div>
-                    ))}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                          Description
+                        </label>
+                        <input
+                          type="text"
+                          className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                          value={editModal.certificateData.certificateDescription}
+                          onChange={(e) => handleCertificateInputChange('certificateDescription', e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700">
+                          Certificate Link
+                        </label>
+                        <input
+                          type="text"
+                          className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                          value={editModal.certificateData.certificateLink}
+                          onChange={(e) => handleCertificateInputChange('certificateLink', e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        {editModal.fieldKey}
+                      </label>
+                      <input
+                        type="text"
+                        className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                        value={editModal.fieldValue}
+                        onChange={(e) => setEditModal(prev => ({ ...prev, fieldValue: e.target.value }))}
+                      />
+                    </div>
+                  )}
+
+                  <div className="flex justify-end gap-2 mt-6">
+                    <button
+                      onClick={closeModal}
+                      className="px-4 py-2 border rounded-md hover:bg-gray-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleUpdate}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                    >
+                      Update
+                    </button>
                   </div>
                 </div>
+              </div>
+            )}
+            
+            <ModalComponent
+              isOpen={openModal === section.id}
+              onClose={() => setOpenModal(null)}
+              sectionType={section.id}
+              title={section.title}
+              onSave={handleSaveData}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
 
 
                 <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Career-profile'>
@@ -1525,97 +1477,115 @@ function UserProfile() {
                   <p className='text-zinc-400 px-6'>This information is important for employers to know you better</p>
                 </div> */}
 
-                <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id="Personal-details">
-                  <div className="head flex w-full justify-between px-4">
-                    <div className="flex justify-between px-2 w-fit gap-5 items-center">
-                      <h1 className="font-semibold text-2xl">Personal details</h1>
-                      <p className="text-green-400">
-                        Add 18%
-                      </p>
-                    </div>
-                    <button
-                      className="text-blue-700 font-semibold cursor-pointer hover:text-blue-800"
-                      onClick={() => setShowModal(true)}
-                    >
-                      {personalDetail ? 'Edit personal details' : 'Add personal details'}
-                    </button>
-                  </div>
+<div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id="Personal-details">
+      <div className="head flex w-full justify-between px-4">
+        <div className="flex justify-between px-2 w-fit gap-5 items-center">
+          <h1 className="font-semibold text-2xl">Personal details</h1>
+          <p className="text-green-400">Add 18%</p>
+        </div>
+        <button
+          className="text-blue-700 font-semibold cursor-pointer hover:text-blue-800"
+          onClick={() => setShowModal(true)}
+        >
+          {personalDetail ? 'Edit personal details' : 'Add personal details'}
+        </button>
+      </div>
 
-                  <p className="text-zinc-400 px-6 mb-4">
-                    This information is important for employers to know you better
-                  </p>
+      <p className="text-zinc-400 px-6 mb-4">
+        This information is important for employers to know you better
+      </p>
 
-                  {personalDetail && (
-                    <div className="px-6 space-y-3 relative">
-                      <button
-                        onClick={handleDelete}
-                        className="absolute top-0 right-0 p-2 text-red-500 transition-colors"
-                        aria-label="Delete personal details"
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex items-center gap-2">
-                          <User className="w-5 h-5 text-gray-500" />
-                          <div>
-                            <p className="text-sm text-gray-500">Gender</p>
-                            <p className="font-medium">{personalDetail.gender}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-5 h-5 text-gray-500" />
-                          <div>
-                            <p className="text-sm text-gray-500">Date of Birth</p>
-                            <p className="font-medium">{personalDetail.dateOfBirth}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <User className="w-5 h-5 text-gray-500" />
-                          <div>
-                            <p className="text-sm text-gray-500">Martial Status</p>
-                            <p className="font-medium">{personalDetail.martialStatus}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <MapPin className="w-5 h-5 text-gray-500" />
-                          <div>
-                            <p className="text-sm text-gray-500">Current Address</p>
-                            <p className="font-medium">{personalDetail.address}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <MapPin className="w-5 h-5 text-gray-500" />
-                          <div>
-                            <p className="text-sm text-gray-500">Permanent Address</p>
-                            <p className="font-medium">
-                              {personalDetail.permanentAddress}
-                              {personalDetail.pincode && ` - ${personalDetail.pincode}`}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Globe className="w-5 h-5 text-gray-500" />
-                          <div>
-                            <p className="text-sm text-gray-500">Languages</p>
-                            <p className="font-medium">
-                              {personalDetail.language?.join(', ')}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {showModal && (
-                    <ExtraProfile
-                      isEdit={!!personalDetail}
-                      initialData={personalDetail}
-                      onSave={(data) => {
-                        handleModalClose();
-                      }}
-                    />
-                  )}
+      {personalDetail && (
+        <div className="px-6 space-y-3 relative">
+          {/* Only show delete button if there's at least one field with data */}
+          {(personalDetail.gender || personalDetail.dateOfBirth || personalDetail.martialStatus || 
+            personalDetail.address || personalDetail.permanentAddress || 
+            (personalDetail.language && personalDetail.language.length > 0)) && (
+            <button
+              onClick={handleDelete}
+              className="absolute top-0 right-0 p-2 text-red-500 transition-colors"
+              aria-label="Delete personal details"
+            >
+              <Trash2 className="w-5 h-5" />
+            </button>
+          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {personalDetail.gender && (
+              <div className="flex items-center gap-2">
+                <User className="w-5 h-5 text-gray-500" />
+                <div>
+                  <p className="text-sm text-gray-500">Gender</p>
+                  <p className="font-medium">{personalDetail.gender}</p>
                 </div>
+              </div>
+            )}
+
+            {personalDetail.dateOfBirth && (
+              <div className="flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-gray-500" />
+                <div>
+                  <p className="text-sm text-gray-500">Date of Birth</p>
+                  <p className="font-medium">{personalDetail.dateOfBirth}</p>
+                </div>
+              </div>
+            )}
+
+            {personalDetail.martialStatus && (
+              <div className="flex items-center gap-2">
+                <User className="w-5 h-5 text-gray-500" />
+                <div>
+                  <p className="text-sm text-gray-500">Martial Status</p>
+                  <p className="font-medium">{personalDetail.martialStatus}</p>
+                </div>
+              </div>
+            )}
+
+            {personalDetail.address && (
+              <div className="flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-gray-500" />
+                <div>
+                  <p className="text-sm text-gray-500">Current Address</p>
+                  <p className="font-medium">{personalDetail.address}</p>
+                </div>
+              </div>
+            )}
+
+            {personalDetail.permanentAddress && (
+              <div className="flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-gray-500" />
+                <div>
+                  <p className="text-sm text-gray-500">Permanent Address</p>
+                  <p className="font-medium">
+                    {personalDetail.permanentAddress}
+                    {personalDetail.pincode && ` - ${personalDetail.pincode}`}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {personalDetail.language?.length > 0 && (
+              <div className="flex items-center gap-2">
+                <Globe className="w-5 h-5 text-gray-500" />
+                <div>
+                  <p className="text-sm text-gray-500">Languages</p>
+                  <p className="font-medium">{personalDetail.language.join(', ')}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {showModal && (
+        <ExtraProfile
+          isEdit={!!personalDetail}
+          initialData={personalDetail}
+          onSave={(data) => {
+            handleModalClose();
+          }}
+        />
+      )}
+    </div>
 
 
 

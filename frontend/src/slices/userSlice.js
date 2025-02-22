@@ -6,7 +6,7 @@ const initialState = {
     token: localStorage.getItem("token") ? JSON.parse(localStorage.getItem("token")) : null,
     user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null,
     alljob:null,
-    appliedJobs:null
+    appliedJobs:[]
 };
 
 const userSlice = createSlice({

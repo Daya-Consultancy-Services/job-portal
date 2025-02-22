@@ -1,17 +1,23 @@
-import React, { useEffect } from 'react'
-import { Link } from 'react-router-dom'
+
+
+import React, { useEffect, useState, useRef } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { GoBellFill } from "react-icons/go";
 import { CiSearch } from "react-icons/ci";
 import { useDispatch, useSelector } from 'react-redux';
-import {  fetchExtraProfile } from '../../operations/profileAPI';
+import { fetchExtraProfile } from '../../operations/profileAPI';
+import { logout } from '../../operations/userAPI';
 
 function HomeHeader() {
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null);
+    const navigate = useNavigate();
+    
     const image = useSelector((state) => state.profile.extraprofile?.image)
     const token = useSelector((state) => state.user.token)
     const user = useSelector((state) => state.profile.user)
     const dispatch = useDispatch();
 
-    // Get userType from localStorage
     const userType = localStorage.getItem('userType');
 
     useEffect(() => {
@@ -20,7 +26,17 @@ function HomeHeader() {
         }
     }, [dispatch, token, user])
 
-    // Determine profile link based on userType
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
     const getProfileLink = () => {
         if (userType === 'Recruiter') {
             return "/components/profiles/RecruiterDashboard/Dashboard";
@@ -30,8 +46,12 @@ function HomeHeader() {
             : "/components/profiles/UserProfile";
     };
 
+    const handleLogout = () => {
+     dispatch(logout(navigate));
+    };
+
     return (
-        <div className="fixed bg-white h-[80px] w-full flex items-center justify-center shadow-md">
+        <div className="fixed bg-white h-[80px] w-full flex items-center justify-center shadow-md z-[99999999]">
             <div className='h-full w-[70%] flex items-center pl-2 pr-2 justify-between'>
                 <Link to="/home">
                     <div className="logo h-full w-[10%]">
@@ -74,16 +94,42 @@ function HomeHeader() {
                             <GoBellFill className='h-full w-full' />
                         </div>
                     </div>
-                    <div className="h-full w-[90%] flex justify-center items-center">
-                        <Link to={getProfileLink()}>
-                            <div className="h-[45px] w-[45px] rounded-full border border-zinc-300 overflow-hidden">
-                                <img 
-                                    className="h-full w-full object-cover" 
-                                    src={image || require("../../assets/default-profile.jpg")} 
-                                    alt="profile" 
-                                />
+                    <div className="relative h-full w-[90%] flex justify-center items-center" ref={dropdownRef}>
+                        <div 
+                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                            className="cursor-pointer h-[45px] w-[45px] rounded-full border border-zinc-300 overflow-hidden"
+                        >
+                            <img 
+                                className="h-full w-full object-cover" 
+                                src={image || require("../../assets/default-profile.jpg")} 
+                                alt="profile" 
+                            />
+                        </div>
+                        
+                        {isDropdownOpen && (
+                            <div className="absolute top-[70px] right-0 bg-white shadow-lg rounded-lg w-48 py-2 z-[99999999999]">
+                                <Link to="/components/profiles/AppliedJobs" 
+                                className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                                onClick={() => setIsDropdownOpen(false)}
+                                >
+                                    Applied Jobs
+                                </Link>
+                                <Link 
+                                    to={getProfileLink()} 
+                                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                                    onClick={() => setIsDropdownOpen(false)}
+                                >
+                                    Profile
+                                </Link>
+                                <button 
+                                    onClick={handleLogout}
+                                    className="w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+                                    
+                                >
+                                    Logout
+                                </button>
                             </div>
-                        </Link>
+                        )}
                     </div>
                 </div>
             </div>

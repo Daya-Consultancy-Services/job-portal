@@ -13,6 +13,7 @@ import Profile from "./components/profiles/UserProfile";
 import CompanyProfile from "./components/profiles/CompanyProfiles/CompanyProfile";
 import CompanyRecruiterLogin from "./components/auth/Recruiter/CompanyRecruiterLogin";
 import Dashboard from "./components/profiles/RecruiterDashboard/Dashboard";
+import AppliedJobs from "./components/profiles/AppliedJobs";
 
 
 function App() {
@@ -27,8 +28,8 @@ function App() {
         <Route path="/components/auth/Recruiter/login" element={<CompanyRecruiterLogin/>}/>
         <Route path="/components/profiles/RecruiterDashboard/Dashboard" element={<Dashboard/>}/>
         <Route path="/components/profiles/UserProfile" element={<Profile/>}/>
+        <Route path="/components/profiles/AppliedJobs" element={<AppliedJobs/>}/>
         <Route path="/components/profiles/CompanyProfiles/CompanyProfile" element={<CompanyProfile/>}/>
-
         <Route path="/home" element={<Home/>}/>
         <Route path="/jobs" element={<FindaJob/>}/>
         <Route path="/company" element={<Company/>}/>

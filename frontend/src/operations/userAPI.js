@@ -222,14 +222,17 @@ export function applyJob(token,jobId) {
                 Authorization: `Bearer ${token}`
             
             });
+
+            console.log(" APPLY JOB API RESPONSE............", response);
             
-            if (!response.data.url) {
+            if (!response.data.success) {
+
                 throw new Error(response.data.message);
             }
             
             toast.success("User apply job successfully");
             dispatch(fetchallJob(token)) //updating the job it already appllied
-            dispatch(fetchJob(token)) //updating in recruiter jobs that this user apply
+            // dispatch(fetchJob(token)) //updating in recruiter jobs that this user apply
         } catch (error) {
             console.log("user_applyjob_API ERROR............", error);
             toast.error("Could not apply user job");
@@ -252,7 +255,7 @@ export function fetchallappliedJob(token) {
                 }
             );
             
-            if (!response.data.url) {
+            if (!response.data.success) {
                 throw new Error(response.data.message);
             }
             

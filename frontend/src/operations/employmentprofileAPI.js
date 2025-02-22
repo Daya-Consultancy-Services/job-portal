@@ -87,7 +87,6 @@ export function updateEmploymentProfiles(token,empId,formdata){
 
 export function deleteEmploymentProfiles(token,empId){
     return async (dispatch) => {
-        console.log("token in api", token, "empId in api", empId);
         const toastId = toast.loading("Loading....")
         dispatch(setLoading(true))
         try {

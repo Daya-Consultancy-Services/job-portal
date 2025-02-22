@@ -245,32 +245,7 @@ function Register() {
                                             placeholder="Enter your password (min 6 characters)"
                                         />
                                     </div>
-                                    <div className="mb-4">
-                                        <label className="block text-gray-700 font-medium mb-2">
-                                            Role <span className="text-red-500">*</span>
-                                        </label>
-                                        <input
-                                            type="text"
-                                            name="role"
-                                            value={role}
-                                            onChange={handleChange}
-                                            className={inputClass('roleType')}
-                                            placeholder="Enter your role"
-                                        />
-                                    </div>
-                                    {/* <div className="mb-4">
-                                        <label className="block text-gray-700 font-medium mb-2">
-                                            Phone Number 
-                                        </label>
-                                        <input
-                                            type="tel"
-                                            name="phoneNumber"
-                                            value={formData.phoneNumber}
-                                            onChange={handleChange}
-                                            className={inputClass('phoneNumber')}
-                                            placeholder="Enter your phone number (10 digits)"
-                                        />
-                                    </div> */}
+
 
 
                                     <div className="work-status min-h-[180px] w-full flex items-center  gap-10 justify-center flex-col">

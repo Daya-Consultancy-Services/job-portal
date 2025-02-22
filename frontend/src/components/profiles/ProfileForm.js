@@ -29,7 +29,7 @@ const ProfileForm = ({ isOpen, onClose, onSave, popupType, initialValue }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[99999]">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[999999]">
       <div className="bg-white p-5 rounded-lg shadow-lg w-[600px] relative">
         <button
           onClick={onClose}
