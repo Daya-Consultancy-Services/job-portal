@@ -91,3 +91,10 @@ export const recruiterPoint = {
     getJob_api          : BASE_URL + "/recruiter/getjobrecruiter",
 
 }
+
+const adminPoint = {
+    createAdmin_api : BASE_URL + "/admin/signup",
+    loginAdmin_api  : BASE_URL + "/admin/login",
+    updateAdmin_api : BASE_URL + "/admin/update",
+    deleteAdmin_api : BASE_URL + "/admin/delete",
+}
