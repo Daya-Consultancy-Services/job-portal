@@ -152,7 +152,7 @@ exports.updateAdmin = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "Admin updated successfully",
-            admin: updatedAdmin,
+            updatedAdmin,
         });
 
     } catch (error) {
