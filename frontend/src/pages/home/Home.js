@@ -71,6 +71,8 @@ function Home() {
   ), []);
   const token = useSelector(selectors.selectToken);
   const jobs = useSelector(selectors.selectJobs);
+  const userRole = localStorage.getItem('userType');
+  // console.log("user type",userType)
 
   useEffect(()=>{
     if(token){
@@ -86,7 +88,7 @@ function Home() {
           <Profile/>
         </div>
         <div className="job-div mt-[115px] w-[50%] bg-white rounded-lg overflow-y-auto">
-          <JobListings jobs={jobs} />
+          <JobListings jobs={jobs} userRole={userRole} />
         </div>
         <div className="mt-14 fixed right-0 news-div w-[25%] h-screen overflow-y-auto z-[60]">
           <News/>

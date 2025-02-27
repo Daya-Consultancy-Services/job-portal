@@ -14,11 +14,15 @@ import CompanyProfile from "./components/profiles/CompanyProfiles/CompanyProfile
 import CompanyRecruiterLogin from "./components/auth/Recruiter/CompanyRecruiterLogin";
 import Dashboard from "./components/profiles/RecruiterDashboard/Dashboard";
 import AppliedJobs from "./components/profiles/AppliedJobs";
+import Admin from "./components/auth/Admin/Admin";
+import 'react-toastify/dist/ReactToastify.css';
+import { Toaster } from "react-hot-toast";
 
 
 function App() {
   return (
     <Router>
+           <Toaster position="bottom-right"  />
       <Routes>
         <Route path="/" element={<Landing/>}/>
         <Route path="/components/auth/User/register" element={<Register/>}/>
@@ -34,9 +38,13 @@ function App() {
         <Route path="/jobs" element={<FindaJob/>}/>
         <Route path="/company" element={<Company/>}/>
         <Route path="/services" element={<Blog/>}/>
+        <Route path="/admin" element={<Admin/>}/>
+       
       </Routes>
+
      
     </Router>
+
   );
 }
 
