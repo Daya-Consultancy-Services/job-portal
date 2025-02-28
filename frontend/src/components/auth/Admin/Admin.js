@@ -6,6 +6,7 @@ import {
 import { Users, Briefcase, Clock, Filter, ChevronDown, Search, Bell, User, Target, TrendingUp, Award, BarChart2, Camera } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAdmin, uploadImage } from '../../../operations/adminapi';
+import { logoutAdmin } from '../../../../../backend/controllers/AdminControler';
 
 // Sample data
 const jobPostingData = [
@@ -116,6 +117,10 @@ const Admin = () => {
     }
   };
 
+  const handleLogout = () => {
+    dispatch(logoutAdmin(token));
+  }
+
   const triggerFileInput = () => {
     fileInputRef.current.click();
   };
@@ -179,11 +184,11 @@ const Admin = () => {
                     <p className="text-center text-sm text-gray-500">admin@recruitpro.com</p>
                   </div>
                   <div className="px-2 py-2">
-                    <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">Your Profile</a>
-                    <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">Settings</a>
-                    <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">Help & Support</a>
+                    <span  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">Your Profile</span>
+                    <span  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">Settings</span>
+                    <span  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">Help & Support</span>
                     <div className="border-t border-gray-100 my-1"></div>
-                    <a href="#" className="block px-4 py-2 text-sm text-red-500 hover:bg-gray-100 rounded-md">Sign out</a>
+                    <span onClick={handleLogout}  className="block px-4 py-2 text-sm text-red-500 hover:bg-gray-100 rounded-md">Sign out</span>
                   </div>
                 </div>
               )}
