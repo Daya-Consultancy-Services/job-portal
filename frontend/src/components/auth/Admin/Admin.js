@@ -1,22 +1,11 @@
-// import React from 'react'
-
-// function Admin() {
-//   return (
-//     <div>
-//       Admin page
-//     </div>
-//   )
-// }
-
-// export default Admin
-
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, 
   Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area
 } from 'recharts';
-import { Users, Briefcase, Clock, Filter, ChevronDown, Search, Bell, User, Target, TrendingUp, Award, BarChart2 } from 'lucide-react';
-import Header from '../../Header';
+import { Users, Briefcase, Clock, Filter, ChevronDown, Search, Bell, User, Target, TrendingUp, Award, BarChart2, Camera } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAdmin, uploadImage } from '../../../operations/adminapi';
 
 // Sample data
 const jobPostingData = [
@@ -86,6 +75,16 @@ const recentApplications = [
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [selectedKpiView, setSelectedKpiView] = useState('funnel');
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [profileImage, setProfileImage] = useState('/api/placeholder/80/80');
+  const fileInputRef = useRef(null);
+  const dispatch = useDispatch();
+
+  const token = useSelector((state)=>state.admin.token);
+  const admin = useSelector((state)=>state.admin.admin);
+
+  console.log(admin);
+
 
   // KPI metrics
   const kpiMetrics = {
@@ -96,11 +95,101 @@ const Admin = () => {
     qualityOfHire: '92%'
   };
 
+  const handleProfileClick = () => {
+    setIsProfileOpen(!isProfileOpen);
+  };
+
+  const handleFileChange = async(e) => {
+    const file = e.target.files[0];
+    if (file) {
+      console.log("file", file);
+      // const reader = new FileReader();
+      // reader.onload = (e) => {
+      //   setProfileImage(e.target.result);
+      // };
+      // reader.readAsDataURL(file);
+      try{
+        await dispatch(uploadImage(token, file));
+      }catch(e){
+        console.log("error uploading profile image", e);
+      }
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current.click();
+  };
+
   return (
     <div className="bg-gray-100 min-h-screen">
       {/* Header */}
       <header className="bg-white shadow-sm">
-        <Header/>
+        <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+          <div className="flex items-center space-x-4">
+            <h1 className="text-xl font-bold text-gray-800"><img
+                src={require('../../../assets/logo.png')}
+                className="h-[85px] w-[85px] relative top-[3px]"
+                alt="Logo"
+              /></h1>
+            <div className="hidden md:flex space-x-6">
+              <a href="#" className="text-gray-500 hover:text-gray-700">Dashboard</a>
+              <a href="#" className="text-gray-500 hover:text-gray-700">Jobs</a>
+              <a href="#" className="text-gray-500 hover:text-gray-700">Candidates</a>
+              <a href="#" className="text-gray-500 hover:text-gray-700">Reports</a>
+            </div>
+          </div>
+          <div className="flex items-center space-x-6">
+            {/* <button className="text-gray-500 hover:text-gray-700">
+              <Search className="h-5 w-5" />
+            </button>
+            <button className="text-gray-500 hover:text-gray-700 relative">
+              <Bell className="h-5 w-5" />
+              <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
+            </button> */}
+            <div className="relative">
+              <button onClick={handleProfileClick} className="flex items-center space-x-2">
+                <div className="relative group w-12 h-12 rounded-full overflow-hidden bg-gray-200">
+                  <img src={profileImage} alt="Admin profile" className="w-full h-full object-cover" />
+                </div>
+              </button>
+              
+              {isProfileOpen && (
+                <div className="absolute right-0 mt-2 w-60 bg-white rounded-lg shadow-lg py-2 z-50">
+                  <div className="px-4 py-3 border-b border-gray-100">
+                    <div className="flex justify-center mb-3">
+                      <div className="relative group w-20 h-20 rounded-full overflow-hidden bg-gray-200">
+                        <img src={profileImage} alt="Admin profile" className="w-full h-full object-cover" />
+                        <div 
+                          onClick={triggerFileInput} 
+                          className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                        >
+                          <Camera className="h-6 w-6 text-white" />
+                        </div>
+                        <input 
+                          type="file" 
+                          ref={fileInputRef} 
+                          onChange={handleFileChange} 
+                          accept="image/*" 
+                          className="hidden" 
+                        />
+                      </div>
+                    </div>
+                    <p className="text-center text-sm text-gray-500 mb-1">Change profile picture</p>
+                    <p className="text-center font-medium">Admin User</p>
+                    <p className="text-center text-sm text-gray-500">admin@recruitpro.com</p>
+                  </div>
+                  <div className="px-2 py-2">
+                    <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">Your Profile</a>
+                    <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">Settings</a>
+                    <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">Help & Support</a>
+                    <div className="border-t border-gray-100 my-1"></div>
+                    <a href="#" className="block px-4 py-2 text-sm text-red-500 hover:bg-gray-100 rounded-md">Sign out</a>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </header>
 
       {/* Main Content */}

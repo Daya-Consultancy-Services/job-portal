@@ -10,7 +10,8 @@ const {
     updateCompany_api,
     deleteCompany_api,
     getalldetailsCompany_api,
-    getallJobs_api
+    getallJobs_api,
+    uploadCompanyLogo
 
 } = companyPoint
 

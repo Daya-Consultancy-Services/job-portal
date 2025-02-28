@@ -41,7 +41,7 @@ function Header() {
       case "Recruiter":
         return "/components/auth/Recruiter/login";
       case "Admin":
-        return "/components/auth/Admin/login";
+        return "/components/auth/Admin/AdminLogin";
       default:
         return "/components/auth/User/login";
     }
@@ -54,7 +54,7 @@ function Header() {
       case "Company":
         return "/components/auth/Company/register";
       case "Admin":
-        return "/components/auth/Admin/register";
+        return "/components/auth/Admin/AdminRegister";
       default:
         return "/components/auth/User/register";
     }
@@ -201,11 +201,10 @@ function Header() {
                       <li>
                         <button
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                          // onClick={() => handleOptionSelect("Admin")}
+                          onClick={() => handleOptionSelect("Admin")}
                         >
-                          <Link to="/admin">
                           Admin
-                          </Link>
+                       
                         </button>
                       </li>
                     </ul>

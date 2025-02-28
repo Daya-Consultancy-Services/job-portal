@@ -151,14 +151,12 @@ const uploadCompanyLogoToCloudinary = async (file) => {
                 { fetch_format: 'auto' },
                 { flags: 'preserve_transparency' }
             ],
-            // Additional options for logos
-            colors: true, // Extract dominant colors
+            colors: true, 
             // background_removal: 'auto' // Optional: remove background if needed
         };
 
         let uploadResponse;
 
-        // Handle different file upload methods
         if (file.tempFilePath) {
             console.log('Using tempFilePath for logo upload');
             uploadResponse = await cloudinary.uploader.upload(file.tempFilePath, uploadOptions);
@@ -191,7 +189,7 @@ const uploadCompanyLogoToCloudinary = async (file) => {
             created_at: uploadResponse.created_at,
             width: uploadResponse.width,
             height: uploadResponse.height,
-            dominant_colors: uploadResponse.colors // If colors option is enabled
+            dominant_colors: uploadResponse.colors 
         };
 
     } catch (error) {
@@ -203,4 +201,89 @@ const uploadCompanyLogoToCloudinary = async (file) => {
     }
 };
 
-module.exports = { uploadToCloudinary, uploadResumeToCloudinary, uploadCompanyLogoToCloudinary };
+
+
+const uploadAdminImage = async (file) => {
+    try {
+        if (!file) {
+            throw new Error('No admin image file provided');
+        }
+
+        console.log('Received admin image:', {
+            hasFile: !!file,
+            fileProperties: file ? Object.keys(file) : null,
+            mimetype: file?.mimetype,
+            size: file?.size
+        });
+
+        const uploadOptions = {
+            resource_type: 'image',
+            folder: 'admin_images',
+            allowed_formats: ['jpg', 'jpeg', 'png'],
+            public_id: `admin_${Date.now()}`,
+            tags: ['admin', 'profile'],
+            transformation: [
+                {
+                    width: 300,
+                    height: 300,
+                    crop: 'fill',
+                    gravity: 'center'  
+                },
+                { quality: 'auto' },
+                { fetch_format: 'auto' },
+                { effect: 'sharpen:60' } 
+            ],
+            access_mode: 'authenticated' 
+        };
+
+        let uploadResponse;
+
+        if (file.tempFilePath) {
+            console.log('Using tempFilePath for admin image upload');
+            uploadResponse = await cloudinary.uploader.upload(file.tempFilePath, uploadOptions);
+        } else if (file.path) {
+            console.log('Using file path for admin image upload');
+            uploadResponse = await cloudinary.uploader.upload(file.path, uploadOptions);
+        } else if (file.buffer) {
+            console.log('Using buffer for admin image upload');
+            const fileStr = file.buffer.toString('base64');
+            uploadResponse = await cloudinary.uploader.upload(
+                `data:${file.mimetype};base64,${fileStr}`,
+                uploadOptions
+            );
+        } else if (file.data) {
+            console.log('Using file data for admin image upload');
+            const fileStr = file.data.toString('base64');
+            uploadResponse = await cloudinary.uploader.upload(
+                `data:${file.mimetype};base64,${fileStr}`,
+                uploadOptions
+            );
+        } else {
+            throw new Error('Unsupported file format for admin image - received properties: ' + JSON.stringify(Object.keys(file)));
+        }
+
+        return {
+            success: true,
+            url: uploadResponse.secure_url,
+            public_id: uploadResponse.public_id,
+            format: uploadResponse.format,
+            created_at: uploadResponse.created_at,
+            width: uploadResponse.width,
+            height: uploadResponse.height
+        };
+
+    } catch (error) {
+        console.error('Admin image upload to Cloudinary failed:', error);
+        return {
+            success: false,
+            error: error.message || 'Failed to upload admin image'
+        };
+    }
+};
+
+module.exports = { 
+    uploadToCloudinary, 
+    uploadResumeToCloudinary, 
+    uploadCompanyLogoToCloudinary,
+    uploadAdminImage 
+};

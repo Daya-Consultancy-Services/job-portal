@@ -17,6 +17,8 @@ import AppliedJobs from "./components/profiles/AppliedJobs";
 import Admin from "./components/auth/Admin/Admin";
 import 'react-toastify/dist/ReactToastify.css';
 import { Toaster } from "react-hot-toast";
+import AdminLogin from "./components/auth/Admin/AdminLogin";
+import AdminRegister from "./components/auth/Admin/AdminRegister";
 
 
 function App() {
@@ -30,6 +32,8 @@ function App() {
         <Route path="/components/auth/Company/login" element={<CompanyLogin/>}/>
         <Route path="/components/auth/Company/register" element={<CompanySignUp/>}/>
         <Route path="/components/auth/Recruiter/login" element={<CompanyRecruiterLogin/>}/>
+        <Route path="/components/auth/Admin/AdminRegister" element={<AdminRegister/>}/>
+        <Route path="/components/auth/Admin/AdminLogin" element={<AdminLogin/>}/>
         <Route path="/components/profiles/RecruiterDashboard/Dashboard" element={<Dashboard/>}/>
         <Route path="/components/profiles/UserProfile" element={<Profile/>}/>
         <Route path="/components/profiles/AppliedJobs" element={<AppliedJobs/>}/>

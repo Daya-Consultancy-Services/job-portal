@@ -1,6 +1,7 @@
 import { toast } from 'react-hot-toast'
-import { adminPoint } from './apis'
+import { adminPoint } from '../operations/apis'
 import { setAdmin, setToken , setLoading } from '../slices/adminSlice'
+import { apiConnector } from '../services/apiConnector';
 
 
 const {
@@ -8,23 +9,20 @@ const {
     createAdmin_api,
     loginAdmin_api,
     updateAdmin_api,
-    deleteAdmin_api
+    deleteAdmin_api,
+    uploadAdminImage,
+    getAdmin_api,
+    
+    
 
 } = adminPoint
 
-export function createAdmin(name, email, password, contactNumber, role) {
+export function createAdmin(formData) {
     return async (dispatch) => {
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true)); 
         try {
-            const response = await apiConnector("POST", createAdmin_api, {
-                name,
-                email,
-                password,
-                contactNumber,
-                role,
-               
-            });
+            const response = await apiConnector("POST", createAdmin_api, formData);
             console.log("CreateAdmin API response........", response);
 
             if (!response.data.success) {
@@ -44,15 +42,12 @@ export function createAdmin(name, email, password, contactNumber, role) {
 
 }
 
-export function loginAdmin(email, password, navigate) {
+export function loginAdmin(formData, navigate) {
     return async (dispatch) => {
         const toastId = toast.loading("Loading......")
         dispatch(setLoading(true))
         try {
-            const response = await apiConnector("POST",loginAdmin_api, {
-                email,
-                password,
-            })
+            const response = await apiConnector("POST",loginAdmin_api, formData)
             console.log("Login Admin_Api Response.......", response)
 
             if (!response.data.success) {
@@ -66,7 +61,7 @@ export function loginAdmin(email, password, navigate) {
             localStorage.setItem("admin", JSON.stringify(response.data.admin));
 
             toast.success("Login Successful")
-            navigate("/home")
+            navigate("/admin")
 
         } catch (error) {
             console.log("Login admin_Api error...............", error)
@@ -129,6 +124,57 @@ export function deleteAdmin(token, navigate) {
             toast.error("Could not delete Admin.");
         } finally {
             toast.dismiss(toastId);
+            dispatch(setLoading(false));
+        }
+    }
+}
+
+export function uploadImage(token, file){
+    return async (dispatch) => {
+        dispatch(setLoading(true));
+        try {
+            console.log("in api token", token, "file", file);
+            const formData = new FormData();
+            formData.append("image", file);
+
+            const response = await apiConnector("POST", uploadAdminImage, formData, {
+                Authorization: `Bearer ${token}`,
+            });
+            console.log("UPLOAD_ADMIN_IMAGE_API RESPONSE............", response);
+
+            if (!response.data.url) {
+                throw new Error(response.data.message);
+            }
+            
+            toast.success("Image uploaded successfully!");
+            //dispatch(setCompany(response.data.company));
+        } catch (error) {
+            console.error("UPLOAD_ADMIN_IMAGE_API error:", error);
+            toast.error("Could not upload image.");
+        } finally {
+            dispatch(setLoading(false));
+        }
+    }
+}
+
+export function fetchAdmin(token){
+    return async (dispatch) => {
+        dispatch(setLoading(true));
+        try {
+            const response = await apiConnector("GET",getAdmin_api, null, {
+                Authorization: `Bearer ${token}`,
+            });
+            console.log("GET_ADMIN_API RESPONSE............", response);
+
+            if (!response.data.success) {
+                throw new Error(response.data.message);
+            }
+
+            dispatch(setAdmin(response.data.admin));
+        } catch (error) {
+            console.error("GET_ADMIN_API error:", error);
+            toast.error("Could not fetch admin.");
+        } finally {
             dispatch(setLoading(false));
         }
     }
