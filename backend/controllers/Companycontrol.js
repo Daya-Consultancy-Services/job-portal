@@ -5,6 +5,7 @@ const Jobs = require("../models/jobs")
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { passwordUpdated } = require("../routes/passwordUpdate");
 
 
 exports.companySignup = async (req,res) => {
@@ -242,6 +243,52 @@ exports.deleteCompany = async (req,res) => {
         })
     }
 }
+
+exports.changeCompanyPassword = async (req, res) => {
+    try {
+        const companyDetails = await Company.findById(req.user.id);
+        const { oldPassword, newPassword } = req.body;
+
+        const isPasswordMatch = await bcrypt.compare(oldPassword, companyDetails.password);
+        if (!isPasswordMatch) {
+            return res.status(401).json({ success: false, message: "The password is incorrect" });
+        }
+
+        const encryptedPassword = await bcrypt.hash(newPassword, 10);
+        const updatedCompanyDetails = await Company.findByIdAndUpdate(
+            req.user.id,
+            { password: encryptedPassword },
+            { new: true }
+        );
+
+        // Send confirmation email
+        try {
+            const emailResponse = await mailSender(
+                updatedCompanyDetails.email,
+                "Password for your account has been updated",
+                passwordUpdated(
+                    updatedUserDetails.email,
+                    `Password updated successfully for ${updatedCompanyDetails.name}`
+                )
+                
+            );
+            console.log("Email sent successfully:", emailResponse.response);
+        } catch (error) {
+            console.error("Error occurred while sending email:", error);
+            return res.status(500).json({
+                success: false,
+                message: "Error occurred while sending email",
+                error: error.message,
+            });
+        }
+
+        return res.status(200).json({ success: true, message: "Password updated successfully" });
+    } catch (error) {
+        console.error("Error updating password:", error);
+        return res.status(500).json({ success: false, message: "Error updating password", error: error.message });
+    }
+};
+
 
 exports.getAllDetailCompany = async (req,res) => {
     try {

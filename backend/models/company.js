@@ -43,7 +43,10 @@ const companySchema = new mongoose.Schema({
     ],
     token:{
         type:String,
-    }
+    },
+    resetPasswordExpires: {
+        type: Date,
+    },
 
            
     

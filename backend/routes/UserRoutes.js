@@ -13,9 +13,15 @@ const {
     getalldetail,
     getJobs,
     applyJobs,
-    getAppliedJobs
+    getAppliedJobs,
+    changePassword
     
 } = require("../controllers/Usercontrol")
+
+const {
+    resetPasswordToken,
+    resetPassword,
+} = require("../controllers/resetPasswordControler")
 
 const { auth , isJobseeker} = require("../middleware/auth");
 
@@ -27,6 +33,10 @@ router.post("/signup",signup);
 router.post("/login",login)
 
 router.put("/update",auth,isJobseeker,updateDetail)
+router.post("/changepassword",auth,isJobseeker,changePassword)
+
+router.post("/reset-password-token", resetPasswordToken)
+router.post("/reset-password", resetPassword)
 
 router.delete("/delete",auth,isJobseeker, deleteUser)
 
