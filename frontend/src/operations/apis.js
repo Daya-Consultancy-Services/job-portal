@@ -106,5 +106,7 @@ export const adminPoint = {
     deleteAdmin_api : BASE_URL + "/admin/delete",
     resetPasswordToken : BASE_URL + "/admin/reset-password-token",
     resetPassword  : BASE_URL + "/admin/resetpassword",
-    changePassword : BASE_URL + "/admin/changepassword"
+    changePassword : BASE_URL + "/admin/changepassword",
+    uploadAdminImage : BASE_URL + "/admin/upload-AdminImage",
+    getAdmin_api  : BASE_URL + "/admin/getadmin",
 }

@@ -9,7 +9,9 @@ const {
     deleteAdmin,
     changeAdminPassword,
     grantUserDetailAccess,
-    logoutAdmin
+    logoutAdmin,
+    uploadAdminImage,
+    getAlldetailAdmin
 
 } = require("../controllers/AdminControler")
 const {
@@ -22,11 +24,13 @@ const {auth,isAdmin} = require("../middleware/auth");
 
 router.post("/signup",createAdmin);
 router.post("/login",loginAdmin);
+router.post("/upload-AdminImage",auth,isAdmin, uploadAdminImage);
 router.put("/update",isAdmin,updateAdmin)
-router.delete("/delete",isAdmin,deleteAdmin)
 router.post("/changepassword",auth,isAdmin,changeAdminPassword)
 router.post("/reset-password-token", resetPasswordToken)
 router.post("/reset-password", resetPassword)
+router.delete("/delete",isAdmin,deleteAdmin);
+router.get("/getadmin", auth, isAdmin, getAlldetailAdmin)
 router.post("/grantAccess",auth,isAdmin,grantUserDetailAccess);
 router.get("/logout",logoutAdmin)
 

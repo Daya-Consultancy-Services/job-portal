@@ -3,6 +3,7 @@ const Admin = require("../models/admin");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { passwordUpdated } = require("../routes/passwordUpdate");
+const { uploadAdminImage } = require("../config/cloudinary");
 require("dotenv").config(); 
 
 
@@ -294,6 +295,32 @@ exports.grantUserDetailAccess = async (req, res) => {
     }
 };
 
+exports.getAlldetailAdmin = async(req, res)=>{
+try{
+    const adminId = req.user.id;
+    const adminDetails = await Admin.findById(adminId);
+
+    if(!adminDetails){
+        return res.status(404).json({
+            success: false,
+            message: "Admin not found, try again later"
+        });
+    }
+
+    return res.status(200).json({
+        success: true,
+        message: "All admin details fetched successfully",
+        data: adminDetails.admin,
+    })
+}catch(e){
+console.log(e);
+return res.status(404).json({
+    success: false,
+    message: "Error fetching admin details, try again later"
+});
+}
+}
+
 exports.logoutAdmin = async (req, res) => {
     try {
         // Clear the authentication token by setting an expired cookie
@@ -312,6 +339,53 @@ exports.logoutAdmin = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Logout failed, please try again",
+        });
+    }
+};
+
+exports.uploadAdminImage = async (req, res) => {
+    console.log("file upload in controller");
+    try {
+        const adminId = req.user.id
+        const adminDetail = await Admin.findById(adminId);
+
+        const file = req.files?.image || req.file
+        if(!file){
+            return res.status(400).json({
+                success: false,
+                message: "No file uploaded"
+            });
+        }
+
+        const cloudinaryResponse = await uploadAdminImage(file);
+
+        if(!cloudinaryResponse){
+            return res.status(500).json({
+                success: false,
+                message: "Error while uploading file to cloudinary"
+            });
+        }
+
+        if(!adminDetail){
+            return res.status(404).json({
+                success: false,
+                message: "Admin not found"
+            });
+        }
+
+        adminDetail.image = cloudinaryResponse.url;
+        await adminDetail.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Admin Image Uploaded Successfully",
+            url: cloudinaryResponse.url
+        });
+    } catch (error) {
+        console.error("Admin image upload error", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error while uploading admin image"
         });
     }
 };

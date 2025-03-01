@@ -41,7 +41,7 @@ function Header() {
       case "Recruiter":
         return "/components/auth/Recruiter/login";
       case "Admin":
-        return "/components/auth/Admin/login";
+        return "/components/auth/Admin/AdminLogin";
       default:
         return "/components/auth/User/login";
     }
@@ -54,7 +54,7 @@ function Header() {
       case "Company":
         return "/components/auth/Company/register";
       case "Admin":
-        return "/components/auth/Admin/register";
+        return "/components/auth/Admin/AdminRegister";
       default:
         return "/components/auth/User/register";
     }
@@ -204,6 +204,7 @@ function Header() {
                           onClick={() => handleOptionSelect("Admin")}
                         >
                           Admin
+                       
                         </button>
                       </li>
                     </ul>

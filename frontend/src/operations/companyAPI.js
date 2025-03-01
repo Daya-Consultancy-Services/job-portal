@@ -13,7 +13,8 @@ const {
     resetPassword,
     changePassword,
     getalldetailsCompany_api,
-    getallJobs_api
+    getallJobs_api,
+    uploadCompanyLogo
 
 } = companyPoint
 

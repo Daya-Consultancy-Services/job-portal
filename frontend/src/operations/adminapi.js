@@ -1,6 +1,7 @@
 import { toast } from 'react-hot-toast'
-import { adminPoint } from './apis'
+import { adminPoint } from '../operations/apis'
 import { setAdmin, setToken , setLoading } from '../slices/adminSlice'
+import { apiConnector } from '../services/apiConnector';
 
 
 const {
@@ -8,26 +9,16 @@ const {
     createAdmin_api,
     loginAdmin_api,
     updateAdmin_api,
-    deleteAdmin_api,
-    resetPasswordToken,
-    resetPassword,
-    changePassword
+    deleteAdmin_api
 
 } = adminPoint
 
-export function createAdmin(name, email, password, contactNumber, role) {
+export function createAdmin(formData) {
     return async (dispatch) => {
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true)); 
         try {
-            const response = await apiConnector("POST", createAdmin_api, {
-                name,
-                email,
-                password,
-                contactNumber,
-                role,
-               
-            });
+            const response = await apiConnector("POST", createAdmin_api, formData);
             console.log("CreateAdmin API response........", response);
 
             if (!response.data.success) {
@@ -47,15 +38,12 @@ export function createAdmin(name, email, password, contactNumber, role) {
 
 }
 
-export function loginAdmin(email, password, navigate) {
+export function loginAdmin(formData, navigate) {
     return async (dispatch) => {
         const toastId = toast.loading("Loading......")
         dispatch(setLoading(true))
         try {
-            const response = await apiConnector("POST",loginAdmin_api, {
-                email,
-                password,
-            })
+            const response = await apiConnector("POST",loginAdmin_api, formData)
             console.log("Login Admin_Api Response.......", response)
 
             if (!response.data.success) {
@@ -69,7 +57,7 @@ export function loginAdmin(email, password, navigate) {
             localStorage.setItem("admin", JSON.stringify(response.data.admin));
 
             toast.success("Login Successful")
-            navigate("/home")
+            navigate("/admin")
 
         } catch (error) {
             console.log("Login admin_Api error...............", error)
@@ -135,80 +123,6 @@ export function deleteAdmin(token, navigate) {
             dispatch(setLoading(false));
         }
     }
-}
-
-export function getPasswordResetToken(email,role,setEmailSent) {
-    return async (dispatch) => {
-      const toastId = toast.loading("Loading...")
-      dispatch(setLoading(true))
-      try {
-        const response = await apiConnector("POST", resetPasswordToken, {
-          email,
-          role
-        })
-  
-        console.log("RESETPASSTOKEN RESPONSE............", response)
-  
-        if (!response.data.success) {
-          throw new Error(response.data.message)
-        }
-  
-        toast.success("Reset Email Sent")
-        setEmailSent(true)
-      } catch (error) {
-        console.log("RESETPASSTOKEN ERROR............", error)
-        toast.error("Failed To Send Reset Email")
-      }
-      toast.dismiss(toastId)
-      dispatch(setLoading(false))
-    }
-}
-
-export function resetPasswords(password, confirmPassword, token, navigate) {
-    return async (dispatch) => {
-      const toastId = toast.loading("Loading...")
-      dispatch(setLoading(true))
-      try {
-        const response = await apiConnector("POST",resetPassword,{
-          password,
-          confirmPassword,
-          token,
-        })
-  
-        console.log("RESETPASSWORD RESPONSE............", response)
-  
-        if (!response.data.success) {
-          throw new Error(response.data.message)
-        }
-  
-        toast.success("Password Reset Successfully")
-        navigate("/login")
-      } catch (error) {
-        console.log("RESETPASSWORD ERROR............", error)
-        toast.error("Failed To Reset Password")
-      }
-      toast.dismiss(toastId)
-      dispatch(setLoading(false))
-    }
-}
-
-export async function changePasswords(token, formData) {
-    const toastId = toast.loading("Loading...")
-    try {
-      const response = await apiConnector("POST", changePassword, formData, {
-        Authorization: `Bearer ${token}`,
-      })
-      console.log("CHANGE_PASSWORD_API API RESPONSE............", response)
-  
-      if (!response.data.success) {
-        throw new Error(response.data.message)
-      }
-      toast.success("Password Changed Successfully")
-    } catch (error) {
-      console.log("CHANGE_PASSWORD_API API ERROR............", error)
-      toast.error(error.response.data.message)
-    }
-    toast.dismiss(toastId)
 }
 
 export function logout() {

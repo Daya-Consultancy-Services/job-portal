@@ -26,7 +26,7 @@ app.use(express.json())
 app.use(cookieParser())
 
 app.use(
-    ["/api/v1/profile/upload-image", "/api/v1/company/upload-logo"],
+    ["/api/v1/profile/upload-image", "/api/v1/company/upload-logo", "/api/v1/admin/upload-AdminImage"],
     fileUpload({
         useTempFiles: true,
     })
