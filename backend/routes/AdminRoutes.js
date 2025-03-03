@@ -10,7 +10,7 @@ const {
     grantUserDetailAccess,
     logoutAdmin,
     uploadAdminImage,
-    getAlldetailAdmin
+
 
 } = require("../controllers/AdminControler")
 
@@ -22,7 +22,6 @@ router.post("/login",loginAdmin);
 router.post("/upload-AdminImage",auth,isAdmin, uploadAdminImage);
 router.put("/update",isAdmin,updateAdmin)
 router.delete("/delete",isAdmin,deleteAdmin);
-router.get("/getadmin", auth, isAdmin, getAlldetailAdmin)
 router.post("/grantAccess",auth,isAdmin,grantUserDetailAccess);
 router.get("/logout",logoutAdmin)
 

@@ -1,6 +1,6 @@
 import { toast } from 'react-hot-toast'
 import { adminPoint } from '../operations/apis'
-import { setAdmin, setToken , setLoading } from '../slices/adminSlice'
+import { setAdmin, setToken , setLoading, setAllAdminData } from '../slices/adminSlice'
 import { apiConnector } from '../services/apiConnector';
 
 
@@ -55,10 +55,11 @@ export function loginAdmin(formData, navigate) {
             }
 
             dispatch(setToken(response.data.token))
-            dispatch(setAdmin(response.data.admin));
+            dispatch(setAllAdminData(response.data.admin));
 
             localStorage.setItem("token", JSON.stringify(response.data.token));
             localStorage.setItem("admin", JSON.stringify(response.data.admin));
+            localStorage.setItem("allAdminData", JSON.stringify(response.data.admin));
 
             toast.success("Login Successful")
             navigate("/admin")
@@ -157,35 +158,15 @@ export function uploadImage(token, file){
     }
 }
 
-export function fetchAdmin(token){
-    return async (dispatch) => {
-        dispatch(setLoading(true));
-        try {
-            const response = await apiConnector("GET",getAdmin_api, null, {
-                Authorization: `Bearer ${token}`,
-            });
-            console.log("GET_ADMIN_API RESPONSE............", response);
 
-            if (!response.data.success) {
-                throw new Error(response.data.message);
-            }
 
-            dispatch(setAdmin(response.data.admin));
-        } catch (error) {
-            console.error("GET_ADMIN_API error:", error);
-            toast.error("Could not fetch admin.");
-        } finally {
-            dispatch(setLoading(false));
-        }
-    }
-}
-
-export function logout() {
+export function logout(navigate) {
     return (dispatch) => {
         dispatch(setToken(null))
         // dispatch(setCompany(null))
         localStorage.removeItem("token")
         localStorage.removeItem("admin")
         toast.success("Logged Out")
+        navigate("/") 
     }
 }

@@ -248,31 +248,31 @@ exports.grantUserDetailAccess = async (req, res) => {
     }
 };
 
-exports.getAlldetailAdmin = async(req, res)=>{
-try{
-    const adminId = req.user.id;
-    const adminDetails = await Admin.findById(adminId);
+// exports.getAlldetailAdmin = async(req, res)=>{
+// try{
+//     const adminId = req.user.id;
+//     const adminDetails = await Admin.findById(adminId);
 
-    if(!adminDetails){
-        return res.status(404).json({
-            success: false,
-            message: "Admin not found, try again later"
-        });
-    }
+//     if(!adminDetails){
+//         return res.status(404).json({
+//             success: false,
+//             message: "Admin not found, try again later"
+//         });
+//     }
 
-    return res.status(200).json({
-        success: true,
-        message: "All admin details fetched successfully",
-        data: adminDetails.admin,
-    })
-}catch(e){
-console.log(e);
-return res.status(404).json({
-    success: false,
-    message: "Error fetching admin details, try again later"
-});
-}
-}
+//     return res.status(200).json({
+//         success: true,
+//         message: "All admin details fetched successfully",
+//         data: adminDetails.admin,
+//     })
+// }catch(e){
+// console.log(e);
+// return res.status(404).json({
+//     success: false,
+//     message: "Error fetching admin details, try again later"
+// });
+// }
+// }
 
 exports.logoutAdmin = async (req, res) => {
     try {
