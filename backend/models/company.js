@@ -47,6 +47,18 @@ const companySchema = new mongoose.Schema({
     resetPasswordExpires: {
         type: Date,
     },
+    jobToken:{ 
+        type: Number, 
+        default: 0 
+    },
+    isBlocked:{ 
+        type: Boolean, 
+        default: false 
+    },
+    userDetailAccessCount:{
+        type:Number,
+        default:0
+    }
 
            
     

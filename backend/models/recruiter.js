@@ -54,6 +54,16 @@ const recruiterSchema = new mongoose.Schema({
         type: Boolean, 
         default: false 
     },  // If true, recruiter has unlimited access
+    jobToken:{ 
+        type: Number, 
+        default: 0 
+    },
+    viewedUsers:[
+        { 
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: "User" 
+        }
+    ],
 })
 
 module.exports = mongoose.model("Recruiter",recruiterSchema);

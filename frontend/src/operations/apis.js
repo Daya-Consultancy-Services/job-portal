@@ -82,8 +82,8 @@ export const companyPoint = {
     getallJobs_api           : BASE_URL + "/company/getalljobs",
     resetPasswordToken : BASE_URL + "/company/reset-password-token",
     resetPassword  : BASE_URL + "/company/resetpassword",
-    changePassword : BASE_URL + "/company/changepassword"
-
+    changePassword : BASE_URL + "/company/changepassword",
+    
 }
 
 export const recruiterPoint = {
@@ -91,11 +91,13 @@ export const recruiterPoint = {
     updateRecruiter_api : BASE_URL + "/company/updaterecruiter",
     getRecruiter_api    : BASE_URL + "/company/getrecruiter",
     deleteRecruiter_api : BASE_URL + "/company/deleterecruiter",
+    tokenRecruiter      : BASE_URL + "/company/assignToken",
     loginRecruiter_api  : BASE_URL + "/recruiter/login",
     createJob_api       : BASE_URL + "/recruiter/createjob",
     updateJob_api       : BASE_URL + "/recruiter/updatejob",
     deleteJob_api       : BASE_URL + "/recruiter/deletejob",
     getJob_api          : BASE_URL + "/recruiter/getjobrecruiter",
+    getuserDetails_api  : BASE_URL + "/recruiter/userDetailAccess"
 
 }
 
@@ -109,4 +111,6 @@ export const adminPoint = {
     changePassword : BASE_URL + "/admin/changepassword",
     uploadAdminImage : BASE_URL + "/admin/upload-AdminImage",
     getAdmin_api  : BASE_URL + "/admin/getadmin",
+    tokenCompany_api :BASE_URL + "/admin/tokenCompany",
+    getallCompany_api :BASE_URL + "/admin/getallCompany"
 }

@@ -1,6 +1,6 @@
 import { toast } from 'react-hot-toast'
 import { adminPoint } from '../operations/apis'
-import { setAdmin, setToken , setLoading } from '../slices/adminSlice'
+import { setAdmin, setToken , setLoading, setAllCompany } from '../slices/adminSlice'
 import { apiConnector } from '../services/apiConnector';
 
 
@@ -9,7 +9,9 @@ const {
     createAdmin_api,
     loginAdmin_api,
     updateAdmin_api,
-    deleteAdmin_api
+    deleteAdmin_api,
+    tokenCompany_api,
+    getallCompany_api
 
 } = adminPoint
 
@@ -123,6 +125,70 @@ export function deleteAdmin(token, navigate) {
             dispatch(setLoading(false));
         }
     }
+}
+
+export function tokenCompanys(token,companyId,jobToken,userDetailAccessCount,isBlocked){
+    return async (dispatch) => {
+        const toastId = toast.loading("Assigining token.... ")
+        dispatch(setLoading(true));
+        try {
+            const response = await apiConnector("POST", tokenCompany_api,{
+                companyId,
+                jobToken,
+                userDetailAccessCount,
+                isBlocked
+            }, 
+            {
+                Authorization: `Bearer ${token}`,
+            });
+            console.log("Admin_JobToken_API RESPONSE............", response);
+
+            if (!response.data.success) {
+                throw new Error(response.data.message);
+            }
+            toast.success("Admin assigned token successfully!");
+            dispatch(adminfetchAllCompany(token))
+
+        } catch (error) {
+            console.error("AdminToken Assign_api error.....", error);
+            toast.error("AdminTokenAssigned Failed, Try again.");
+        } finally{
+            dispatch(setLoading(false)); 
+            toast.dismiss(toastId);
+        }
+    }
+}
+
+export function adminfetchAllCompany(token) {
+   
+    return async (dispatch) => {
+        const toastId = toast.loading("Fetching Company data...");
+        dispatch(setLoading(true));
+        try {
+            const response = await apiConnector(
+                "GET",
+                getallCompany_api,
+                null,
+                {
+                    Authorization: `Bearer ${token}`
+                }
+            );
+            
+            if (!response.data.success) {
+                throw new Error(response.data.message);
+            }
+            
+            dispatch(setAllCompany(response.data.data));
+            toast.success("Admin fetched Allcompany successfully");
+
+        } catch (error) {
+            console.log("Admin fetched Allcompany ERROR............", error);
+            toast.error("Could not fetch Admin Allcompany");
+        } finally {
+            dispatch(setLoading(false)); 
+            toast.dismiss(toastId);
+        }
+    };
 }
 
 export function logout() {

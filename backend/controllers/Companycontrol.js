@@ -656,3 +656,42 @@ exports.getAllJobsForCompany = async (req, res) => {
         });
     }
 };
+
+exports.assignTokensToRecruiter = async (req, res) => {
+    try {
+        const { recruiterId, jobToken, userDetailAccessCount } = req.body;
+        const companyId = req.user.id; // Assuming company is authenticated
+
+        const recruiter = await Recruiter.findById(recruiterId);
+        const company = await Company.findById(companyId);
+     
+
+        if (!recruiter || !company) {
+            return res.status(404).json({ success: false, message: "Recruiter or Company not found" });
+        }
+
+        if (company.jobToken < jobToken || company.userDetailAccessCount < userDetailAccessCount) {
+            return res.status(400).json({ success: false, message: "Insufficient company tokens" });
+        }
+
+        //decuted from the company jobtoken and userDetailAccesstoken
+        company.jobToken -= jobToken;
+        company.userDetailAccessCount -= userDetailAccessCount;
+
+        // add into recruiter the value of token after dedcution from company
+        recruiter.jobToken = jobToken;
+        recruiter.userDetailAccessCount = userDetailAccessCount;
+
+        await company.save();
+        await recruiter.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Tokens assigned to recruiter successfully",
+            recruiter
+        });
+    } catch (error) {
+        console.error("Error assigning tokens:", error);
+        return res.status(500).json({ success: false, message: "Error assigning tokens to recruiter" });
+    }
+};
