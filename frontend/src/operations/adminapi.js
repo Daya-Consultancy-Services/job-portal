@@ -53,10 +53,11 @@ export function loginAdmin(formData, navigate) {
             }
 
             dispatch(setToken(response.data.token))
-            dispatch(setAdmin(response.data.admin));
+            dispatch(setAllAdminData(response.data.admin));
 
             localStorage.setItem("token", JSON.stringify(response.data.token));
             localStorage.setItem("admin", JSON.stringify(response.data.admin));
+            localStorage.setItem("allAdminData", JSON.stringify(response.data.admin));
 
             toast.success("Login Successful")
             navigate("/admin")
@@ -198,5 +199,6 @@ export function logout() {
         localStorage.removeItem("token")
         localStorage.removeItem("admin")
         toast.success("Logged Out")
+        navigate("/") 
     }
 }

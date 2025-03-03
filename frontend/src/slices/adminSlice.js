@@ -4,7 +4,7 @@ const initialState = {
     token : localStorage.getItem("token") ? JSON.parse(localStorage.getItem("token")) : null,
     admin: localStorage.getItem("admin") ? JSON.parse(localStorage.getItem("admin")) : null,
     loading : false,
-    allcompany: null
+
 };
 
 const adminSlice = createSlice({
@@ -22,10 +22,14 @@ const adminSlice = createSlice({
         },
         setAllCompany(state,action){
             state.allcompany = action.payload
-        }
+        },
+        setAllAdminData(state,action){
+            state.allAdminData = action.payload
+            console.log("in slice",state.allAdminData);
+        },
       
     }
 })
 
-export const {setAdmin,setToken,setLoading,setAllCompany} = adminSlice.actions;
+export const {setAdmin,setToken,setLoading,setAllAdminData,setAllCompany} = adminSlice.actions;
 export default adminSlice.reducer

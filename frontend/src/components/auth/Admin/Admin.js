@@ -1,12 +1,13 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, 
   Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area
 } from 'recharts';
 import { Users, Briefcase, Clock, Filter, ChevronDown, Search, Bell, User, Target, TrendingUp, Award, BarChart2, Camera } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAdmin, uploadImage } from '../../../operations/adminapi';
-import { logoutAdmin } from '../../../../../backend/controllers/AdminControler';
+import { fetchAdmin, logout, uploadImage } from '../../../operations/adminapi';
+import { useNavigate } from 'react-router-dom';
+
 
 // Sample data
 const jobPostingData = [
@@ -82,9 +83,11 @@ const Admin = () => {
   const dispatch = useDispatch();
 
   const token = useSelector((state)=>state.admin.token);
-  const admin = useSelector((state)=>state.admin.admin);
+  const admin = useSelector((state)=>state.admin.allAdminData);
 
+  console.log(token);
   console.log(admin);
+
 
 
   // KPI metrics
@@ -117,8 +120,9 @@ const Admin = () => {
     }
   };
 
+  const navigate = useNavigate();
   const handleLogout = () => {
-    dispatch(logoutAdmin(token));
+    dispatch(logout(navigate));
   }
 
   const triggerFileInput = () => {
@@ -154,7 +158,7 @@ const Admin = () => {
             <div className="relative">
               <button onClick={handleProfileClick} className="flex items-center space-x-2">
                 <div className="relative group w-12 h-12 rounded-full overflow-hidden bg-gray-200">
-                  <img src={profileImage} alt="Admin profile" className="w-full h-full object-cover" />
+                  <img src={admin.image} alt="Admin profile" className="w-full h-full object-cover" />
                 </div>
               </button>
               
@@ -163,7 +167,7 @@ const Admin = () => {
                   <div className="px-4 py-3 border-b border-gray-100">
                     <div className="flex justify-center mb-3">
                       <div className="relative group w-20 h-20 rounded-full overflow-hidden bg-gray-200">
-                        <img src={profileImage} alt="Admin profile" className="w-full h-full object-cover" />
+                        <img src={admin.image} alt="Admin profile" className="w-full h-full object-cover" />
                         <div 
                           onClick={triggerFileInput} 
                           className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
@@ -180,15 +184,15 @@ const Admin = () => {
                       </div>
                     </div>
                     <p className="text-center text-sm text-gray-500 mb-1">Change profile picture</p>
-                    <p className="text-center font-medium">Admin User</p>
-                    <p className="text-center text-sm text-gray-500">admin@recruitpro.com</p>
+                    <p className="text-center font-medium">{admin.name}</p>
+                    <p className="text-center text-sm text-gray-500">{admin.email}</p>
                   </div>
                   <div className="px-2 py-2">
-                    <span  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">Your Profile</span>
-                    <span  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">Settings</span>
-                    <span  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">Help & Support</span>
+                    {/* <span  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">Your Profile</span>
+                    <span  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">Settings</span> */}
+                    {/* <span  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">Help & Support</span> */}
                     <div className="border-t border-gray-100 my-1"></div>
-                    <span onClick={handleLogout}  className="block px-4 py-2 text-sm text-red-500 hover:bg-gray-100 rounded-md">Sign out</span>
+                    <span onClick={handleLogout}  className="block px-4 py-2 text-sm text-red-500 hover:bg-gray-100 rounded-md cursor-pointer">Sign out</span>
                   </div>
                 </div>
               )}
