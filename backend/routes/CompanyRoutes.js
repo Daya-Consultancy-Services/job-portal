@@ -7,6 +7,7 @@ const {
     loginCompany,
     updateCompanyDetail,
     deleteCompany,
+    changeCompanyPassword,
     getAllDetailCompany,
     uploadCompanyLogo,
     createRecruiter,
@@ -17,6 +18,10 @@ const {
     getAllJobsForCompany
 
 } = require("../controllers/Companycontrol") 
+const {
+    resetPasswordToken,
+    resetPassword,
+} = require("../controllers/resetPasswordControler")
 
 
 const { auth , isCompany} = require("../middleware/auth");
@@ -59,6 +64,9 @@ router.get("/companydetails",auth,isCompany,getAllDetailCompany);  // get all th
 router.post("/upload-logo", auth, isCompany,uploadCompanyLogo);
 router.get("/logout",logoutCompany);  // get all the detail for the company with the recruiter details
 router.get("/getalljobs",auth,isCompany,getAllJobsForCompany)
+router.post("/reset-password-token", resetPasswordToken)
+router.post("/reset-password", resetPassword)
+router.post("/changepassword",auth,isCompany,changeCompanyPassword)
 
 // recruiter **********************************************************************************************
 router.post("/createrecruiter",auth,createRecruiter);

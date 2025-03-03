@@ -21,6 +21,9 @@ const adminSchema = new mongoose.Schema({
     token:{
         type:String
     },
+    resetPasswordExpires: {
+        type: Date,
+    },
     detail:{
         type:String
     },

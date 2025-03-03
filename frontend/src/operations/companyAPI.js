@@ -9,6 +9,9 @@ const {
     loginCompany_api,
     updateCompany_api,
     deleteCompany_api,
+    resetPasswordToken,
+    resetPassword,
+    changePassword,
     getalldetailsCompany_api,
     getallJobs_api,
     uploadCompanyLogo
@@ -146,6 +149,80 @@ export function deleteCompanys(token, navigate) {
             dispatch(setLoading(false));
         }
     }
+}
+
+export function getPasswordResetToken(email,role,setEmailSent) {
+    return async (dispatch) => {
+      const toastId = toast.loading("Loading...")
+      dispatch(setLoading(true))
+      try {
+        const response = await apiConnector("POST", resetPasswordToken, {
+          email,
+          role
+        })
+  
+        console.log("RESETPASSTOKEN RESPONSE............", response)
+  
+        if (!response.data.success) {
+          throw new Error(response.data.message)
+        }
+  
+        toast.success("Reset Email Sent")
+        setEmailSent(true)
+      } catch (error) {
+        console.log("RESETPASSTOKEN ERROR............", error)
+        toast.error("Failed To Send Reset Email")
+      }
+      toast.dismiss(toastId)
+      dispatch(setLoading(false))
+    }
+}
+
+export function resetPasswords(password, confirmPassword, token, navigate) {
+    return async (dispatch) => {
+      const toastId = toast.loading("Loading...")
+      dispatch(setLoading(true))
+      try {
+        const response = await apiConnector("POST",resetPassword,{
+          password,
+          confirmPassword,
+          token,
+        })
+  
+        console.log("RESETPASSWORD RESPONSE............", response)
+  
+        if (!response.data.success) {
+          throw new Error(response.data.message)
+        }
+  
+        toast.success("Password Reset Successfully")
+        navigate("/login")
+      } catch (error) {
+        console.log("RESETPASSWORD ERROR............", error)
+        toast.error("Failed To Reset Password")
+      }
+      toast.dismiss(toastId)
+      dispatch(setLoading(false))
+    }
+}
+
+export async function changePasswords(token, formData) {
+    const toastId = toast.loading("Loading...")
+    try {
+      const response = await apiConnector("POST", changePassword, formData, {
+        Authorization: `Bearer ${token}`,
+      })
+      console.log("CHANGE_PASSWORD_API API RESPONSE............", response)
+  
+      if (!response.data.success) {
+        throw new Error(response.data.message)
+      }
+      toast.success("Password Changed Successfully")
+    } catch (error) {
+      console.log("CHANGE_PASSWORD_API API ERROR............", error)
+      toast.error(error.response.data.message)
+    }
+    toast.dismiss(toastId)
 }
 
 export function uploadCompanyLogos(token, file) {

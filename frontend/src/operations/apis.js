@@ -7,7 +7,10 @@ export const userPoint = {
     deleteUser_api : BASE_URL + "/user/delete",
     getalljob      : BASE_URL + "/user/getjobs",
     applyjob       : BASE_URL + "/user/applyjob",
-    appliedJob     : BASE_URL + "/user/getappliedjob"
+    appliedJob     : BASE_URL + "/user/getappliedjob",
+    resetPasswordToken : BASE_URL + "/user/reset-password-token",
+    resetPassword  : BASE_URL + "/user/resetpassword",
+    changePassword : BASE_URL + "/user/changepassword"
 } 
 
 export const profilePoint = {
@@ -76,7 +79,11 @@ export const companyPoint = {
     deleteCompany_api        : BASE_URL + "/company/delete",
     getalldetailsCompany_api : BASE_URL + "/company/companydetails",
     uploadCompanyLogo        : BASE_URL + "/upload-logo",
-    getallJobs_api           : BASE_URL + "/company/getalljobs"
+    getallJobs_api           : BASE_URL + "/company/getalljobs",
+    resetPasswordToken : BASE_URL + "/company/reset-password-token",
+    resetPassword  : BASE_URL + "/company/resetpassword",
+    changePassword : BASE_URL + "/company/changepassword"
+
 }
 
 export const recruiterPoint = {
@@ -97,6 +104,9 @@ export const adminPoint = {
     loginAdmin_api  : BASE_URL + "/admin/login",
     updateAdmin_api : BASE_URL + "/admin/update",
     deleteAdmin_api : BASE_URL + "/admin/delete",
+    resetPasswordToken : BASE_URL + "/admin/reset-password-token",
+    resetPassword  : BASE_URL + "/admin/resetpassword",
+    changePassword : BASE_URL + "/admin/changepassword",
     uploadAdminImage : BASE_URL + "/admin/upload-AdminImage",
     getAdmin_api  : BASE_URL + "/admin/getadmin",
 }

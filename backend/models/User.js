@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema({
     },
     resetPasswordExpires: {
         type: Date,
-      },
+    },
     appliedJobs: [  // Stores an array of Job IDs the user has applied to
         {
             type: mongoose.Schema.ObjectId,
