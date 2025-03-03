@@ -126,7 +126,37 @@ export function deleteAdmin(token, navigate) {
     }
 }
 
-export function logout() {
+export function uploadImage(token, file){
+    return async (dispatch) => {
+        dispatch(setLoading(true));
+        try {
+            console.log("in api token", token, "file", file);
+            const formData = new FormData();
+            formData.append("image", file);
+
+            const response = await apiConnector("POST", uploadAdminImage, formData, {
+                Authorization: `Bearer ${token}`,
+            });
+            console.log("UPLOAD_ADMIN_IMAGE_API RESPONSE............", response);
+
+            if (!response.data.url) {
+                throw new Error(response.data.message);
+            }
+            
+            toast.success("Image uploaded successfully!");
+            //dispatch(setCompany(response.data.company));
+        } catch (error) {
+            console.error("UPLOAD_ADMIN_IMAGE_API error:", error);
+            toast.error("Could not upload image.");
+        } finally {
+            dispatch(setLoading(false));
+        }
+    }
+}
+
+
+
+export function logout(navigate) {
     return (dispatch) => {
         dispatch(setToken(null))
         // dispatch(setCompany(null))

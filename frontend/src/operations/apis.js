@@ -9,7 +9,7 @@ export const userPoint = {
     applyjob       : BASE_URL + "/user/applyjob",
     appliedJob     : BASE_URL + "/user/getappliedjob",
     resetPasswordToken : BASE_URL + "/user/reset-password-token",
-    resetPassword  : BASE_URL + "/user/resetpassword",
+    resetPassword  : BASE_URL + "/user/reset-password",
     changePassword : BASE_URL + "/user/changepassword"
 } 
 

@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '../../Header';
 import { useDispatch } from 'react-redux';
-import { login } from '../../../operations/userAPI';
+import { getPasswordResetToken, login } from '../../../operations/userAPI';
+import toast from 'react-hot-toast';
 
 function Login() {
   const navigate = useNavigate();
@@ -12,9 +13,19 @@ function Login() {
     email: "",
     password: "",
   });
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [recoveryEmail, setRecoveryEmail] = useState('');
+  const [isRecoveryLoading, setIsRecoveryLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  
   const { email, password } = loginForm;
 
-  // Validate the form
+  let userType = localStorage.getItem('userType');
+
+  if(userType === 'User'){
+     userType = "jobseeker"
+  };
+
   const validateForm = () => {
     const newErrors = {};
     if (!/\S+@\S+\.\S+/.test(loginForm.email)) {
@@ -28,7 +39,6 @@ function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle form field changes
   const handleChange = (e) => {
     setLoginForm((prevData) => ({
       ...prevData,
@@ -36,7 +46,6 @@ function Login() {
     }));
   };
 
-  // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -45,17 +54,14 @@ function Login() {
       return;
     }
 
-    // Dispatch login action
     try {
       const response = await dispatch(login(email, password, navigate));
 
-      // If the login is successful, store the token in localStorage
       if (response && response.token) {
-        localStorage.setItem("token", response.token); // Store the token
+        localStorage.setItem("token", response.token); 
         console.log("Token saved:", response.token);
 
-        // Optionally, navigate to a different page after successful login
-        navigate('/dashboard'); // Change the route as needed
+        navigate('/dashboard'); 
       } 
 
     } catch (error) {
@@ -63,11 +69,33 @@ function Login() {
       alert("Something went wrong. Please try again.");
     }
 
-    // Clear the form fields after submit
     setLoginForm({
       email: "",
       password: "",
     });
+  };
+
+  const handleForgotPassword = (e) => {
+    e.preventDefault();
+    
+    if (!recoveryEmail || !/\S+@\S+\.\S+/.test(recoveryEmail)) {
+      alert("Please enter a valid email address");
+      return;
+    }
+    
+    setIsRecoveryLoading(true);
+
+    if(dispatch(getPasswordResetToken(recoveryEmail, userType, setEmailSent))){
+      setTimeout(() => {
+        toast.success("Password reset link sent to your email");
+        setIsRecoveryLoading(false);
+        setShowForgotPassword(false);
+      }, 1500);
+    };
+    
+
+
+ 
   };
 
   const isFormValid =
@@ -81,7 +109,7 @@ function Login() {
           <div className="relative register-sec p-10 w-[50%] h-[95%] bg-white shadow-xl shadow-[#D2E3F1] rounded-xl">
             <h1 className='font-semibold text-2xl'>New to OneCareer ?</h1>
             <div className="desc mt-7 flex flex-col gap-3">
-              <p>One click apply using naukri profile</p>
+              <p>One click apply using OneCareer profile</p>
               <p>Get relevant job recommendations</p>
               <p>Showcase profile to top companies and consultants</p>
               <p>Know application status on applied jobs</p>
@@ -121,9 +149,13 @@ function Login() {
                   className='p-4 rounded-lg mt-3 bg-zinc-100'
                 />
                 <div className="forgot mt-2 w-full flex items-center justify-end">
-                  <Link to="login/forgotpassword">
-                    <p className='text-blue-500 hover:text-blue-600'>Forgot Password ?</p>
-                  </Link>
+                  <button 
+                    type="button"
+                    onClick={() => setShowForgotPassword(true)}
+                    className='text-blue-500 hover:text-blue-600'
+                  >
+                    Forgot Password ?
+                  </button>
                 </div>
               </div>
 
@@ -137,6 +169,63 @@ function Login() {
           </div>
         </div>
       </div>
+
+      {/* Forgot Password Modal */}
+      {showForgotPassword && (
+        <div className="fixed inset-0 z-[10001] overflow-y-auto bg-gray-600 bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-md">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-semibold">Forgot Password</h2>
+              <button 
+                onClick={() => setShowForgotPassword(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <p className="text-gray-600 mb-6">
+              Enter your email address and we'll send you a link to reset your password.
+            </p>
+            
+            <form onSubmit={handleForgotPassword}>
+              <div className="mb-6">
+                <label htmlFor="recovery-email" className="block text-gray-700 text-sm font-medium mb-2">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  id="recovery-email"
+                  value={recoveryEmail}
+                  onChange={(e) => setRecoveryEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  className="w-full p-3 border border-gray-300 rounded-lg bg-zinc-100"
+                  required
+                />
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isRecoveryLoading}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                >
+                  {isRecoveryLoading ? 'Sending...' : 'Send Reset Link'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   );
 }
