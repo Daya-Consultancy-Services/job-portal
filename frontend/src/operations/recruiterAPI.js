@@ -13,10 +13,12 @@ const {
     deleteRecruiter_api,
     loginRecruiter_api,
     getRecruiter_api,
+    tokenRecruiter,
     createJob_api,
     updateJob_api,
     deleteJob_api,
-    getJob_api
+    getJob_api,
+    getuserDetails_api
 
  } = recruiterPoint
 
@@ -178,6 +180,36 @@ export function deleteRecruiter(token,recruiterId, navigate) {
     };
 }
 
+export function tokenRecruiters(token,recruiterId,jobToken,userDetailAccessCount){
+    return async (dispatch) => {
+        const toastId = toast.loading("Assigining token.... ")
+        dispatch(setLoading(true));
+        try {
+            const response = await apiConnector("POST", tokenRecruiter,{
+                recruiterId,
+                jobToken,
+                userDetailAccessCount,
+            }, 
+            {
+                Authorization: `Bearer ${token}`,
+            });
+            console.log("Company_JobToken_API RESPONSE............", response);
+
+            if (!response.data.success) {
+                throw new Error(response.data.message);
+            }
+            toast.success("company assigned token successfully!");
+            dispatch(fetchRecruiter(token))
+
+        } catch (error) {
+            console.error("companyToken Assign_api error.....", error);
+            toast.error("companyTokenAssigned Failed, Try again.");
+        } finally{
+            dispatch(setLoading(false)); 
+            toast.dismiss(toastId);
+        }
+    }
+}
 
 export function fetchRecruiter(token) {
     return async (dispatch) => {
@@ -186,8 +218,6 @@ export function fetchRecruiter(token) {
             const response = await apiConnector("GET", getRecruiter_api, null, {
                 Authorization: `Bearer ${token}`
             });
-
-       
 
             if (!response.data || !response.data.data) {  
                 throw new Error("Invalid API response structure");
@@ -321,32 +351,30 @@ export function fetchJob(token) {
     }
 }
 
-
-// export function fetchRecruiter(token) {
-//     return async (dispatch) => {
-//         const toastId = toast.loading("Fetching Recruiter data...");
-//         try {
-//             const response = await apiConnector(
-//                 "GET",
-//                 getRecruiter_api,
-//                 null,
-//                 {
-//                     Authorization: `Bearer ${token}`
-//                 }
-//             );
+export function userDetailAccess(token,userId,navigate) {
+    return async (dispatch) => {
+        const toastId = toast.loading("Loading...");
+        dispatch(setLoading(true)); 
+        try {
             
-//             if (!response.data.url) {
-//                 throw new Error(response.data.message);
-//             }
-            
-//             dispatch(setRecruiterData(response.data.data));
-//             toast.success("recruiterData fetched successfully");
+            const response = await apiConnector("POST",getuserDetails_api,userId,
+            {
+                Authorization: `Bearer ${token}`,
+            });
 
-//         } catch (error) {
-//             console.log("RecruiterData ERROR............", error);
-//             toast.error("Could not fetch recruiterData");
-//         } finally {
-//             toast.dismiss(toastId);
-//         }
-//     };
-// }
+            console.log("userDetailsAccess API response........", response); 
+
+            if (!response.data.success) {
+                throw new Error(response.data.message);
+            }
+            toast.success("userDetailsAccess Successful!!!");
+            dispatch(setRecruiter(token));
+        } catch (error) {
+             console.error("Error for userDetailsAccess.....", error);
+             toast.error("userDetailsAccess Failed, Try again.");
+        } finally {
+             dispatch(setLoading(false)); 
+             toast.dismiss(toastId);
+        }
+    };
+}

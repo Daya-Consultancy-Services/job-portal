@@ -10,7 +10,8 @@ const {
     deleteJob,
     getJobRecruiter,
     logoutRecruiter,
-    getUserDetailsForRecruiter
+    getUserDetailsForRecruiter,
+    downloadUserDetailsForRecruiter
     
 } = require("../controllers/RecruiterControl")
 
@@ -34,7 +35,8 @@ router.delete("/deletejob",auth,isRecruiter,deleteJob)
 
 router.get("/getjobrecruiter",auth,isRecruiter,getJobRecruiter)
 
-router.get("/grantAccess",auth,isRecruiter,getUserDetailsForRecruiter)
+router.get("/userDetailAccess",auth,isRecruiter,getUserDetailsForRecruiter)
+router.get("/downloaduser",auth,isRecruiter,downloadUserDetailsForRecruiter)
 // {
 //     "name":"Jacks",
 //     "email":"jack66@gmail.com",

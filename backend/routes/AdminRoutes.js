@@ -8,10 +8,11 @@ const {
     updateAdmin,
     deleteAdmin,
     changeAdminPassword,
-    grantUserDetailAccess,
     logoutAdmin,
     uploadAdminImage,
-
+    getAlldetailAdmin,
+    assignTokensToCompany,
+    getAllCompaniesForAdmin
 
 } = require("../controllers/AdminControler")
 const {
@@ -30,7 +31,9 @@ router.post("/changepassword",auth,isAdmin,changeAdminPassword)
 router.post("/reset-password-token", resetPasswordToken)
 router.post("/reset-password", resetPassword)
 router.delete("/delete",isAdmin,deleteAdmin);
-router.post("/grantAccess",auth,isAdmin,grantUserDetailAccess);
+router.get("/getadmin", auth, isAdmin, getAlldetailAdmin),
+router.get("/getallCompany",auth,isAdmin,getAllCompaniesForAdmin),
+router.post("/tokenCompany",auth,isAdmin,assignTokensToCompany),
 router.get("/logout",logoutAdmin)
 
 module.exports = router 

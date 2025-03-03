@@ -236,7 +236,7 @@ export async function changePasswords(token, formData) {
       toast.error(error.response.data.message)
     }
     toast.dismiss(toastId)
-  }
+}
   
 export function logout(navigate) {
 

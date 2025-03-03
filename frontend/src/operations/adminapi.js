@@ -1,6 +1,6 @@
 import { toast } from 'react-hot-toast'
 import { adminPoint } from '../operations/apis'
-import { setAdmin, setToken , setLoading, setAllAdminData } from '../slices/adminSlice'
+import { setAdmin, setToken , setLoading, setAllCompany } from '../slices/adminSlice'
 import { apiConnector } from '../services/apiConnector';
 
 
@@ -9,7 +9,9 @@ const {
     createAdmin_api,
     loginAdmin_api,
     updateAdmin_api,
-    deleteAdmin_api
+    deleteAdmin_api,
+    tokenCompany_api,
+    getallCompany_api
 
 } = adminPoint
 
@@ -126,37 +128,98 @@ export function deleteAdmin(token, navigate) {
     }
 }
 
-export function uploadImage(token, file){
+
+// export function uploadImage(token, file){
+//     return async (dispatch) => {
+//         dispatch(setLoading(true));
+//         try {
+//             console.log("in api token", token, "file", file);
+//             const formData = new FormData();
+//             formData.append("image", file);
+
+//             const response = await apiConnector("POST", uploadAdminImage, formData, {
+//                 Authorization: `Bearer ${token}`,
+//             });
+//             console.log("UPLOAD_ADMIN_IMAGE_API RESPONSE............", response);
+
+//             if (!response.data.url) {
+//                 throw new Error(response.data.message);
+//             }
+            
+//             toast.success("Image uploaded successfully!");
+//             //dispatch(setCompany(response.data.company));
+//         } catch (error) {
+//             console.error("UPLOAD_ADMIN_IMAGE_API error:", error);
+//             toast.error("Could not upload image.");
+//         } finally {
+//             dispatch(setLoading(false));
+// =======
+// export function tokenCompanys(token,companyId,jobToken,userDetailAccessCount,isBlocked){
+//     return async (dispatch) => {
+//         const toastId = toast.loading("Assigining token.... ")
+//         dispatch(setLoading(true));
+//         try {
+//             const response = await apiConnector("POST", tokenCompany_api,{
+//                 companyId,
+//                 jobToken,
+//                 userDetailAccessCount,
+//                 isBlocked
+//             }, 
+//             {
+//                 Authorization: `Bearer ${token}`,
+//             });
+//             console.log("Admin_JobToken_API RESPONSE............", response);
+
+//             if (!response.data.success) {
+//                 throw new Error(response.data.message);
+//             }
+//             toast.success("Admin assigned token successfully!");
+//             dispatch(adminfetchAllCompany(token))
+
+//         } catch (error) {
+//             console.error("AdminToken Assign_api error.....", error);
+//             toast.error("AdminTokenAssigned Failed, Try again.");
+//         } finally{
+//             dispatch(setLoading(false)); 
+//             toast.dismiss(toastId);
+// >>>>>>> 0bce7be955ac028ea548f50ab8906cceb63d1981
+//         }
+//     }
+// }
+
+export function adminfetchAllCompany(token) {
+   
     return async (dispatch) => {
+        const toastId = toast.loading("Fetching Company data...");
         dispatch(setLoading(true));
         try {
-            console.log("in api token", token, "file", file);
-            const formData = new FormData();
-            formData.append("image", file);
-
-            const response = await apiConnector("POST", uploadAdminImage, formData, {
-                Authorization: `Bearer ${token}`,
-            });
-            console.log("UPLOAD_ADMIN_IMAGE_API RESPONSE............", response);
-
-            if (!response.data.url) {
+            const response = await apiConnector(
+                "GET",
+                getallCompany_api,
+                null,
+                {
+                    Authorization: `Bearer ${token}`
+                }
+            );
+            
+            if (!response.data.success) {
                 throw new Error(response.data.message);
             }
             
-            toast.success("Image uploaded successfully!");
-            //dispatch(setCompany(response.data.company));
+            dispatch(setAllCompany(response.data.data));
+            toast.success("Admin fetched Allcompany successfully");
+
         } catch (error) {
-            console.error("UPLOAD_ADMIN_IMAGE_API error:", error);
-            toast.error("Could not upload image.");
+            console.log("Admin fetched Allcompany ERROR............", error);
+            toast.error("Could not fetch Admin Allcompany");
         } finally {
-            dispatch(setLoading(false));
+            dispatch(setLoading(false)); 
+            toast.dismiss(toastId);
         }
-    }
+    };
 }
 
-
-
-export function logout(navigate) {
+export function logout() {
     return (dispatch) => {
         dispatch(setToken(null))
         // dispatch(setCompany(null))

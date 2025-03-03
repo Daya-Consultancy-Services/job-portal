@@ -15,7 +15,8 @@ const {
     deleteRecruiter,
     getAlldetailRecruiter,
     logoutCompany,
-    getAllJobsForCompany
+    getAllJobsForCompany,
+    assignTokensToRecruiter
 
 } = require("../controllers/Companycontrol") 
 const {
@@ -67,7 +68,7 @@ router.get("/getalljobs",auth,isCompany,getAllJobsForCompany)
 router.post("/reset-password-token", resetPasswordToken)
 router.post("/reset-password", resetPassword)
 router.post("/changepassword",auth,isCompany,changeCompanyPassword)
-
+router.post("/assignToken",auth,isCompany,assignTokensToRecruiter)
 // recruiter **********************************************************************************************
 router.post("/createrecruiter",auth,createRecruiter);
 router.put("/updaterecruiter",auth,isCompany,updateRecruiterDetail)
