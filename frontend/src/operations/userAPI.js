@@ -219,10 +219,10 @@ export function resetPasswords(password, confirmPassword, token, navigate) {
     }
 }
 
-export async function changePasswords(token, formData) {
+export async function changePasswords(token, oldPassword, newPassword ) {
     const toastId = toast.loading("Loading...")
     try {
-      const response = await apiConnector("POST", changePassword, formData, {
+      const response = await apiConnector("POST", changePassword, {oldPassword, newPassword}, {
         Authorization: `Bearer ${token}`,
       })
       console.log("CHANGE_PASSWORD_API API RESPONSE............", response)

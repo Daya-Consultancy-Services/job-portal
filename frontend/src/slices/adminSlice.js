@@ -23,10 +23,6 @@ const adminSlice = createSlice({
         setAllCompany(state,action){
             state.allcompany = action.payload
         },
-        setAllAdminData(state,action){
-            state.allAdminData = action.payload
-            console.log("in slice",state.allAdminData);
-        },
       
     }
 })

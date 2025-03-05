@@ -83,7 +83,7 @@ const Admin = () => {
   const dispatch = useDispatch();
 
   const token = useSelector((state)=>state.admin.token);
-  const admin = useSelector((state)=>state.admin.allAdminData);
+  const admin = useSelector((state)=>state.admin.admin);
 
   console.log(token);
   console.log(admin);

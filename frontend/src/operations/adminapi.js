@@ -1,6 +1,6 @@
 import { toast } from 'react-hot-toast'
 import { adminPoint } from '../operations/apis'
-import { setAdmin, setToken , setLoading, setAllCompany } from '../slices/adminSlice'
+import { setAdmin, setToken , setLoading, setAllCompany, setAllAdminData } from '../slices/adminSlice'
 import { apiConnector } from '../services/apiConnector';
 
 
@@ -11,9 +11,12 @@ const {
     updateAdmin_api,
     deleteAdmin_api,
     tokenCompany_api,
-    getallCompany_api
+    getallCompany_api,
+    uploadAdminImage
 
 } = adminPoint
+
+
 
 export function createAdmin(formData) {
     return async (dispatch) => {
@@ -51,13 +54,9 @@ export function loginAdmin(formData, navigate) {
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
-
             dispatch(setToken(response.data.token))
-            dispatch(setAllAdminData(response.data.admin));
-
             localStorage.setItem("token", JSON.stringify(response.data.token));
             localStorage.setItem("admin", JSON.stringify(response.data.admin));
-            localStorage.setItem("allAdminData", JSON.stringify(response.data.admin));
 
             toast.success("Login Successful")
             navigate("/admin")
@@ -129,63 +128,75 @@ export function deleteAdmin(token, navigate) {
 }
 
 
-// export function uploadImage(token, file){
-//     return async (dispatch) => {
-//         dispatch(setLoading(true));
-//         try {
-//             console.log("in api token", token, "file", file);
-//             const formData = new FormData();
-//             formData.append("image", file);
+export function uploadImage(token, file) {
+    return async (dispatch) => {
+        const toastId = toast.loading("Uploading image...");
+        dispatch(setLoading(true));
+        try {
+            console.log("in api token", token, "file", file);
+            const formData = new FormData();
+            formData.append("image", file);
 
-//             const response = await apiConnector("POST", uploadAdminImage, formData, {
-//                 Authorization: `Bearer ${token}`,
-//             });
-//             console.log("UPLOAD_ADMIN_IMAGE_API RESPONSE............", response);
+            const response = await apiConnector("POST", uploadAdminImage, formData, {
+                Authorization: `Bearer ${token}`,
+            });
+            console.log("UPLOAD_ADMIN_IMAGE_API RESPONSE............", response);
 
-//             if (!response.data.url) {
-//                 throw new Error(response.data.message);
-//             }
+            if (!response.data.success) {
+                throw new Error(response.data.message);
+            }
             
-//             toast.success("Image uploaded successfully!");
-//             //dispatch(setCompany(response.data.company));
-//         } catch (error) {
-//             console.error("UPLOAD_ADMIN_IMAGE_API error:", error);
-//             toast.error("Could not upload image.");
-//         } finally {
-//             dispatch(setLoading(false));
-// =======
-// export function tokenCompanys(token,companyId,jobToken,userDetailAccessCount,isBlocked){
-//     return async (dispatch) => {
-//         const toastId = toast.loading("Assigining token.... ")
-//         dispatch(setLoading(true));
-//         try {
-//             const response = await apiConnector("POST", tokenCompany_api,{
-//                 companyId,
-//                 jobToken,
-//                 userDetailAccessCount,
-//                 isBlocked
-//             }, 
-//             {
-//                 Authorization: `Bearer ${token}`,
-//             });
-//             console.log("Admin_JobToken_API RESPONSE............", response);
+            // Update the admin data with the new image URL
+            const updatedAdmin = {
+                ...JSON.parse(localStorage.getItem("admin")),
+                image: response.data.url
+            };
+            
+            dispatch(setAdmin(updatedAdmin));
+            localStorage.setItem("admin", JSON.stringify(updatedAdmin));
+            
+            toast.success("Image uploaded successfully!");
+        } catch (error) {
+            console.error("UPLOAD_ADMIN_IMAGE_API error:", error);
+            toast.error("Could not upload image.");
+        } finally {
+            dispatch(setLoading(false));
+            toast.dismiss(toastId);
+        }
+    };
+}
 
-//             if (!response.data.success) {
-//                 throw new Error(response.data.message);
-//             }
-//             toast.success("Admin assigned token successfully!");
-//             dispatch(adminfetchAllCompany(token))
+export function tokenCompanys(token,companyId,jobToken,userDetailAccessCount,isBlocked){
+    return async (dispatch) => {
+        const toastId = toast.loading("Assigining token.... ")
+        dispatch(setLoading(true));
+        try {
+            const response = await apiConnector("POST", tokenCompany_api,{
+                companyId,
+                jobToken,
+                userDetailAccessCount,
+                isBlocked
+            }, 
+            {
+                Authorization: `Bearer ${token}`,
+            });
+            console.log("Admin_JobToken_API RESPONSE............", response);
 
-//         } catch (error) {
-//             console.error("AdminToken Assign_api error.....", error);
-//             toast.error("AdminTokenAssigned Failed, Try again.");
-//         } finally{
-//             dispatch(setLoading(false)); 
-//             toast.dismiss(toastId);
-// >>>>>>> 0bce7be955ac028ea548f50ab8906cceb63d1981
-//         }
-//     }
-// }
+            if (!response.data.success) {
+                throw new Error(response.data.message);
+            }
+            toast.success("Admin assigned token successfully!");
+            dispatch(adminfetchAllCompany(token))
+
+        } catch (error) {
+            console.error("AdminToken Assign_api error.....", error);
+            toast.error("AdminTokenAssigned Failed, Try again.");
+        } finally{
+            dispatch(setLoading(false)); 
+            toast.dismiss(toastId);
+        }
+    }
+}
 
 export function adminfetchAllCompany(token) {
    
@@ -219,7 +230,7 @@ export function adminfetchAllCompany(token) {
     };
 }
 
-export function logout() {
+export function logout(navigate) {
     return (dispatch) => {
         dispatch(setToken(null))
         // dispatch(setCompany(null))
