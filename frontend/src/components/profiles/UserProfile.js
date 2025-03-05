@@ -10,7 +10,7 @@ import EducationForm from './EducationForm';
 import SkillsForm from './SkillForm';
 import ProjectForm from './ProjectForm';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteUser, logout, updateDetail } from '../../operations/userAPI';
+import { changePasswords, deleteUser, logout, updateDetail } from '../../operations/userAPI';
 import ExtraProfile from './ExtraProfile';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -157,6 +157,10 @@ function UserProfile() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [initialValue, setInitialValue] = useState("");
   const [openModal, setOpenModal] = useState(null);
+  const [changePassword, setChangePassword] = useState(false);
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [error, setError] = useState('');
   // const [openEmpForm, setOpenEmpForm] = useState(null);
 
 
@@ -212,6 +216,7 @@ function UserProfile() {
 
   const handleModalClose = () => {
     setShowModal(false);
+    setChangePassword(false);
   };
 
   // --------------------------------------------------------------------------------------------------------------
@@ -689,18 +694,6 @@ function UserProfile() {
 
 
 
-  // const handleButtonClick4 = () => {
-  //   setPersonalDetailsVisible(!isPersonalDetailsVisible);
-  // };
-
-  // const handlePersonalDetailsSaved = (details) => {
-  //   if (details) {
-  //     setPersonalDetails(details);
-  //   }
-  //   setPersonalDetailsVisible(false);
-  // };
-
-
   const mainSectionRef = useRef(null);
 
 
@@ -744,9 +737,41 @@ function UserProfile() {
     setIsModalOpen(false);
   };
 
-  const handleLogout = () => {
-    dispatch(logout(navigate));
-    console.log("Profile logged out");
+  const handleChangePass = (e) => {
+    e.preventDefault();
+    setChangePassword(true);
+  }
+
+  const handlePasswordChange = async(e) => {
+    e.preventDefault();
+    
+    if (oldPassword === newPassword) {
+      setError('New password must be different from the current password');
+      return;
+    }
+    
+    if (newPassword.length < 8) {
+      setError('Password must be at least 8 characters long');
+      return;
+    }
+    
+   
+    try {
+    
+      // await changePasswordAPI(oldPassword, newPassword);
+      await changePasswords(token, oldPassword, newPassword);
+      
+
+      setOldPassword('');
+      setNewPassword('');
+      setError('');
+      setChangePassword(false);
+      
+      
+      // Optional: Show success message or close modal
+    } catch (err) {
+      setError('Failed to change password');
+    }
   }
 
 
@@ -772,15 +797,6 @@ function UserProfile() {
     </div>
   );
 
-  // const TextArea = ({ label, placeholder }) => (
-  //   <div className="mb-4">
-  //     <label className="block text-sm font-medium mb-1">{label}</label>
-  //     <textarea
-  //       placeholder={placeholder}
-  //       className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[100px]"
-  //     />
-  //   </div>
-  // );
 
   const sections = [
     {
@@ -796,8 +812,6 @@ function UserProfile() {
       ),
 
     },
-
-
     {
       id: 'certification',
       title: "Certification",
@@ -945,7 +959,7 @@ function UserProfile() {
                       Delete profile
                     </button>
 
-                    <h1 className=' text-blue-500 cursor-pointer' onClick={handleLogout}>logout</h1>
+                    <h1 className=' text-blue-500 cursor-pointer' onClick={handleChangePass}>Reset Password</h1>
 
 
                   </div>
@@ -1661,6 +1675,72 @@ function UserProfile() {
             </div>
           </div>
         )}
+
+{changePassword && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-96 p-6 relative">
+            <button 
+              onClick={handleModalClose} 
+              className="absolute top-4 right-4 text-gray-600 hover:text-gray-900 text-2xl"
+            >
+              &times;
+            </button>
+
+            <h2 className="text-2xl font-bold mb-6 text-center">Change Password</h2>
+
+            <form onSubmit={handlePasswordChange}>
+              <div className="mb-4">
+                <label 
+                  htmlFor="oldPassword" 
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                >
+                  Current Password
+                </label>
+                <input 
+                  type="password" 
+                  id="oldPassword"
+                  value={oldPassword}
+                  onChange={(e) => setOldPassword(e.target.value)}
+                  placeholder="Enter current password"
+                  required
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label 
+                  htmlFor="newPassword" 
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                >
+                  New Password
+                </label>
+                <input 
+                  type="password" 
+                  id="newPassword"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Enter new password"
+                  required
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              {error && (
+                <div className="mb-4 text-red-500 text-sm text-center">
+                  {error}
+                </div>
+              )}
+
+              <button 
+                type="submit" 
+                className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-colors"
+              >
+                Change Password
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
 
 
 

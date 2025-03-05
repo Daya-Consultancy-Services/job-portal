@@ -1,6 +1,6 @@
 import { toast } from 'react-hot-toast'
 import { adminPoint } from '../operations/apis'
-import { setAdmin, setToken , setLoading, setAllCompany } from '../slices/adminSlice'
+import { setAdmin, setToken , setLoading, setAllCompany, setAllAdminData } from '../slices/adminSlice'
 import { apiConnector } from '../services/apiConnector';
 
 
@@ -11,9 +11,12 @@ const {
     updateAdmin_api,
     deleteAdmin_api,
     tokenCompany_api,
-    getallCompany_api
+    getallCompany_api,
+    uploadAdminImage
 
 } = adminPoint
+
+
 
 export function createAdmin(formData) {
     return async (dispatch) => {
@@ -51,13 +54,9 @@ export function loginAdmin(formData, navigate) {
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
-
             dispatch(setToken(response.data.token))
-            dispatch(setAllAdminData(response.data.admin));
-
             localStorage.setItem("token", JSON.stringify(response.data.token));
             localStorage.setItem("admin", JSON.stringify(response.data.admin));
-            localStorage.setItem("allAdminData", JSON.stringify(response.data.admin));
 
             toast.success("Login Successful")
             navigate("/admin")
@@ -128,6 +127,45 @@ export function deleteAdmin(token, navigate) {
     }
 }
 
+
+export function uploadImage(token, file) {
+    return async (dispatch) => {
+        const toastId = toast.loading("Uploading image...");
+        dispatch(setLoading(true));
+        try {
+            console.log("in api token", token, "file", file);
+            const formData = new FormData();
+            formData.append("image", file);
+
+            const response = await apiConnector("POST", uploadAdminImage, formData, {
+                Authorization: `Bearer ${token}`,
+            });
+            console.log("UPLOAD_ADMIN_IMAGE_API RESPONSE............", response);
+
+            if (!response.data.success) {
+                throw new Error(response.data.message);
+            }
+            
+            // Update the admin data with the new image URL
+            const updatedAdmin = {
+                ...JSON.parse(localStorage.getItem("admin")),
+                image: response.data.url
+            };
+            
+            dispatch(setAdmin(updatedAdmin));
+            localStorage.setItem("admin", JSON.stringify(updatedAdmin));
+            
+            toast.success("Image uploaded successfully!");
+        } catch (error) {
+            console.error("UPLOAD_ADMIN_IMAGE_API error:", error);
+            toast.error("Could not upload image.");
+        } finally {
+            dispatch(setLoading(false));
+            toast.dismiss(toastId);
+        }
+    };
+}
+
 export function tokenCompanys(token,companyId,jobToken,userDetailAccessCount,isBlocked){
     return async (dispatch) => {
         const toastId = toast.loading("Assigining token.... ")
@@ -192,7 +230,7 @@ export function adminfetchAllCompany(token) {
     };
 }
 
-export function logout() {
+export function logout(navigate) {
     return (dispatch) => {
         dispatch(setToken(null))
         // dispatch(setCompany(null))

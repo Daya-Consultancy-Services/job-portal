@@ -19,6 +19,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Toaster } from "react-hot-toast";
 import AdminLogin from "./components/auth/Admin/AdminLogin";
 import AdminRegister from "./components/auth/Admin/AdminRegister";
+import ResetPassword from "./components/ResetPassword";
+
 
 
 function App() {
@@ -29,6 +31,7 @@ function App() {
         <Route path="/" element={<Landing/>}/>
         <Route path="/components/auth/User/register" element={<Register/>}/>
         <Route path="/components/auth/User/login" element={<Login/>}/>
+        <Route path="/update-password/:token" element={<ResetPassword/>}/>
         <Route path="/components/auth/Company/login" element={<CompanyLogin/>}/>
         <Route path="/components/auth/Company/register" element={<CompanySignUp/>}/>
         <Route path="/components/auth/Recruiter/login" element={<CompanyRecruiterLogin/>}/>
