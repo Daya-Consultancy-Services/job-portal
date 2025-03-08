@@ -74,6 +74,17 @@ exports.auth = async(req,res,next) => {
     }
 }
 
+// Middleware to Check if User is Blocked
+exports.checkBlocked = async (req, res, next) => {
+    if (req.roleData.isBlocked) {
+        return res.status(403).json({
+            success: false,
+            message: "Access denied. Your account has been blocked.",
+        });
+    }
+    next();
+};
+
 //isjobseeker
 exports.isJobseeker = async (req, res, next) => {
     try{

@@ -43,7 +43,8 @@ const jobSchema = new mongoose.Schema({
             type: mongoose.Schema.ObjectId,
             ref: "User"
         }
-    ]
+    ],
+    isBlocked: { type: Boolean, default: false },
 
 })
 
