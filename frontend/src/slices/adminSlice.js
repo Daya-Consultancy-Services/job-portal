@@ -4,6 +4,7 @@ const initialState = {
     token : localStorage.getItem("token") ? JSON.parse(localStorage.getItem("token")) : null,
     admin: localStorage.getItem("admin") ? JSON.parse(localStorage.getItem("admin")) : null,
     loading : false,
+    allCompany:null
 
 };
 
@@ -21,7 +22,7 @@ const adminSlice = createSlice({
             state.loading = action.payload
         },
         setAllCompany(state,action){
-            state.allcompany = action.payload
+            state.allCompany = action.payload
         },
       
     }

@@ -5,7 +5,8 @@ const initialState = {
     recruiter: localStorage.getItem("recruiter") ? JSON.parse(localStorage.getItem("recruiter")) : null,
     company : localStorage.getItem("company") ? JSON.parse(localStorage.getItem("company")) : null,
     recruiterData:null,
-    loading: false
+    loading: false,
+    applicantData:[]
 }
 
 const recruiterSlice = createSlice({
@@ -30,9 +31,13 @@ const recruiterSlice = createSlice({
         setRecruiterData(state,action){
             state.recruiterData= action.payload
             console.log("in slice recruiterData", state.recruiterData);
+        },
+        setApplicantData(state,action){
+            state.applicantData= action.payload
+            console.log("in slice applicantData", state.applicantData);
         }
     },
 });
 
-export const { setCompany, setLoading,setToken,setRecruiter,setRecruiterData } = recruiterSlice.actions;
+export const { setCompany, setLoading,setToken,setRecruiter,setRecruiterData, setApplicantData } = recruiterSlice.actions;
 export default recruiterSlice.reducer;

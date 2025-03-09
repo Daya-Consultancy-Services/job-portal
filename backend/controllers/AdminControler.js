@@ -357,7 +357,7 @@ exports.getAllCompaniesForAdmin = async (req, res) => {
         }
 
         // Fetch all companies without recruiters
-        const companies = await Company.find().select("name isBlocked jobToken userDetailAccessCount email website location companyfield");
+        const companies = await Company.find().select("name isBlocked jobToken logo userDetailAccessCount email website location companyfield");
 
         return res.status(200).json({ success: true, data: companies });
 

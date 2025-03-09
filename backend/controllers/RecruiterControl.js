@@ -285,7 +285,9 @@ exports.logoutRecruiter = async (req, res) => {
 exports.getUserDetailsForRecruiter = async (req, res) => {
     try {
         const recruiterId = req.user.id;
-        const { userId } = req.body; 
+        const userId = req.query.userId;
+        console.log(userId);
+
 
         if (!userId) {
             return res.status(400).json({ success: false, message: "User ID is required" });
@@ -431,7 +433,7 @@ exports.downloadUserDetailsForRecruiter = async (req, res) => {
         profileSummary: user.profile?.profileSummary || "N/A",
         contactNumber: user.profile?.contactNumber || "N/A",
         PersonalDetail : user.profile?.personalDetails?.map(per => `${per.gender} ${per.dateOfBirth} ${per.martialStatus} ${per.permanentAddress} ${per.pincode} ${per.language} ${per.address}`).join("\n") || "N\A",
-        OnlineProfiles : user.profile?.onlineProfiles?.map(onf => `${onf.instagramLink} ${per.facebookLink} ${per.githubLink} ${per.linkedinLink}`).join("\n") || "N\A",
+        OnlineProfiles : user.profile?.onlineProfiles?.map(onf => `${onf.instagramLink} ${per.facebookLink} ${per.githubLink} ${per.linkedinLink}`).join("\n") || "N/A",
         certificates: user.profile?.certificates?.map(cert => `${cert.certificateName} (${cert.certificateLink}) - ${cert.certificateDescription}`).join("\n") || "N/A",
         skills: user.profile?.skillsProfile?.map(skill => `${skill.skillName} (${skill.experience})` ).join("\n") || "N/A",
         projects: user.profile?.project?.map(proj =>`${proj.projectTitle} (${proj.projectLink}) - ${proj.projectDescription} ${proj.projectSkills}`).join("\n") || "N/A",
@@ -444,7 +446,7 @@ exports.downloadUserDetailsForRecruiter = async (req, res) => {
             "Content-Type",
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         );
-        const fileName = `${user.firstName}_${user.lastName}_details.xlsx`;
+        const fileName = `User_Details_${userId}.xlsx`;
         res.setHeader(
             "Content-Disposition",
             `attachment; filename="${fileName}"`

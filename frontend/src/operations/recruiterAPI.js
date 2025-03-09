@@ -1,5 +1,5 @@
 import { toast } from 'react-hot-toast'
-import { setLoading, setToken } from '../slices/recruiterSlice'
+import { setApplicantData, setLoading, setToken } from '../slices/recruiterSlice'
 import { setRecruiter,setRecruiterData } from '../slices/recruiterSlice'
 import { setAllJobs, setRecruiters } from '../slices/companySlice'
 import { apiConnector } from '../services/apiConnector'
@@ -18,7 +18,8 @@ const {
     updateJob_api,
     deleteJob_api,
     getJob_api,
-    getuserDetails_api
+    getuserDetails_api,
+    downloadUserDetail,
 
  } = recruiterPoint
 
@@ -351,16 +352,25 @@ export function fetchJob(token) {
     }
 }
 
-export function userDetailAccess(token,userId,navigate) {
+export function userDetailAccess(token,userId) {
+   
     return async (dispatch) => {
         const toastId = toast.loading("Loading...");
         dispatch(setLoading(true)); 
         try {
             
-            const response = await apiConnector("POST",getuserDetails_api,userId,
-            {
-                Authorization: `Bearer ${token}`,
-            });
+            // const response = await apiConnector("GET",getuserDetails_api, userId,
+            // {
+            //     Authorization: `Bearer ${token}`,
+            // });
+            const response = await apiConnector(
+                "GET",
+                `${getuserDetails_api}?userId=${userId}`,
+                null, // No body needed for GET request
+                {
+                    Authorization: `Bearer ${token}`,
+                }
+            );
 
             console.log("userDetailsAccess API response........", response); 
 
@@ -369,12 +379,57 @@ export function userDetailAccess(token,userId,navigate) {
             }
             toast.success("userDetailsAccess Successful!!!");
             dispatch(setRecruiter(token));
+            dispatch(setApplicantData(response.data.user));
         } catch (error) {
              console.error("Error for userDetailsAccess.....", error);
              toast.error("userDetailsAccess Failed, Try again.");
         } finally {
              dispatch(setLoading(false)); 
              toast.dismiss(toastId);
+        }
+    };
+}
+
+export function downloadUserDetailForRecruiter(token, userId) {
+    return async (dispatch) => {
+        const toastId = toast.loading("Downloading...");
+        try {
+            const response = await apiConnector(
+                "GET",
+                `${downloadUserDetail}/${userId}`, // Pass userId as a query parameter
+                null,
+                {
+                    Authorization:` Bearer ${token}`,
+                    responseType: "blob", // Expect binary file data
+                }
+            );
+
+            if (response.status !== 200) {
+                throw new Error("Failed to download user details");
+            }
+
+            // Create a blob URL for downloading the file
+            const blob = new Blob([response.data], {
+                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            });
+
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", `User_Details_${userId}.xlsx`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
+            toast.success("Download Successful!");
+            dispatch(setRecruiter(token)) 
+            // dispatch(fetchRecruiter(token)) 
+        } catch (error) {
+            console.error("Error downloading user details:", error);
+            toast.error("Failed to download user details, Try again.");
+        } finally {
+            toast.dismiss(toastId);
         }
     };
 }

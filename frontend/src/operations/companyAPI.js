@@ -152,6 +152,7 @@ export function deleteCompanys(token, navigate) {
 }
 
 export function getPasswordResetToken(email,role,setEmailSent) {
+    console.log(email, role, setEmailSent);
     return async (dispatch) => {
       const toastId = toast.loading("Loading...")
       dispatch(setLoading(true))

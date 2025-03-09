@@ -97,7 +97,8 @@ export const recruiterPoint = {
     updateJob_api       : BASE_URL + "/recruiter/updatejob",
     deleteJob_api       : BASE_URL + "/recruiter/deletejob",
     getJob_api          : BASE_URL + "/recruiter/getjobrecruiter",
-    getuserDetails_api  : BASE_URL + "/recruiter/userDetailAccess"
+    getuserDetails_api  : BASE_URL + "/recruiter/userDetailAccess",
+    downloadUserDetail : BASE_URL + "/recruiter/downloaduser",
 
 }
 
