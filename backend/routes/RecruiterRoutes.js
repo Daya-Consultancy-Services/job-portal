@@ -35,8 +35,8 @@ router.delete("/deletejob",auth,isRecruiter,deleteJob)
 
 router.get("/getjobrecruiter",auth,isRecruiter,getJobRecruiter)
 
-router.get("/userDetailAccess",auth,isRecruiter,getUserDetailsForRecruiter)
-router.get("/downloaduser",auth,isRecruiter,downloadUserDetailsForRecruiter)
+router.post("/userDetailAccess",auth,isRecruiter,getUserDetailsForRecruiter)
+router.post("/downloaduser",auth,isRecruiter,downloadUserDetailsForRecruiter)
 // {
 //     "name":"Jacks",
 //     "email":"jack66@gmail.com",

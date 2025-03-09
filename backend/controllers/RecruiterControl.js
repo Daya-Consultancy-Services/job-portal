@@ -285,9 +285,7 @@ exports.logoutRecruiter = async (req, res) => {
 exports.getUserDetailsForRecruiter = async (req, res) => {
     try {
         const recruiterId = req.user.id;
-        const userId = req.query.userId;
-        console.log(userId);
-
+        const {userId} = req.body;
 
         if (!userId) {
             return res.status(400).json({ success: false, message: "User ID is required" });
@@ -327,10 +325,15 @@ exports.getUserDetailsForRecruiter = async (req, res) => {
         // Deduct 1 token for viewing
         if (!recruiter.permanentAccess) {
             recruiter.userDetailAccessCount -= 1;
-            if (!recruiter.viewedUsers) recruiter.viewedUsers = [];  // Initialize array if not present
-            recruiter.viewedUsers.push(userId);  // Mark user as viewed
-            await recruiter.save();
+        
+            if (!recruiter.viewedUsers) recruiter.viewedUsers = []; // Initialize array if not present
+        
+            if (!recruiter.viewedUsers.includes(userId)) { // Check if userId is already viewed
+                recruiter.viewedUsers.push(userId); // Mark user as viewed
+                await recruiter.save();
+            }
         }
+        
 
         return res.status(200).json({ success: true, message: "User details fetched", user });
 
@@ -343,7 +346,7 @@ exports.getUserDetailsForRecruiter = async (req, res) => {
 exports.downloadUserDetailsForRecruiter = async (req, res) => {
     try {
         const recruiterId = req.user.id;
-        const { userId } = req.body; 
+        const {userId} = req.body;
 
         if (!userId) {
             return res.status(400).json({ success: false, message: "User ID is required" });
@@ -353,12 +356,10 @@ exports.downloadUserDetailsForRecruiter = async (req, res) => {
         if (!recruiter) {
             return res.status(404).json({ success: false, message: "Recruiter not found" });
         }
-        // Ensure recruiter has seen the user before downloading
+
+        // Ensure recruiter has viewed the user before downloading
         if (!recruiter.viewedUsers || !recruiter.viewedUsers.includes(userId)) {
-            return res.status(403).json({
-                success: false,
-                message: "You must first view the user's details before downloading.",
-            });
+            return res.status(403).json({ success: false, message: "You must first view the user's details before downloading." });
         }
 
         if (!recruiter.permanentAccess && recruiter.userDetailAccessCount <= 0) {
@@ -370,9 +371,7 @@ exports.downloadUserDetailsForRecruiter = async (req, res) => {
             .populate({
                 path: "profile",
                 select: "contactNumber resume resumeHeadline profileSummary location image personalDetails onlineProfiles certificates skillsProfile project careerProfile educationProfile employProfile",
-                populate: {
-                    path: "personalDetails onlineProfiles certificates skillsProfile project careerProfile educationProfile employProfile",
-                },
+                populate: { path: "personalDetails onlineProfiles certificates skillsProfile project careerProfile educationProfile employProfile" },
             });
 
         if (!user) {
@@ -392,68 +391,101 @@ exports.downloadUserDetailsForRecruiter = async (req, res) => {
                 recruiter.userDetailAccessCount -= 2;
                 await recruiter.save();
             } else {
-                return res.status(403).json({ 
-                    success: false, 
-                    message: "Insufficient tokens to download user details" 
-                });
+                return res.status(403).json({ success: false, message: "Insufficient tokens to download user details" });
             }
         }
 
-        // Generate Excel file
+        // ✅ 1. Create Workbook and Worksheet
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet("User Details");
 
-      // Define Excel columns, including nested fields from the profile
-    worksheet.columns = [
-        { header: "First Name", key: "firstName", width: 15 },
-        { header: "Last Name", key: "lastName", width: 15 },
-        { header: "Email", key: "email", width: 25 },
-        { header: "Work Status", key: "workstatus", width: 15 },
-        { header: "Location", key: "location", width: 20 },
-        { header: "Resume Headline", key: "resumeHeadline", width: 25 },
-        { header: "Profile Summary", key: "profileSummary", width: 30 },
-        { header: "Contact Number", key: "contactNumber", width: 15 },
-        { header: "PersonalDetail", key: "PersonalDetail", width: 30 },
-        { header: "OnlineProfiles", key: "OnlineProfiles", width: 30 },
-        { header: "Certificates", key: "certificates", width: 30 },
-        { header: "Skills", key: "skills", width: 30 },
-        { header: "Projects", key: "projects", width: 30 },
-        { header: "Education", key: "education", width: 30 },
-        { header: "Employment History", key: "employment", width: 30 }
-    ];
+        // ✅ 2. Define Columns
+        worksheet.columns = [
+            { header: "First Name", key: "firstName", width: 15 },
+            { header: "Last Name", key: "lastName", width: 15 },
+            { header: "Email", key: "email", width: 25 },
+            { header: "Work Status", key: "workstatus", width: 15 },
+            { header: "Location", key: "location", width: 20 },
+            { header: "Resume", key: "resume", width: 20 },
+            { header: "Resume Headline", key: "resumeHeadline", width: 25 },
+            { header: "Profile Summary", key: "profileSummary", width: 30 },
+            { header: "Contact Number", key: "contactNumber", width: 15 },
+            { header: "Personal Details", key: "personalDetails", width: 30 },
+            { header: "Online Profiles", key: "onlineProfiles", width: 30 },
+            { header: "Certificates", key: "certificates", width: 30 },
+            { header: "Skills", key: "skills", width: 30 },
+            { header: "Projects", key: "projects", width: 30 },
+            { header: "Education", key: "education", width: 30 },
+            { header: "Employment History", key: "employment", width: 30 }
+        ];
 
-    // Add the user's data, making sure to handle nested objects and arrays
-    worksheet.addRow({
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        workstatus: user.workstatus,
-        location: user.profile?.location || "N/A",
-        resumeHeadline: user.profile?.resumeHeadline || "N/A",
-        profileSummary: user.profile?.profileSummary || "N/A",
-        contactNumber: user.profile?.contactNumber || "N/A",
-        PersonalDetail : user.profile?.personalDetails?.map(per => `${per.gender} ${per.dateOfBirth} ${per.martialStatus} ${per.permanentAddress} ${per.pincode} ${per.language} ${per.address}`).join("\n") || "N\A",
-        OnlineProfiles : user.profile?.onlineProfiles?.map(onf => `${onf.instagramLink} ${per.facebookLink} ${per.githubLink} ${per.linkedinLink}`).join("\n") || "N/A",
-        certificates: user.profile?.certificates?.map(cert => `${cert.certificateName} (${cert.certificateLink}) - ${cert.certificateDescription}`).join("\n") || "N/A",
-        skills: user.profile?.skillsProfile?.map(skill => `${skill.skillName} (${skill.experience})` ).join("\n") || "N/A",
-        projects: user.profile?.project?.map(proj =>`${proj.projectTitle} (${proj.projectLink}) - ${proj.projectDescription} ${proj.projectSkills}`).join("\n") || "N/A",
-        education: user.profile?.educationProfile?.map(edu => `${edu.institutionName} - ${edu.courseName} ${edu.courseType} ${edu.courseName} ${edu.marks} ${edu.location} ${edu.education}`).join("\n") || "N/A",
-        employment: user.profile?.employProfile?.map(emp => `${emp.empType} (${emp.totalExp}) ${emp.currentJobTitle} ${emp.joinDate} ${emp.leaveDate} ${emp.empType} ${emp.currentSalary} ${emp.skill} ${emp.jobProfile} ${emp.noticePeriod} ${emp.jobDescription}`).join("\n") || "N/A"
-    });
+        // ✅ 3. Add User Data
+        worksheet.addRow({
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            workstatus: user.workstatus,
+            location: user.profile?.location || "N/A",
+            resume: user.profile?.resume || "N/A",
+            resumeHeadline: user.profile?.resumeHeadline || "N/A",
+            profileSummary: user.profile?.profileSummary || "N/A",
+            contactNumber: user.profile?.contactNumber || "N/A",
+            personalDetails: user.profile?.personalDetails?.length
+            ? user.profile.personalDetails.map(per => 
+            {
+                const values = [
+                    per.gender, 
+                    per.dateOfBirth, 
+                    per.maritalStatus,
+                    per.permanentAddress, 
+                    per.pincode, 
+                    per.language, 
+                    per.address
+                ];
 
+            // Check if all values are null or undefined
+                return values.every(value => value == null) ? null : values.join(", ");
+            }).filter(Boolean).join("\n") || "N/A"
+            : "N/A",
 
-        res.setHeader(
-            "Content-Type",
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        );
-        const fileName = `User_Details_${userId}.xlsx`;
-        res.setHeader(
-            "Content-Disposition",
-            `attachment; filename="${fileName}"`
-        );
+            onlineProfiles: user.profile?.onlineProfiles?.length
+            ? user.profile.onlineProfiles.map(onf => 
+            {
+                const values = [
+                    onf.instagramLink, 
+                    onf.facebookLink, 
+                    onf.githubLink, 
+                    onf.linkedinLink
+                ];
 
-        await workbook.xlsx.write(res);
-        res.end();
+            // Check if all values are null or undefined
+                return values.every(value => value == null) ? null : values.join(", ");
+            }).filter(Boolean).join("\n") || "N/A"
+            : "N/A",
+
+            certificates: user.profile?.certificates?.map(cert => 
+                `${cert.certificateName} (${cert.certificateLink}) - ${cert.certificateDescription}`
+            ).join("\n") || "N/A",
+            skills: user.profile?.skillsProfile?.map(skill => 
+                `${skill.skillName} (${skill.experience})`
+            ).join("\n") || "N/A",
+            projects: user.profile?.project?.map(proj => 
+                `${proj.projectTitle} (${proj.projectLink}) - ${proj.projectDescription} ${proj.projectSkills}`
+            ).join("\n") || "N/A",
+            education: user.profile?.educationProfile?.map(edu => 
+                `${edu.institutionName} - ${edu.courseName} ${edu.courseType} ${edu.marks} ${edu.location} ${edu.education}`
+            ).join("\n") || "N/A",
+            employment: user.profile?.employProfile?.map(emp => 
+                `${emp.empType} (${emp.totalExp}) ${emp.currentJobTitle} ${emp.joinDate} - ${emp.leaveDate}, ${emp.currentSalary}, ${emp.skill}, ${emp.jobProfile}, ${emp.noticePeriod}, ${emp.jobDescription}`
+            ).join("\n") || "N/A"
+        });
+
+        // ✅ 4. Write File as Buffer & Send
+        const buffer = await workbook.xlsx.writeBuffer();
+
+        res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        res.setHeader("Content-Disposition", `attachment; filename=User_Details_${user.firstName}_${user.lastName}.xlsx`);
+        res.send(buffer);
 
     } catch (error) {
         console.error("Error downloading user details:", error);
