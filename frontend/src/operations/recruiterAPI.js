@@ -18,8 +18,7 @@ const {
     updateJob_api,
     deleteJob_api,
     getJob_api,
-    getuserDetails_api,
-    downloadUserDetail,
+    getuserDetails_api
 
  } = recruiterPoint
 
@@ -56,35 +55,6 @@ export function createRecruiter(formdata,token,navigate) {
         }
     };
 }
-
-// export function createRecruiter(formdata, token, navigate) {
-//     return async (dispatch) => {
-//         const toastId = toast.loading("Loading...");
-//         dispatch(setLoading(true)); 
-        
-//         try {
-//             const response = await apiConnector("POST", createRecruiter_api, formdata, {
-//                 Authorization: `Bearer ${token}`,
-//             });
-
-//             console.log("Signup API response:", response); 
-
-//             if (!response.data.success) {
-//                 throw new Error(response.data.message);
-//             }
-//             dispatch(fetchRecruiter(token))
-//             toast.success("Signup Successful!!!");
-
-//             return recruiter; 
-//         } catch (error) {
-//             console.error("Signup Error for createRecruiter:", error);
-//             toast.error("Signup Failed, Try again.");
-//         } finally {
-//             dispatch(setLoading(false)); 
-//             toast.dismiss(toastId);
-//         }
-//     };
-// }
 
 
 export function loginRecruiter(formData, navigate) 
@@ -138,8 +108,8 @@ export function updateRecruiter(token,recruiterId, formdata) {
             }
 
             // Update the recruiter in the Redux state
-            // const updatedrecruiter = { ...response.data.recruiterDetail };
-            // dispatch(setRecruiters(updatedrecruiter));
+            const updatedrecruiter = { ...response.data.recruiterDetail };
+            dispatch(setRecruiter(updatedrecruiter));
             dispatch(fetchRecruiter(token));
             
             toast.success('recruiter updated successfully!');
@@ -169,6 +139,7 @@ export function deleteRecruiter(token,recruiterId, navigate) {
             }
 
             toast.success("recruiter deleted successfully!");
+            dispatch(setRecruiter(null));
             dispatch(fetchRecruiter(token));
 
         } catch (error) {
@@ -200,6 +171,7 @@ export function tokenRecruiters(token,recruiterId,jobToken,userDetailAccessCount
                 throw new Error(response.data.message);
             }
             toast.success("company assigned token successfully!");
+            dispatch(setRecruiter(token))
             dispatch(fetchRecruiter(token))
 
         } catch (error) {
@@ -210,6 +182,50 @@ export function tokenRecruiters(token,recruiterId,jobToken,userDetailAccessCount
             toast.dismiss(toastId);
         }
     }
+}
+
+export function downloadUserDetailForRecruiter(token, userId) {
+    return async () => {
+        const toastId = toast.loading("Downloading...");
+        try {
+            const response = await apiConnector(
+                "GET",
+                downloadUserDetail, // Pass userId as a query parameter
+                null,
+                {
+                    Authorization: `Bearer ${token}`,
+                    responseType: "blob", // Expect binary file data
+                }
+            );
+
+            if (response.status !== 200) {
+                throw new Error("Failed to download user details");
+            }
+
+            // Create a blob URL for downloading the file
+            const blob = new Blob([response.data], {
+                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            });
+
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", `User_Details_${userId}.xlsx`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
+            toast.success("Download Successful!");
+            dispatch(setRecruiter(token)) //for single recruiter in recruiter slice data it to seen 
+            dispatch(fetchRecruiter(token)) //for all the recruiter data in company slice to seen
+        } catch (error) {
+            console.error("Error downloading user details:", error);
+            toast.error("Failed to download user details, Try again.");
+        } finally {
+            toast.dismiss(toastId);
+        }
+    };
 }
 
 export function fetchRecruiter(token) {

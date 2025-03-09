@@ -1,7 +1,10 @@
 const Admin = require("../models/admin");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 const Company = require("../models/company");
+const Job = require("../models/jobs");
+const Recruiter = require("../models/recruiter");
 const { passwordUpdated } = require("../routes/passwordUpdate");
 const { uploadAdminImage } = require("../config/cloudinary");
 require("dotenv").config();
@@ -400,4 +403,75 @@ exports.assignTokensToCompany = async (req, res) => {
       .status(500)
       .json({ success: false, message: "Error assigning tokens" });
   }
+};
+
+exports.toggleUserBlock = async (req, res) => {
+  try {
+      const { userId } = req.body; // Get user ID from body 
+
+      const user = await User.findById(userId);
+      if (!user) {
+          return res.status(404).json({ success: false, message: "User not found" });
+      }
+
+      user.isBlocked = !user.isBlocked; // Toggle the block status
+      await user.save();
+
+      return res.status(200).json({
+          success: true,
+          message: `User ${user.isBlocked ? "blocked" : "unblocked"} successfully.`,
+          user,
+      });
+  } catch (error) {
+      console.error("Error toggling user block status:", error);
+      return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+// Block/Unblock Job
+exports.toggleJobBlock = async (req, res) => {
+  try {
+      const { jobId } = req.body; // Get job ID from request parameters
+
+      const job = await Job.findById(jobId);
+      if (!job) {
+          return res.status(404).json({ success: false, message: "Job not found" });
+      }
+
+      job.isBlocked = !job.isBlocked; // Toggle the block status
+      await job.save();
+
+      return res.status(200).json({
+          success: true,
+          message: `Job ${job.isBlocked ? "blocked" : "unblocked"} successfully.`,
+          job,
+      });
+  } catch (error) {
+      console.error("Error toggling job block status:", error);
+      return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+// Toggle Block/Unblock Recruiter
+exports.toggleRecruiterBlock = async (req, res) => {
+    try {
+        const { recruiterId } = req.body;
+
+        const recruiter = await Recruiter.findById(recruiterId);
+        if (!recruiter) {
+            return res.status(404).json({ success: false, message: "Recruiter not found" });
+        }
+
+        recruiter.isBlocked = !recruiter.isBlocked;
+        await recruiter.save();
+
+        return res.status(200).json({
+            success: true,
+            message: `Recruiter ${recruiter.isBlocked ? "blocked" : "unblocked"} successfully.`,
+            recruiter,
+        });
+    } catch (error) {
+        console.error("Error toggling recruiter block status:", error);
+        return res.status(500).json({ success: false, message: "Internal server error" });
+    }
 };

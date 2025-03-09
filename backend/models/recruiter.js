@@ -64,6 +64,7 @@ const recruiterSchema = new mongoose.Schema({
             ref: "User" 
         }
     ],
+    isBlocked: { type: Boolean, default: false },
 })
 
 module.exports = mongoose.model("Recruiter",recruiterSchema);
