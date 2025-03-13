@@ -161,8 +161,6 @@ exports.updateDetail = async(req,res) => {
             firstName,
             lastName,
             email,
-            // workstatus
-            // password  // have to remove this 
         } = req.body
 
         // get the user Id from the request body
@@ -184,8 +182,6 @@ exports.updateDetail = async(req,res) => {
             });
         }
 
-        // find the user 
-        // const user = await User.findById(req.user.id);
         const userDetail = await User.findByIdAndUpdate(
             userID,
             { 
@@ -197,22 +193,6 @@ exports.updateDetail = async(req,res) => {
             },
             { new: true }
         )
-        // console.log(userDetail)
-
-        // by the refrence id we can make changes to the firstname , lastname , email to the user table
-        // user.firstName = firstName;
-        // user.lastName = lastName;
-        // user.email = email;
-        
-        // Hash the new password before saving
-        // const hashedPassword = await bcrypt.hash(password, 10);  // not good for the security reason
-        // user.password = hashedPassword;
- 
-        // Save the updated user to the database
-        
-
- 
-        // Respond with a success message and the new token
         return res.status(200).json({
              success: true,
              message: "User details updated successfully!",
@@ -227,7 +207,7 @@ exports.updateDetail = async(req,res) => {
         })
         
     }
-}
+};
 
 exports.deleteUser = async(req,res) => {
     try {
@@ -406,7 +386,7 @@ exports.applyJobs = async (req, res) => {
         }
 
         // Add jobId to user's appliedJobs array
-        user.appliedJobs.push(jobId);
+        user.appliedJobs.push({ jobId, appliedAt: new Date() });
         await user.save();
 
         // Add userId to job's appliedUsers array
@@ -435,7 +415,7 @@ exports.getAppliedJobs = async (req, res) => {
         // Find user and populate appliedJobs
         const user = await User.findById(userId)
             .populate({
-                path: "appliedJobs",
+                path: "appliedJobs appliedAt",
                 select: "jobTitle description skillRequired jobType jobLocation salaryRange isClose companyId", // Select only required fields
                 populate: {
                     path:"companyId",

@@ -47,10 +47,13 @@ const userSchema = new mongoose.Schema({
     appliedJobs: [  // Stores an array of Job IDs the user has applied to
         {
             type: mongoose.Schema.ObjectId,
-            ref: "Jobs"
-        }
+            ref: "Jobs",
+            appliedAt: { type: Date, default: Date.now }
+        },
+        
     ],
     isBlocked: { type: Boolean, default: false },
+    lastUpdated: { type: Date, default: Date.now }
 
 })
 
