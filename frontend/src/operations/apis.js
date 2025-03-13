@@ -10,7 +10,8 @@ export const userPoint = {
     appliedJob     : BASE_URL + "/user/getappliedjob",
     resetPasswordToken : BASE_URL + "/user/reset-password-token",
     resetPassword  : BASE_URL + "/user/reset-password",
-    changePassword : BASE_URL + "/user/changepassword"
+    changePassword : BASE_URL + "/user/changepassword",
+    searchJobsEndpoint : BASE_URL +"/user/search",
 } 
 
 export const profilePoint = {

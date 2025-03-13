@@ -15,7 +15,7 @@ const JobCard = ({ job, onRemove, userRole }) => {
     appliedJobs.some(appliedJob => appliedJob._id === job._id)
   );
 
-  console.log("job id", job._id);
+  
   const [isVisible, setIsVisible] = useState(true);
 
   const handleApply = async () => {

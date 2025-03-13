@@ -86,8 +86,7 @@ const Admin = () => {
   const token = useSelector((state)=>state.admin.token);
   const admin = useSelector((state)=>state.admin.admin);
 
-  console.log(token);
-  console.log(admin);
+
 
 
 
@@ -149,7 +148,7 @@ const Admin = () => {
             <div className="relative">
               <button onClick={handleProfileClick} className="flex items-center space-x-2">
                 <div className="relative group w-12 h-12 rounded-full overflow-hidden bg-gray-200">
-                  <img src={admin.image?"":admin.image} alt="Admin profile" className="w-full h-full object-cover" />
+                  <img src={admin.image || require("../../../assets/default-profile.jpg")} alt="Admin profile" className="w-full h-full object-cover" />
                 </div>
               </button>
               

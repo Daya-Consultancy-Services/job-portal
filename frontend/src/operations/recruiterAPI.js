@@ -402,3 +402,15 @@ export function downloadUserDetailForRecruiter(token, userId) {
         }
     };
 }
+
+export function logout(navigate) {
+    return (dispatch) => {
+        dispatch(setToken(null))
+        // dispatch(setCompany(null))
+        localStorage.removeItem("token")
+        localStorage.removeItem("recruiter")
+        toast.success("Logged Out")
+        navigate("/");
+        
+    }
+}

@@ -1,28 +1,35 @@
-
-
-
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Building, Mail, Globe, MapPin, Upload, Edit2, Check, X, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import RecruiterManagement from './RecruiterManagement';
 import CompanyHeader from './CompanyHeader';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { logout, updateCompanyDetail, uploadCompanyLogos } from '../../../operations/companyAPI';
+import { fetchCompany, logout, updateCompanyDetail, uploadCompanyLogos } from '../../../operations/companyAPI';
 import CompanyJobs from './CompanyJobs';
 
 const CompanyProfile = () => {
    const token = useSelector((state)=>state.company?.token);
    const company = useSelector((state)=>state.company?.company)
+   console.log(company);
    const navigate = useNavigate();
    const dispatch = useDispatch();
    const [isEditing, setIsEditing] = useState(false);
    const [editedCompany, setEditedCompany] = useState(company);
    const [newField, setNewField] = useState("");
 
+   useEffect(()=>{
+    try{
+      console.log(dispatch(fetchCompany(token)));
+    }catch{
+      console.error('Error fetching company');
+
+    }
+   },[])
+
    const handleLogout = () => {
      dispatch(logout()); 
-     navigate('/components/auth/Company/login'); // Navigate to login page
+     navigate('/components/auth/Company/login'); 
    };
 
   const handleLogoUpload = (event) => {

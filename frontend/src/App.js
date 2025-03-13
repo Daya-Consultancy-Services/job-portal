@@ -10,7 +10,6 @@ import Login from "./components/auth/User/Login";
 import CompanyLogin from "./components/auth/Company/CompanyLogin";
 import CompanySignUp from "./components/auth/Company/CompanySignUp";
 import Profile from "./components/profiles/UserProfile";
-import CompanyProfile from "./components/profiles/CompanyProfiles/CompanyProfile";
 import CompanyRecruiterLogin from "./components/auth/Recruiter/CompanyRecruiterLogin";
 import Dashboard from "./components/profiles/RecruiterDashboard/Dashboard";
 import AppliedJobs from "./components/profiles/AppliedJobs";
@@ -20,6 +19,10 @@ import { Toaster } from "react-hot-toast";
 import AdminLogin from "./components/auth/Admin/AdminLogin";
 import AdminRegister from "./components/auth/Admin/AdminRegister";
 import ResetPassword from "./components/ResetPassword";
+// import CompanyProfile from "./pages/Admin/AdminCompanyProfile";
+import AdminCompanyProfile from "./pages/Admin/AdminCompanyProfile";
+import CompanyProfile from "./components/profiles/CompanyProfiles/CompanyProfile";
+import SearchResults from "./components/SearchResults";
 
 
 
@@ -33,6 +36,7 @@ function App() {
         <Route path="/components/auth/User/login" element={<Login/>}/>
         <Route path="/update-password/:token" element={<ResetPassword/>}/>
         <Route path="/components/auth/Company/login" element={<CompanyLogin/>}/>
+        <Route path = "/company-profile/:companyId" element={<AdminCompanyProfile/>}/>
         <Route path="/components/auth/Company/register" element={<CompanySignUp/>}/>
         <Route path="/components/auth/Recruiter/login" element={<CompanyRecruiterLogin/>}/>
         <Route path="/components/auth/Admin/AdminRegister" element={<AdminRegister/>}/>
@@ -43,6 +47,7 @@ function App() {
         <Route path="/components/profiles/CompanyProfiles/CompanyProfile" element={<CompanyProfile/>}/>
         <Route path="/home" element={<Home/>}/>
         <Route path="/jobs" element={<FindaJob/>}/>
+        <Route path="/search-results" element={<SearchResults />} />
         <Route path="/company" element={<Company/>}/>
         <Route path="/services" element={<Blog/>}/>
         <Route path="/admin" element={<Admin/>}/>

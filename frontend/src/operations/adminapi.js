@@ -210,7 +210,8 @@ export function adminfetchAllCompany(token) {
                 null,
                 {
                     Authorization: `Bearer ${token}`
-                }
+                },
+               
             );
             
             if (!response.data.success) {
@@ -229,6 +230,8 @@ export function adminfetchAllCompany(token) {
         }
     };
 }
+
+
 
 export function logout(navigate) {
     return (dispatch) => {

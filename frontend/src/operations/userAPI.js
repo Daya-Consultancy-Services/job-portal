@@ -1,12 +1,12 @@
 import { toast } from 'react-hot-toast'
 
-import { setLoading, setToken } from '../slices/userSlice'
+import { setLoading, setSearchResults, setToken } from '../slices/userSlice'
 import { setUser,setalljob ,setappliedjobs } from '../slices/userSlice'
 import { apiConnector } from '../services/apiConnector'
 import { userPoint } from './apis'
 import { fetchJob } from './recruiterAPI'
 // import {setCertificate, , setOnlineprofile} from '../slices/userProfileSlice'
-import {setCertificate,setImageResume, setOnlineprofile,setskillprofiles,setCareers,setEducation,setProject,setEmpProfile,setResume,setImage} from '../slices/userProfileSlice'
+// import {setCertificate,setImageResume, setOnlineprofile,setskillprofiles,setCareers,setEducation,setProject,setEmpProfile,setResume,setImage} from '../slices/userProfileSlice'
 
 
 const {
@@ -20,7 +20,8 @@ const {
     changePassword,
     getalljob,
     applyjob,
-    appliedJob
+    appliedJob,
+    searchJobsEndpoint
 
 } = userPoint
 
@@ -285,6 +286,40 @@ export function fetchallJob(token) {
         } catch (error) {
             console.log("FETCH_user_alljob_API ERROR............", error);
             toast.error("Could not fetch useralljob");
+        } finally {
+            toast.dismiss(toastId);
+        }
+    };
+}
+
+export function performSearchJobs(token, searchTerm) {
+    return async (dispatch) => {
+        const toastId = toast.loading("Searching...");
+        try {
+            // Encode the search term properly
+            const encodedSearchTerm = encodeURIComponent(searchTerm);
+            
+            console.log("Performing search with encoded term:", encodedSearchTerm);
+            
+            const response = await apiConnector(
+                "GET",
+                `${searchJobsEndpoint}?query=${encodedSearchTerm}`,
+                null,
+                {
+                    Authorization: `Bearer ${token}`
+                }
+            );
+            
+            if (!response.data.success) {
+                throw new Error(response.data.message);
+            }
+            
+            dispatch(setSearchResults(response.data.data));
+            toast.success("Search completed");
+        } catch (error) {
+            console.log("SEARCH_JOBS_API ERROR............", error);
+            toast.error("Search failed. Please try again.");
+            dispatch(setSearchResults({companies: [], jobs: []}));
         } finally {
             toast.dismiss(toastId);
         }

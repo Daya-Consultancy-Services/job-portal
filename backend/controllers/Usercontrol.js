@@ -5,6 +5,8 @@ require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Job = require("../models/jobs");
+const Company = require("../models/company"); 
+
 const {passwordUpdated} = require("../routes/passwordUpdate")
 const mailSender = require("../routes/mailSender")
 
@@ -317,6 +319,57 @@ exports.getJobs = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Error while fetching jobs"
+        });
+    }
+};
+
+exports.searchJobs = async (req, res) => {
+    try {
+        const { query } = req.query;
+        console.log("in backend search query");
+        
+        if (!query) {
+            return res.status(400).json({
+                success: false,
+                message: "Search query is required"
+            });
+        }
+        const searchPattern = new RegExp(query, 'i');
+        const companies = await Company.find({
+            $or: [
+                { name: searchPattern },
+                { companyfield: searchPattern }
+            ]
+        }).select("_id name location logo companyfield description");
+        
+        const companyIds = companies.map(company => company._id);
+        
+        const jobs = await Job.find({
+            $or: [
+                { jobTitle: searchPattern },
+                { description: searchPattern },
+                { skillRequired: { $in: [searchPattern] } },
+                { companyId: { $in: companyIds } }
+            ]
+        })
+        .select("jobTitle description skillRequired jobType salaryRange jobLocation companyId")
+        .populate("companyId", "name location email website description logo companyfield")
+        .exec();
+        
+        return res.status(200).json({
+            success: true,
+            message: "Search results fetched successfully",
+            data: {
+                companies: companies,
+                jobs: jobs
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Error while searching",
+            error: error.message
         });
     }
 };

@@ -14,7 +14,8 @@ const {
     getJobs,
     applyJobs,
     getAppliedJobs,
-    changePassword
+    changePassword,
+    searchJobs
     
 } = require("../controllers/Usercontrol")
 
@@ -45,6 +46,7 @@ router.get("/getjobs",getJobs)
 
 router.post("/applyjob",auth,isJobseeker,applyJobs)
 router.get("/getappliedjob",auth,isJobseeker,getAppliedJobs)
+router.get('/search', auth,isJobseeker, searchJobs);
 
 
 

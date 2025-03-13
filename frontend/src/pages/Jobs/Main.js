@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from "react";
-import JobCard from "./JobCard"; 
+import JobCard from "./JobCard";
 
-
-function Main({cards=[]}) { 
-
-  // Initialize noofPosts to the length of cards
-  const [noofPosts, setNoofPosts] = useState(cards.length);
-
+function Main({ jobs = [] }) { // Provide default empty array
+  console.log("Main component jobs:", jobs);
+  
+  // Initialize noofPosts state safely
+  const [noofPosts, setNoofPosts] = useState(0);
+  
   useEffect(() => {
-    // Update noofPosts whenever cards changes
-    setNoofPosts(cards.length);
-  }, [cards]);
-
-
-
+    // Update noofPosts whenever jobs changes
+    setNoofPosts(jobs.length || 0);
+  }, [jobs]);
+  
   return (
     <>
       {/* Header Section */}
@@ -26,18 +24,18 @@ function Main({cards=[]}) {
           </div>
         </div>
       </div>
-
       {/* Card Section */}
-      <div className="card-section min-h-[160vh] grid grid-cols-3 gap-4">
-        {/* Check if cards is defined before mapping */}
-        {cards.length > 0 ? (
-          cards.map((card, index) => (
-            <JobCard key={index} card={card} />
+      <div className="card-section flex flex-wrap gap-4 mt-6">
+        {/* Check if jobs has items before mapping */}
+        {jobs && jobs.length > 0 ? (
+          jobs.map((job, index) => (
+            <JobCard key={index} jobs={job} />
           ))
         ) : (
-          <div>No jobs available</div> // Fallback UI if no jobs
+          <div className="col-span-3 text-center text-xl mt-10">
+            No jobs available. Please check your data source or try again later.
+          </div>
         )}
-    
       </div>
     </>
   );

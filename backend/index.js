@@ -48,6 +48,7 @@ app.use("/api/v1/admin", adminRoute);
 
 
 
+
 app.use("/", (req,res) =>{
     return res.json({
         success:true,
