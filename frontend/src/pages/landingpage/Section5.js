@@ -2,12 +2,12 @@ import React, { useState } from 'react'
 
 function Section5() {
     const cards = [
-        { id: 1, title: "Card 1", description: "This is card 1", colors:"yellow" },
-        { id: 2, title: "Card 2", description: "This is card 2", colors:"green" },
-        { id: 3, title: "Card 3", description: "This is card 3", colors:"blue" },
-        { id: 4, title: "Card 4", description: "This is card 4", colors:"purple" },
-        { id: 5, title: "Card 5", description: "This is card 5", colors:"white" },
-        { id: 6, title: "Card 6", description: "This is card 6", colors:"pink" },
+        { id: 1, title: "Card 1", description: "This is card 1", colors:"yellow", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUk2zBfHzeV5yxsgE4tRO6Z2q5SozMWph8Og&s" },
+        { id: 2, title: "Card 2", description: "This is card 2", colors:"green" , image:"https://www.indifi.com/blog/wp-content/uploads/2019/12/Why-Flipkart-Should-be-a-Preferred-Choice-If-You-Are-Thinking-of-Taking-Business-Online-.jpg"},
+        { id: 3, title: "Card 3", description: "This is card 3", colors:"blue" , image:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCLvx1x8oeXs-DidUVmNti1LMUwkdDG3Fn0Q&s"},
+        { id: 4, title: "Card 4", description: "This is card 4", colors:"purple", image:"https://i.pcmag.com/imagery/reviews/068BjcjwBw0snwHIq0KNo5m-15..v1602794215.png" },
+        { id: 5, title: "Card 5", description: "This is card 5", colors:"white", image:"https://pub-f8c0307ce82b4885975558b04e13a858.r2.dev/2025/01/OMB-Q2-Earnings-Hero-960x540.png" },
+        { id: 6, title: "Card 6", description: "This is card 6", colors:"pink", image:"https://images.samsung.com/is/image/samsung/assets/us/about-us/brand/logo/mo/360_197_1.png?$720_N_PNG$" },
       ];
     
       const [activeIndex, setActiveIndex] = useState(0);
@@ -42,22 +42,21 @@ function Section5() {
 
       <div className="slider-wrapper  flex items-center justify-center w-[100%] h-full relative left-[-150px]">
         {cards.map((card, index) => {
-          let position = "translate-x-[100%] scale-90 opacity-50 z-[5]";
+          let position = "translate-x-[100%] scale-90  z-[5]";
           if (index === activeIndex) {
-            position = "translate-x-[23%] scale-100 opacity-100 z-[10]";
+            position = "translate-x-[23%] scale-100  z-[10]";
           } else if (
             index === (activeIndex - 1 + cards.length) % cards.length
           ) {
-            position = "translate-x-[-50%] scale-90 opacity-75 z-[5]";
+            position = "translate-x-[-50%] scale-90  z-[5]";
           } 
 
           return (
             <div
               key={card.id}
-              className={`card absolute w-[600px] h-[550px] bg-${card.colors}-600 rounded-lg shadow-lg p-5 transition-all duration-500 ${position} flex items-center justify-center`}
+              className={`card absolute  w-[600px] h-[350px]  rounded-lg shadow-lg transition-all duration-500 ${position} flex items-center justify-center`}
             >
-              <h2 className="font-bold text-5xl ">{card.title}</h2>
-              <p className="text-gray-500">{card.description}</p>
+              <img src={card.image} alt={`card-${card.id}`}  className='h-full w-full'/>
             </div>
           );
         })}

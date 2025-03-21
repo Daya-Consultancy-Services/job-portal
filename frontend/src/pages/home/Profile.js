@@ -6,10 +6,14 @@ import { TbBuildings } from "react-icons/tb";
 import { LuBookOpen } from "react-icons/lu";
 import { fetchExtraProfile, fetchProfileImage } from '../../operations/profileAPI';
 import { useDispatch, useSelector } from 'react-redux';
+import ProfileWithProgressRing from '../../components/ProfileCompletionWidget';
 function Profile() {
-  const image = useSelector((state) => state.profile.imageResume?.image)
+  const image = useSelector((state) =>state.profile.extraprofile?.image)
   const token = useSelector((state)=> state.user.token)
   const user = useSelector((state)=> state.profile.user)
+
+ 
+ 
 
   const dispatch = useDispatch();
 
@@ -30,6 +34,13 @@ function Profile() {
           <img className="h-full w-full object-cover" src={image || require("../../assets/default-profile.jpg")} alt="image" />
         
           </div>
+           {/* <ProfileWithProgressRing
+              imageUrl={image || require("../../assets/default-profile.jpg")}
+              handleImageUpload={handleImageUpload}
+              completedFields={completedFields}
+              totalFields= {10}
+            /> */}
+         
 
           {/* Name */}
           <h1 className="mt-3 font-semibold">Ladukishor Subudhi</h1>
@@ -50,7 +61,7 @@ function Profile() {
             </div>
 
             <div className="btn flex items-center justify-center mt-5">
-                <Link to="#">
+                <Link to="/components/profiles/UserProfile">
             <button className='px-4 py-2 rounded-full bg-orange-600 text-white font-semibold hover:bg-orange-700'>Create Profile</button>
                 </Link>
 

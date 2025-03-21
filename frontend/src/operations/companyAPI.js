@@ -82,7 +82,7 @@ export function loginCompany(email, password, navigate) {
             localStorage.setItem("company", JSON.stringify(response.data.company));
 
             toast.success("Login Successful")
-            navigate("/home")
+            navigate("/components/profiles/CompanyProfiles/CompanyDashboard")
 
         } catch (error) {
             console.log("Login Company_Api error...............", error)

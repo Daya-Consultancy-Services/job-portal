@@ -79,7 +79,7 @@ export function loginRecruiter(formData, navigate)
                 throw new Error(response.data.message);
             }
             toast.success("Login Successful")
-            navigate("/home")
+            navigate("/components/profiles/RecruiterDashboard/Dashboard")
 
         } catch (error) {
             console.log("Login Api error...............", error)

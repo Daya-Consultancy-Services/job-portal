@@ -12,6 +12,7 @@ export const userPoint = {
     resetPassword  : BASE_URL + "/user/reset-password",
     changePassword : BASE_URL + "/user/changepassword",
     searchJobsEndpoint : BASE_URL +"/user/search",
+    jobDetails: BASE_URL + "/user/job",
 } 
 
 export const profilePoint = {

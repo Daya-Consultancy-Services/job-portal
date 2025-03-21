@@ -31,7 +31,7 @@ const Jobs = () => {
   const token = useSelector(state => state.recruiter.token);
   const recruiterData = useSelector(state => state.recruiter.recruiterData);
   const applicantData = useSelector(state => state.recruiter.applicantData);
-  console.log(applicantData);
+  
   
   const [jobs, setJobs] = useState([]);
   const [editingJob, setEditingJob] = useState(null);
@@ -199,16 +199,16 @@ const Jobs = () => {
   };
 
   return (
-    <div className="p-4 max-w-5xl mx-auto">
+    <div className="relative top-8 max-w-5xl mx-auto">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Job Listings</h1>
         <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-600"
-        >
-          <Plus className="w-4 h-4" />
-          Add New Job
-        </button>
+  onClick={() => setIsModalOpen(true)}
+  className="bg-blue-500 cursor-pointer text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-600 border-4 " // Added border for visibility
+>
+  <Plus className="w-4 h-4" />
+  Add New Job
+</button>
       </div>
 
       <Modal

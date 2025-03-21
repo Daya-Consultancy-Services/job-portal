@@ -354,6 +354,44 @@ exports.searchJobs = async (req, res) => {
     }
 };
 
+exports.getJobDetails = async (req, res) => {
+    try {
+        const { jobId } = req.params;
+        
+        if (!jobId) {
+            return res.status(400).json({
+                success: false,
+                message: "Job ID is required"
+            });
+        }
+
+        const job = await Job.findById(jobId)
+            .populate("companyId", "name location email website description logo companyfield")
+            .exec();
+
+        if (!job) {
+            return res.status(404).json({
+                success: false,
+                message: "Job not found"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Job details fetched successfully",
+            data: job
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Error while fetching job details",
+            error: error.message
+        });
+    }
+};
+
 exports.applyJobs = async (req, res) => {
     try {
         const userId = req.user.id; // Assuming user ID is available from auth middleware
@@ -386,7 +424,7 @@ exports.applyJobs = async (req, res) => {
         }
 
         // Add jobId to user's appliedJobs array
-        user.appliedJobs.push({ jobId, appliedAt: new Date() });
+        user.appliedJobs.push( jobId);
         await user.save();
 
         // Add userId to job's appliedUsers array
@@ -415,7 +453,7 @@ exports.getAppliedJobs = async (req, res) => {
         // Find user and populate appliedJobs
         const user = await User.findById(userId)
             .populate({
-                path: "appliedJobs appliedAt",
+                path: "appliedJobs",
                 select: "jobTitle description skillRequired jobType jobLocation salaryRange isClose companyId", // Select only required fields
                 populate: {
                     path:"companyId",

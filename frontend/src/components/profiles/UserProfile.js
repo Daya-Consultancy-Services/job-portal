@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Header from '../../pages/home/Header';
 import Footer from '../Footer';
 import { FaPencilAlt } from "react-icons/fa";
-import {  IoLocationOutline } from "react-icons/io5";
-import { MdLocalPhone } from "react-icons/md";
+import { IoLocationOutline } from "react-icons/io5";
+import { MdLocalPhone, MdVerified } from "react-icons/md";
 import { CiMail } from "react-icons/ci";
 import { TbDeviceMobileCheck } from "react-icons/tb";
 import EducationForm from './EducationForm';
@@ -16,7 +16,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { fetchExtraProfile, uploadProfileImage } from '../../operations/profileAPI';
 import ProfileForm from './ProfileForm';
-import  { ModalComponent } from './Accomplishment';
+import { ModalComponent } from './Accomplishment';
 import { deleteOnlineProfiles, updateonlineProfiles, getOnlineProfiles } from '../../operations/onlineprofileAPI';
 import { Calendar, Globe, MapPin, Pencil, PencilIcon, Trash2, Trash2Icon, User } from 'lucide-react';
 import { deleteCertificates, fetchCertificates, updateCertificates } from '../../operations/certificateAPI';
@@ -30,6 +30,7 @@ import { deleteEmploymentProfiles, fetchEmploymentProfile } from '../../operatio
 import { deleteEducationProfiles, fetchEducationProfile } from '../../operations/educationprofileAPI';
 import ResumeUpload from './ResumeUpload';
 import { deletePersonaldetails, fetchPersonalDetails } from '../../operations/personaldetailAPI';
+import ProfileWithProgressRing from '../ProfileCompletionWidget';
 
 
 
@@ -154,7 +155,7 @@ function UserProfile() {
   const [showExtraProfile, setShowExtraProfile] = useState(false);
   const [isNamePopupOpen, setIsNamePopupOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  // const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [initialValue, setInitialValue] = useState("");
   const [openModal, setOpenModal] = useState(null);
   const [changePassword, setChangePassword] = useState(false);
@@ -162,6 +163,25 @@ function UserProfile() {
   const [newPassword, setNewPassword] = useState('');
   const [error, setError] = useState('');
   // const [openEmpForm, setOpenEmpForm] = useState(null);
+  const totalFields = 10; 
+  const completedFields = [
+    // imageUrl && { field: 'profile image', value: imageUrl },
+    // about && { field: 'about', value: about },
+    // location && { field: 'location', value: location },
+    // user?.email && { field: 'email', value: user.email },
+    // contactNumber && { field: 'contact number', value: contactNumber },
+    resumeHeadline && { field: 'resume headline', value: resumeHeadline },
+    projectProfiles?.length > 0 && { field: 'projects', value: projectProfiles },
+    skillsData?.length > 0 && { field: 'IT skills', value: skillsData },
+    educationProfiles?.length > 0 && { field: 'education', value: educationProfiles },
+    profileSummery && { field: 'profile summary', value: profileSummery },
+    empProfile?.length > 0 && { field: 'employment', value: empProfile },
+    careerProfiles?.length > 0 && { field: 'career profile', value: careerProfiles },
+    personalDetail && { field: 'personal details', value: personalDetail },
+  ].filter(Boolean);
+  
+
+
 
 
 
@@ -648,7 +668,7 @@ function UserProfile() {
   // --------------------------------------------------------------------------------------------------------------------
 
   const { register, handleSubmit } = useForm({
-    
+
   });
 
 
@@ -742,32 +762,32 @@ function UserProfile() {
     setChangePassword(true);
   }
 
-  const handlePasswordChange = async(e) => {
+  const handlePasswordChange = async (e) => {
     e.preventDefault();
-    
+
     if (oldPassword === newPassword) {
       setError('New password must be different from the current password');
       return;
     }
-    
+
     if (newPassword.length < 8) {
       setError('Password must be at least 8 characters long');
       return;
     }
-    
-   
+
+
     try {
-    
+
       // await changePasswordAPI(oldPassword, newPassword);
       await changePasswords(token, oldPassword, newPassword);
-      
+
 
       setOldPassword('');
       setNewPassword('');
       setError('');
       setChangePassword(false);
-      
-      
+
+
       // Optional: Show success message or close modal
     } catch (err) {
       setError('Failed to change password');
@@ -845,27 +865,13 @@ function UserProfile() {
           <div className="mt-[80px] min-h-[80%] w-[60%]  p-5 flex flex-col gap-5">
             <div className="h-[250px] w-full bg-zinc-50 rounded-xl overflow-hidden flex">
               <div className="profile-info w-[65%] h-full  flex ">
-                <div className="profile h-full w-[30%]  flex items-center justify-center">
-                  <div className="img-div h-[150px] w-[150px]  rounded-full overflow-hidden relative group">
-                    <img className="h-full w-full object-cover" src={imageUrl || require("../../assets/default-profile.jpg")} alt="image" />
-                    {/* Overlay for Upload */}
-                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <label
-                        htmlFor="imageUpload"
-                        className="text-white text-sm rounded cursor-pointer"
-                      >
-                        Upload Image
-                      </label>
-                      <input
-                        id="imageUpload"
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={handleImageUpload}
-                      />
-                    </div>
-                  </div>
-                </div>
+                <ProfileWithProgressRing 
+          imageUrl={imageUrl}
+          handleImageUpload={handleImageUpload}
+          completedFields={completedFields}
+          totalFields={totalFields}
+        />
+      
                 <div className="profile-info w-[70%] p-4">
                   <div className="heading w-full flex flex-col gap-4 border-b-[0.5px] pb-3 ">
                     <div className="name flex gap-5 items-center pt-4 group">
@@ -886,11 +892,21 @@ function UserProfile() {
                         <span className={`text-md font-medium `}>{location ? location : "enter your location"}</span>
                         <FaPencilAlt onClick={() => handleEditClick("location", "New York")} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
-                      <div className="email flex gap-5 items-center group ">
+                      {/* <div className="email flex gap-5 items-center group ">
                         <CiMail />
                         <span className="text-md font-medium text-black"> {user?.email?.length > 8 ? `${user.email.slice(0, 12)}...` : user?.email}</span>
                         <FaPencilAlt onClick={() => handleEditClick("email", "Enter your email id")} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </div>
+                      </div> */}
+                       <div className="email flex gap-5 items-center group">
+          <CiMail />
+          <span className="text-md font-medium text-black">
+            {user?.email?.length > 8 ? `${user.email.slice(0, 12)}...` : user?.email}
+          </span>
+          <div className="verified-badge flex items-center">
+            <MdVerified className="text-green-500 ml-1" title="Verified Email" />
+          </div>
+          <FaPencilAlt onClick={() => handleEditClick("email", "Enter your email id")} className="cursor-pointer text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+        </div>
                     </div>
 
                     <div className="right-div h-full w-[50%] flex flex-col gap-3 p-2">
@@ -955,9 +971,9 @@ function UserProfile() {
                     <div onClick={() => scrollToDiv('Personal-details')} className="Personal-details flex"><h3>Personal Details</h3></div>
                   </div>
                   <div className="delete-btn mt-5 flex justify-between items-center">
-                    <button onClick={() => setIsDeleteModalOpen(true)} className='px-3 py-2 border bg-red-500 text-white rounded-full cursor-pointer font-semibold hover:bg-red-600'>
+                    {/* <button onClick={() => setIsDeleteModalOpen(true)} className='px-3 py-2 border bg-red-500 text-white rounded-full cursor-pointer font-semibold hover:bg-red-600'>
                       Delete profile
-                    </button>
+                    </button> */}
 
                     <h1 className=' text-blue-500 cursor-pointer' onClick={handleChangePass}>Reset Password</h1>
 
@@ -966,555 +982,547 @@ function UserProfile() {
                 </div>
               </div>
 
-              <div ref={mainSectionRef} className="main min-h-full w-[70%]  flex flex-col gap-4">
-                <div className="min-h-[400px] border  p-5 rounded-lg shadow-lg" id='Resume'>
-                  <div className="head">
-                    <div className=""><h1 className='font-semibold text-2xl'>Resume </h1> <p className='text-green-400'>Add 10%</p></div>
-                    <p className='text-zinc-400'>70% of recruiters discover candidates through their resume</p>
-                  </div>
-                  <ResumeUpload />
-                </div>
-                <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Resume-headline'>
-                  <div className="head flex w-full justify-between px-4">
-                    <div className="flex justify-between px-2 h-fit w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Resume headline</h1> <p className='text-green-400'>Add 8%</p></div>
-                    <h1 className='text-blue-700 font-semibold cursor-pointer' onClick={() => togglePopup('add resume headlines')}>Add resume headline</h1>
-                  </div>
-                  {!resumeHeadline ? (
-                    <p className='text-zinc-400 px-6'>Add a summary of your resume to introduce yourself to recruiters</p>
+              <div ref={mainSectionRef} className="main min-h-full w-[70%] flex flex-col gap-4">
+  <div className="min-h-[400px] border p-5 rounded-lg shadow-lg" id='Resume'>
+    <div className="head">
+      <div className=""><h1 className='font-semibold text-2xl'>Resume </h1> </div>
+      <p className='text-zinc-400'>70% of recruiters discover candidates through their resume</p>
+    </div>
+    <ResumeUpload />
+  </div>
+  
+  <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Resume-headline'>
+    <div className="head flex w-full justify-between px-4">
+      <div className="flex justify-between px-2 h-fit w-fit gap-5 items-center">
+        <h1 className='font-semibold text-2xl'>Resume headline</h1> 
+        {!resumeHeadline && <p className='text-green-400'>Add 8%</p>}
+      </div>
+      <h1 className='text-blue-700 font-semibold cursor-pointer' 
+        onClick={() => togglePopup('add resume headlines')}>
+        {resumeHeadline ? 'Edit resume headline' : 'Add resume headline'}
+      </h1>
+    </div>
+    
+    {!resumeHeadline ? (
+      <p className='text-zinc-400 px-6'>Add a summary of your resume to introduce yourself to recruiters</p>
+    ) : (
+      <div className='p-6 mt-5 border'>
+        <p>{resumeHeadline}</p>
+      </div>
+    )}
+  </div>
+  
+  <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='key-skills'>
+    <div className="head flex w-full justify-between px-4">
+      <div className="flex justify-between px-2 w-fit gap-5 items-center">
+        <h1 className='font-semibold text-2xl'>Key skills</h1> 
+        {!skillsData && <p className='text-green-400'>Add 8%</p>}
+      </div>
+      <h1 className='text-blue-700 font-semibold cursor-pointer' 
+        onClick={() => togglePopup('Add key skills')}>
+        {skillsData ? 'Edit key skills' : 'Add key Skills'}
+      </h1>
+    </div>
+    <p className='text-zinc-400 px-6'>Recruiters look for candidates with specific key skills</p>
+  </div>
 
-                  ) : (
-                    <div className=' p-6 mt-5 border'>
+  <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='education'>
+    <div className="head flex w-full px-4 flex-col">
+      <div className="flex justify-between w-full">
+        <div className="flex justify-between px-2 w-fit gap-5 items-center">
+          <h1 className='font-semibold text-2xl'>Education</h1>
+          {educationProfiles.length === 0 && <p className='text-green-400'>Add 10%</p>}
+        </div>
+        <h1
+          className='text-blue-700 font-semibold cursor-pointer flex flex-col'
+          onClick={handleButtonEducation}
+        >
+          {educationProfiles.length > 0 ? 'Add more education' : 'Add education'}
+        </h1>
+      </div>
+      <p className='text-zinc-400 px-2'>Your qualifications help employers know your educational background</p>
 
-                      <p>
-                        {resumeHeadline}
-                      </p>
-                    </div>
-
-
-                  )}
-                </div>
-                <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='key-skills'>
-                  <div className="head flex w-full justify-between px-4">
-                    <div className="flex justify-between px-2 w-fit gap-5 items-center"><h1 className='font-semibold text-2xl'>Key skills</h1> <p className='text-green-400'>Add 8%</p></div>
-                    <h1 className='text-blue-700 font-semibold cursor-pointer' onClick={() => togglePopup('Add key skills')}>Add key Skills</h1>
-                  </div>
-                  <p className='text-zinc-400 px-6'>Recruiters look for candidates with specific key skills</p>
-                </div>
-
-
-
-                <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='education'>
-                  <div className="head flex w-full px-4 flex-col">
-                    <div className="flex justify-between w-full">
-                      <div className="flex justify-between px-2 w-fit gap-5 items-center">
-                        <h1 className='font-semibold text-2xl'>Education</h1>
-                        <p className='text-green-400'>Add 10%</p>
-                      </div>
-                      <h1
-                        className='text-blue-700 font-semibold cursor-pointer flex flex-col'
-                        onClick={handleButtonEducation}
-                      >
-                        Add education
-                      </h1>
-                    </div>
-                    <p className='text-zinc-400 px-2'>Your qualifications help employers know your educational background</p>
-
-
-                    <div className="space-y-4">
-                      {educationProfiles.length > 0 ? (
-                        educationProfiles.map((education, index) => (
-                          <div key={index} className="flex justify-between px-2 w-full gap-5 items-start mt-5 border p-3 rounded-xl">
-                            <div className="flex flex-col space-y-2">
-                              <p className='font-medium'>Institution Name: {education.institutionName}</p>
-                              <p className='font-medium'>Course Name: {education.courseName}</p>
-                              <p className='font-medium'>Course Type: {education.courseType}</p>
-                              <p className='font-medium'>Duration: {education.duration}</p>
-                              <p className='font-medium'>Marks: {education.marks}</p>
-                              <p className='font-medium'>Location: {education.location}</p>
-                              <p className='font-medium'>Education Level: {education.education}</p>
-                            </div>
-                            <div className="flex items-center space-x-4">
-                              <button
-                                onClick={() => handleEditEducation(education)}
-                                className="text-blue-500 hover:text-blue-700"
-                              >
-                                <Pencil size={20} />
-                              </button>
-                              <button
-                                onClick={() => handleDeleteEducation(token, education._id)}
-                                className="text-red-500 hover:text-red-700"
-                              >
-                                <Trash2 size={20} />
-                              </button>
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div></div>
-                      )}
-                      {isEducationProfileVisible && (
-                        <EducationForm
-                          onSave={handleEducationSaved}
-                          initialData={editingEducation}
-                          onClose={() => setIsEducationProfileVisible(false)}
-                        />
-                      )}
-                    </div>
-
-
-
-                  </div>
-
-                </div>
-
-
-                <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='IT-skills'>
-                  <div className="head flex w-full justify-between px-4">
-                    <div className="flex justify-between px-2 w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>IT skills</h1> <p className='text-green-400'>Add 18%</p></div>
-                    <h1 className='text-blue-700 font-semibold cursor-pointer'
-                      onClick={handleButtonClick2}>Add IT skills</h1>
-                  </div>
-                  <p className='text-zinc-400 px-6'>Show your technical expertise by mentioning softwares and skills you know</p>
-
-                  {isSkillsVisible && (
-                    <SkillsForm onSave={handleSkillsSaved} />
-                  )}
-
-                  <div className="space-y-4">
-                    {skillsData.length > 0 ? (
-                      skillsData.map((skill, index) => (
-                        <div
-                          key={index}
-                          className="flex justify-between items-center border p-3 mt-3 rounded-lg bg-white shadow-sm"
-                        >
-                          <div>
-                            <div className=" text-gray-800">
-                              <span className='font-medium'>Skill Name:</span> {skill.skillName}
-                            </div>
-                            <div className="text-gray-800 ">
-                              <span className='font-medium'>Experience:</span> {skill.experience} Years
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-4">
-                            <button
-                              onClick={() => handleSkillEditClick(skill, index)}
-                              className="text-blue-500 hover:text-blue-700"
-                            >
-                              <Pencil size={20} />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteSkill(token, skill._id)}
-                              className="text-red-500 hover:text-red-700"
-                            >
-                              <Trash2 size={20} />
-                            </button>
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div></div>
-                    )}
-                    {editingSkill && (
-                      <SkillsForm
-                        editMode={true}
-                        initialSkill={editingSkill}
-                        onSave={handleCloseEditModal}
-                        skillId={editingSkill._id}
-                      />
-                    )}
-                  </div>
-                </div>
-
-
-
-                <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Projects'>
-                  <div className="head flex w-full justify-between px-4">
-                    <div className="flex justify-between px-2 w-fit gap-5 items-center">
-                      <h1 className='font-semibold text-2xl'>Projects</h1>
-                      <p className='text-green-400'>Add 8%</p>
-                    </div>
-                    <h1
-                      className='text-blue-700 font-semibold cursor-pointer'
-                      onClick={handleButtonClick}
-                    >
-                      Add projects
-                    </h1>
-                  </div>
-
-                  <p className='text-zinc-400 px-6'>
-                    Stand out to employers by adding details about projects that you have done so far
-                  </p>
-
-                  {isProjectVisible && (
-                    <ProjectForm
-                      onSave={handleProjectSaved}
-                      isEdit={!!editingProject}
-                      initialData={editingProject}
-                    />
-                  )}
-
-                  <div className="projects-list mt-6">
-                    {projectProfiles.length > 0 ? (
-                      projectProfiles.map((project, index) => (
-                        <div key={index} className="project-entry flex justify-between pl-6 pr-4 pt-2 pb-2 border flex-col ">
-                          <div className="w-full flex justify-between items-start">
-                            <div className='w-full'>
-                              <p><span className='font-medium'>Project Title:</span> {project.projectTitle}</p>
-                              <p><span className="font-medium">Link:</span> {project.projectLink}</p>
-                              <p><span className='font-medium'>Description:</span> {project.projectDescription}</p>
-                              <p><span className='font-medium'>Skills:</span> {project.projectSkills}</p>
-                            </div>
-                            <div className="flex items-center space-x-4">
-                              <button
-                                onClick={() => handleProjectEditClick(project)}
-                                className="text-blue-500 hover:text-blue-700"
-                              >
-                                <PencilIcon size={20} />
-                              </button>
-                              <button
-                                onClick={() => handleDeleteProject(token, project._id)}
-                                className="text-red-500 hover:text-red-700"
-                              >
-                                <Trash2Icon size={20} />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <p></p>
-                    )}
-                  </div>
-                </div>
-
-
-
-                <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Profile-summery'>
-                  <div className="head flex w-full justify-between px-4">
-                    <div className="flex justify-between px-2 w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Profile summery</h1> <p className='text-green-400'>Add 10%</p></div>
-                    
-                  </div>
-
-                  {!profileSummery ? (
-                    <p className='text-zinc-400 px-6'>Highlight your key career achievements to help employers know your potential</p>
-
-                  ) : (
-                    <div className=' p-6 mt-5 border'>
-
-                      <p>
-                        {profileSummery}
-                      </p>
-                    </div>
-
-
-                  )}
-
-
-
-
-                </div>
-
-                <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id="employment">
-                  <div className="head flex w-full justify-between px-4">
-                    <div className="flex justify-between px-2 w-fit gap-5 items-center">
-                      <h1 className="font-semibold text-2xl">Employment</h1>
-                      <p className="text-green-400 relative top-1">Add 15%</p>
-                    </div>
-                    <button
-                      className="text-blue-700 font-semibold hover:text-blue-800"
-                      onClick={handleAddEmployment}
-                    >
-                      Add employment
-                    </button>
-                  </div>
-                  {showEmploymentForm && (
-                    <EmploymentForm
-                      initialData={selectedEmployment}
-                      onClose={handleFormClose}
-                      onSubmitSuccess={handleFormSubmitSuccess}
-                    />
-                  )}
-                  {empProfile && empProfile.length > 0 ? (
-                    <div className="empProfile-display mt-6 px-4">
-                      <ul className="space-y-4">
-                        {empProfile.map((employment) => (
-                          <div key={employment._id} className="border p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                            <div className="flex justify-between">
-                              <div className="space-y-2 flex-1">
-                                <div className="flex items-center gap-2">
-                                  <h4 className="font-bold text-gray-900 text-lg">{employment.currentJobTitle}</h4>
-                                  {employment.isCurrentEmp && (
-                                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Current</span>
-                                  )}
-                                </div>
-                                <div className="grid grid-cols-2 gap-4 text-sm">
-                                  <div>
-                                    <p><span className="font-semibold">Type:</span> {employment.empType}</p>
-                                    <p><span className="font-semibold">Experience:</span> {employment.totalExp} years</p>
-                                    <p><span className="font-semibold">Salary:</span> {employment.currentSalary}</p>
-                                    <p><span className="font-semibold">Notice Period:</span> {employment.noticePeriod}</p>
-                                    <p><span className="font-semibold">Join Date:</span> {new Date(employment.joinDate).toLocaleDateString()}</p>
-                                    {!employment.isCurrentEmp && employment.leaveDate && (
-                                      <p><span className="font-semibold">Leave Date:</span> {new Date(employment.leaveDate).toLocaleDateString()}</p>
-                                    )}
-                                    <p><span className="font-semibold">Profile:</span> {employment.jobProfile}</p>
-                                  </div>
-                                </div>
-                                <div className="-mt-2">
-                                  <p><span className="font-semibold">Skills:</span> {employment.skill}</p>
-                                  <p><span className="font-semibold">Description:</span> {employment.jobDescription}</p>
-                                </div>
-                              </div>
-                              <div className="flex gap-2 ml-4">
-                                <button
-                                  onClick={() => handleEditEmployment(employment)}
-                                  className="text-blue-500 hover:text-blue-700 p-1"
-                                  aria-label="Edit employment"
-                                >
-                                  <PencilIcon size={20} />
-                                </button>
-                                <button
-                                  onClick={() => handleDeleteEmployment(token, employment._id)}
-                                  className="text-red-500 hover:text-red-700 p-1"
-                                  aria-label="Delete employment"
-                                >
-                                  <Trash2Icon size={20} />
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : (
-                    <p className="text-zinc-400 px-6 mt-4">
-                      Add your work history to showcase your professional experience and career progression
-                    </p>
-                  )}
-                </div>
-
-
-                <div className="p-6 shadow-lg">
-      <h2 className="text-xl font-medium">Accomplishments</h2>
-      <p className="text-gray-600 mb-4">
-        Showcase your credentials by adding relevant certifications, work samples, online profiles, etc.
-      </p>
-
-      <div className= 'space-y-6' >
-        {sections.map((section) => (
-          <div key={section.id} >
-            <div className="flex justify-between items-start">
-              <div >
-                <h3 className="font-medium text-gray-800">{section.title}</h3>
-                <p className="text-gray-600 text-sm mt-1">{section.description}</p>
+      <div className="space-y-4">
+        {educationProfiles.length > 0 ? (
+          educationProfiles.map((education, index) => (
+            <div key={index} className="flex justify-between px-2 w-full gap-5 items-start mt-5 border p-3 rounded-xl">
+              <div className="flex flex-col space-y-2">
+                <p className='font-medium'>Institution Name: {education.institutionName}</p>
+                <p className='font-medium'>Course Name: {education.courseName}</p>
+                <p className='font-medium'>Course Type: {education.courseType}</p>
+                <p className='font-medium'>Duration: {education.duration}</p>
+                <p className='font-medium'>Marks: {education.marks}</p>
+                <p className='font-medium'>Location: {education.location}</p>
+                <p className='font-medium'>Education Level: {education.education}</p>
               </div>
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={() => handleEditEducation(education)}
+                  className="text-blue-500 hover:text-blue-700"
+                >
+                  <Pencil size={20} />
+                </button>
+                <button
+                  onClick={() => handleDeleteEducation(token, education._id)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  <Trash2 size={20} />
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div></div>
+        )}
+        {isEducationProfileVisible && (
+          <EducationForm
+            onSave={handleEducationSaved}
+            initialData={editingEducation}
+            onClose={() => setIsEducationProfileVisible(false)}
+          />
+        )}
+      </div>
+    </div>
+  </div>
+
+  <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='IT-skills'>
+    <div className="head flex w-full justify-between px-4">
+      <div className="flex justify-between px-2 w-fit gap-5 items-center">
+        <h1 className='font-semibold text-2xl'>IT skills</h1> 
+        {skillsData.length === 0 && <p className='text-green-400'>Add 18%</p>}
+      </div>
+      <h1 className='text-blue-700 font-semibold cursor-pointer'
+        onClick={handleButtonClick2}>
+        {skillsData.length > 0 ? 'Add more IT skills' : 'Add IT skills'}
+      </h1>
+    </div>
+    <p className='text-zinc-400 px-6'>Show your technical expertise by mentioning softwares and skills you know</p>
+
+    {isSkillsVisible && (
+      <SkillsForm onSave={handleSkillsSaved} />
+    )}
+
+    <div className="space-y-4">
+      {skillsData.length > 0 ? (
+        skillsData.map((skill, index) => (
+          <div
+            key={index}
+            className="flex justify-between items-center border p-3 mt-3 rounded-lg bg-white shadow-sm"
+          >
+            <div>
+              <div className=" text-gray-800">
+                <span className='font-medium'>Skill Name:</span> {skill.skillName}
+              </div>
+              <div className="text-gray-800 ">
+                <span className='font-medium'>Experience:</span> {skill.experience} Years
+              </div>
+            </div>
+            <div className="flex items-center space-x-4">
               <button
-                className="text-blue-600 font-medium"
-                onClick={() => setOpenModal(section.id)}
+                onClick={() => handleSkillEditClick(skill, index)}
+                className="text-blue-500 hover:text-blue-700"
               >
-                Add
+                <Pencil size={20} />
+              </button>
+              <button
+                onClick={() => handleDeleteSkill(token, skill._id)}
+                className="text-red-500 hover:text-red-700"
+              >
+                <Trash2 size={20} />
               </button>
             </div>
-
-            {sectionData[section.id]?.length > 0 && (
-  <div>
-    {sectionData[section.id].map((item, index) => (
-      section.id === 'certification'
-        ? renderCertificate(item, index, section.id)
-        : renderOnlineProfile(item, index, section.id)
-    ))}
+          </div>
+        ))
+      ) : (
+        <div></div>
+      )}
+      {editingSkill && (
+        <SkillsForm
+          editMode={true}
+          initialSkill={editingSkill}
+          onSave={handleCloseEditModal}
+          skillId={editingSkill._id}
+        />
+      )}
+    </div>
   </div>
-)}
-            
-            {editModal.sectionId !== null && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white rounded-lg w-full max-w-xl p-6 relative">
-                  <button
-                    onClick={closeModal}
-                    className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-                  >
-                    X
-                  </button>
-                  <h2 className="text-xl font-semibold mb-4">
-                    {editModal.sectionId === 'certification' ? 'Edit Certificate' : 'Edit Field'}
-                  </h2>
 
-                  {editModal.sectionId === 'certification' ? (
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                          Certificate Name
-                        </label>
-                        <input
-                          type="text"
-                          className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-                          value={editModal.certificateData.certificateName}
-                          onChange={(e) => handleCertificateInputChange('certificateName', e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                          Description
-                        </label>
-                        <input
-                          type="text"
-                          className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-                          value={editModal.certificateData.certificateDescription}
-                          onChange={(e) => handleCertificateInputChange('certificateDescription', e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                          Certificate Link
-                        </label>
-                        <input
-                          type="text"
-                          className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-                          value={editModal.certificateData.certificateLink}
-                          onChange={(e) => handleCertificateInputChange('certificateLink', e.target.value)}
-                        />
-                      </div>
+  <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Projects'>
+    <div className="head flex w-full justify-between px-4">
+      <div className="flex justify-between px-2 w-fit gap-5 items-center">
+        <h1 className='font-semibold text-2xl'>Projects</h1>
+        {projectProfiles.length === 0 && <p className='text-green-400'>Add 8%</p>}
+      </div>
+      <h1
+        className='text-blue-700 font-semibold cursor-pointer'
+        onClick={handleButtonClick}
+      >
+        {projectProfiles.length > 0 ? 'Add more projects' : 'Add projects'}
+      </h1>
+    </div>
+
+    <p className='text-zinc-400 px-6'>
+      Stand out to employers by adding details about projects that you have done so far
+    </p>
+
+    {isProjectVisible && (
+      <ProjectForm
+        onSave={handleProjectSaved}
+        isEdit={!!editingProject}
+        initialData={editingProject}
+      />
+    )}
+
+    <div className="projects-list mt-6">
+      {projectProfiles.length > 0 ? (
+        projectProfiles.map((project, index) => (
+          <div key={index} className="project-entry flex justify-between pl-6 pr-4 pt-2 pb-2 border flex-col ">
+            <div className="w-full flex justify-between items-start">
+              <div className='w-full'>
+                <p><span className='font-medium'>Project Title:</span> {project.projectTitle}</p>
+                <p><span className="font-medium">Link:</span> {project.projectLink}</p>
+                <p><span className='font-medium'>Description:</span> {project.projectDescription}</p>
+                <p><span className='font-medium'>Skills:</span> {project.projectSkills}</p>
+              </div>
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={() => handleProjectEditClick(project)}
+                  className="text-blue-500 hover:text-blue-700"
+                >
+                  <PencilIcon size={20} />
+                </button>
+                <button
+                  onClick={() => handleDeleteProject(token, project._id)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  <Trash2Icon size={20} />
+                </button>
+              </div>
+            </div>
+          </div>
+        ))
+      ) : (
+        <p></p>
+      )}
+    </div>
+  </div>
+
+  <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Profile-summery'>
+    <div className="head flex w-full justify-between px-4">
+      <div className="flex justify-between px-2 w-fit gap-5 items-center">
+        <h1 className='font-semibold text-2xl'>Profile summery</h1> 
+        {!profileSummery && <p className='text-green-400'>Add 10%</p>}
+      </div>
+      <h1 className='text-blue-700 font-semibold cursor-pointer'
+        onClick={() => togglePopup('add profile summary')}>
+        {profileSummery ? 'Edit profile summary' : 'Add profile summary'}
+      </h1>
+    </div>
+
+    {!profileSummery ? (
+      <p className='text-zinc-400 px-6'>Highlight your key career achievements to help employers know your potential</p>
+    ) : (
+      <div className='p-6 mt-5 border'>
+        <p>
+          {profileSummery}
+        </p>
+      </div>
+    )}
+  </div>
+
+  <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id="employment">
+    <div className="head flex w-full justify-between px-4">
+      <div className="flex justify-between px-2 w-fit gap-5 items-center">
+        <h1 className="font-semibold text-2xl">Employment</h1>
+        {(!empProfile || empProfile.length === 0) && <p className="text-green-400 relative top-1">Add 15%</p>}
+      </div>
+      <button
+        className="text-blue-700 font-semibold hover:text-blue-800"
+        onClick={handleAddEmployment}
+      >
+        {empProfile && empProfile.length > 0 ? 'Add more employment' : 'Add employment'}
+      </button>
+    </div>
+    {showEmploymentForm && (
+      <EmploymentForm
+        initialData={selectedEmployment}
+        onClose={handleFormClose}
+        onSubmitSuccess={handleFormSubmitSuccess}
+      />
+    )}
+    {empProfile && empProfile.length > 0 ? (
+      <div className="empProfile-display mt-6 px-4">
+        <ul className="space-y-4">
+          {empProfile.map((employment) => (
+            <div key={employment._id} className="border p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex justify-between">
+                <div className="space-y-2 flex-1">
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-bold text-gray-900 text-lg">{employment.currentJobTitle}</h4>
+                    {employment.isCurrentEmp && (
+                      <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Current</span>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p><span className="font-semibold">Type:</span> {employment.empType}</p>
+                      <p><span className="font-semibold">Experience:</span> {employment.totalExp} years</p>
+                      <p><span className="font-semibold">Salary:</span> {employment.currentSalary}</p>
+                      <p><span className="font-semibold">Notice Period:</span> {employment.noticePeriod}</p>
+                      <p><span className="font-semibold">Join Date:</span> {new Date(employment.joinDate).toLocaleDateString()}</p>
+                      {!employment.isCurrentEmp && employment.leaveDate && (
+                        <p><span className="font-semibold">Leave Date:</span> {new Date(employment.leaveDate).toLocaleDateString()}</p>
+                      )}
+                      <p><span className="font-semibold">Profile:</span> {employment.jobProfile}</p>
                     </div>
-                  ) : (
+                  </div>
+                  <div className="-mt-2">
+                    <p><span className="font-semibold">Skills:</span> {employment.skill}</p>
+                    <p><span className="font-semibold">Description:</span> {employment.jobDescription}</p>
+                  </div>
+                </div>
+                <div className="flex gap-2 ml-4">
+                  <button
+                    onClick={() => handleEditEmployment(employment)}
+                    className="text-blue-500 hover:text-blue-700 p-1"
+                    aria-label="Edit employment"
+                  >
+                    <PencilIcon size={20} />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteEmployment(token, employment._id)}
+                    className="text-red-500 hover:text-red-700 p-1"
+                    aria-label="Delete employment"
+                  >
+                    <Trash2Icon size={20} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </ul>
+      </div>
+    ) : (
+      <p className="text-zinc-400 px-6 mt-4">
+        Add your work history to showcase your professional experience and career progression
+      </p>
+    )}
+  </div>
+
+  <div className="p-6 shadow-lg border rounded-lg">
+    <div className="flex justify-between">
+      <div className="flex gap-5 items-center">
+        <h2 className="text-xl font-medium">Accomplishments</h2>
+      
+      </div>
+    </div>
+    <p className="text-gray-600 mb-4">
+      Showcase your credentials by adding relevant certifications, work samples, online profiles, etc.
+    </p>
+
+    <div className='space-y-6' >
+      {sections.map((section) => (
+        <div key={section.id} >
+          <div className="flex justify-between items-start">
+            <div >
+              <h3 className="font-medium text-gray-800">{section.title}</h3>
+              <p className="text-gray-600 text-sm mt-1">{section.description}</p>
+            </div>
+            <button
+              className="text-blue-600 font-medium"
+              onClick={() => setOpenModal(section.id)}
+            >
+              {sectionData[section.id]?.length > 0 ? 'Add more' : 'Add'}
+            </button>
+          </div>
+
+          {sectionData[section.id]?.length > 0 && (
+            <div>
+              {sectionData[section.id].map((item, index) => (
+                section.id === 'certification'
+                  ? renderCertificate(item, index, section.id)
+                  : renderOnlineProfile(item, index, section.id)
+              ))}
+            </div>
+          )}
+
+          {editModal.sectionId !== null && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg w-full max-w-xl p-6 relative">
+                <button
+                  onClick={closeModal}
+                  className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                >
+                  X
+                </button>
+                <h2 className="text-xl font-semibold mb-4">
+                  {editModal.sectionId === 'certification' ? 'Edit Certificate' : 'Edit Field'}
+                </h2>
+
+                {editModal.sectionId === 'certification' ? (
+                  <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        {editModal.fieldKey}
+                        Certificate Name
                       </label>
                       <input
                         type="text"
                         className="mt-1 block w-full rounded-md border border-gray-300 p-2"
-                        value={editModal.fieldValue}
-                        onChange={(e) => setEditModal(prev => ({ ...prev, fieldValue: e.target.value }))}
+                        value={editModal.certificateData.certificateName}
+                        onChange={(e) => handleCertificateInputChange('certificateName', e.target.value)}
                       />
                     </div>
-                  )}
-
-                  <div className="flex justify-end gap-2 mt-6">
-                    <button
-                      onClick={closeModal}
-                      className="px-4 py-2 border rounded-md hover:bg-gray-50"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleUpdate}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                    >
-                      Update
-                    </button>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Description
+                      </label>
+                      <input
+                        type="text"
+                        className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                        value={editModal.certificateData.certificateDescription}
+                        onChange={(e) => handleCertificateInputChange('certificateDescription', e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Certificate Link
+                      </label>
+                      <input
+                        type="text"
+                        className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                        value={editModal.certificateData.certificateLink}
+                        onChange={(e) => handleCertificateInputChange('certificateLink', e.target.value)}
+                      />
+                    </div>
                   </div>
+                ) : (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      {editModal.fieldKey}
+                    </label>
+                    <input
+                      type="text"
+                      className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+                      value={editModal.fieldValue}
+                      onChange={(e) => setEditModal(prev => ({ ...prev, fieldValue: e.target.value }))}
+                    />
+                  </div>
+                )}
+
+                <div className="flex justify-end gap-2 mt-6">
+                  <button
+                    onClick={closeModal}
+                    className="px-4 py-2 border rounded-md hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleUpdate}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  >
+                    Update
+                  </button>
                 </div>
               </div>
-            )}
-            
-            <ModalComponent
-              isOpen={openModal === section.id}
-              onClose={() => setOpenModal(null)}
-              sectionType={section.id}
-              title={section.title}
-              onSave={handleSaveData}
-            />
-          </div>
-        ))}
+            </div>
+          )}
+
+          <ModalComponent
+            isOpen={openModal === section.id}
+            onClose={() => setOpenModal(null)}
+            sectionType={section.id}
+            title={section.title}
+            onSave={handleSaveData}
+          />
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Career-profile'>
+    <div className="head flex w-full justify-between px-4">
+      <div className="flex justify-between px-2 w-fit gap-5 items-center ">
+        <h1 className='font-semibold text-2xl'>Career Profile</h1>
+        {(!careerProfiles || careerProfiles.length === 0) && <p className='text-green-400'>Add 18%</p>}
       </div>
+      <h1
+        className='text-blue-700 font-semibold cursor-pointer'
+        onClick={handleAddProfile}
+      >
+        {careerProfiles && careerProfiles.length > 0 ? 'Edit Career Profile' : 'Add Career Profile'}
+      </h1>
     </div>
 
-
-                <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Career-profile'>
-                  <div className="head flex w-full justify-between px-4">
-                    <div className="flex justify-between px-2 w-fit gap-5 items-center ">
-                      <h1 className='font-semibold text-2xl'>Career Profile</h1>
-                      <p className='text-green-400'>Add 18%</p>
-                    </div>
-                    <h1
-                      className='text-blue-700 font-semibold cursor-pointer'
-                      onClick={handleAddProfile}
-
-                    >
-                      Add Career Profile
-                    </h1>
+    {careerProfiles && careerProfiles.length > 0 ? (
+      <div className="mt-4 px-6">
+        <div className="p-4 rounded-lg border">
+          {careerProfiles.map((career, index) => (
+            <div key={index} className="mb-4 pb-4 border-b last:border-b-0 relative">
+              <div className="absolute right-0 top-0 flex space-x-2">
+                <Pencil
+                  className="text-blue-500 cursor-pointer hover:text-blue-700"
+                  size={20}
+                  onClick={() => updateCareersProfile(career)}
+                />
+                <Trash2
+                  className="text-red-500 cursor-pointer hover:text-red-700"
+                  size={20}
+                  onClick={() => handleDeleteForCareerProfile(career._id)}
+                />
+              </div>
+              {Object.entries(career).map(([key, value]) =>
+                value && key !== '_id' ? (
+                  <div key={key} className="flex mt-2">
+                    <span className="font-medium mr-2 capitalize">
+                      {key.replace(/([A-Z])/g, ' $1').toLowerCase()}:
+                    </span>
+                    <span>{value}</span>
                   </div>
-
-                  {careerProfiles && careerProfiles.length > 0 ? (
-                    <div className="mt-4 px-6">
-                      <div className="p-4 rounded-lg border">
-                        {careerProfiles.map((career, index) => (
-                          <div key={index} className="mb-4 pb-4 border-b last:border-b-0 relative">
-                            <div className="absolute right-0 top-0 flex space-x-2">
-                              <Pencil
-                                className="text-blue-500 cursor-pointer hover:text-blue-700"
-                                size={20}
-                                onClick={() => updateCareersProfile(career)}
-                              />
-                              <Trash2
-                                className="text-red-500 cursor-pointer hover:text-red-700"
-                                size={20}
-                                onClick={() => handleDeleteForCareerProfile(career._id)}
-                              />
-                            </div>
-                            {Object.entries(career).map(([key, value]) =>
-                              value && key !== '_id' ? (
-                                <div key={key} className="flex mt-2">
-                                  <span className="font-medium mr-2 capitalize">
-                                    {key.replace(/([A-Z])/g, ' $1').toLowerCase()}:
-                                  </span>
-                                  <span>{value}</span>
-                                </div>
-                              ) : null
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ) : (
-                    <p className='text-zinc-400 px-6'>
-                      Add details about your current and preferred career profile.
-                      This helps us personalise your job recommendations.
-                    </p>
-                  )}
-
-                  <CareerProfileModal
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    onSubmit={handleSubmitForCareerProfile}
-                    initialData={currentProfile}
-                  />
-                </div>
-
-
-
-                {/* <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id='Personal-details'>
-                  <div className="head flex w-full justify-between px-4">
-                    <div className="flex justify-between px-2 w-fit gap-5 items-center "><h1 className='font-semibold text-2xl'>Personal details</h1> <p className='text-green-400'>Add 18%</p></div>
-                    <h1 className='text-blue-700 font-semibold cursor-pointer' onClick={() => setShowExtraProfile(true)} >Add personal details</h1>
-                  </div>
-                  <p className='text-zinc-400 px-6'>This information is important for employers to know you better</p>
-                </div> */}
-
-<div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id="Personal-details">
-      <div className="head flex w-full justify-between px-4">
-        <div className="flex justify-between px-2 w-fit gap-5 items-center">
-          <h1 className="font-semibold text-2xl">Personal details</h1>
-          <p className="text-green-400">Add 18%</p>
+                ) : null
+              )}
+            </div>
+          ))}
         </div>
-        <button
-          className="text-blue-700 font-semibold cursor-pointer hover:text-blue-800"
-          onClick={() => setShowModal(true)}
-        >
-          {personalDetail ? 'Edit personal details' : 'Add personal details'}
-        </button>
       </div>
-
-      <p className="text-zinc-400 px-6 mb-4">
-        This information is important for employers to know you better
+    ) : (
+      <p className='text-zinc-400 px-6'>
+        Add details about your current and preferred career profile.
+        This helps us personalise your job recommendations.
       </p>
+    )}
 
-      {personalDetail && (
-        <div className="px-6 space-y-3 relative">
-          {/* Only show delete button if there's at least one field with data */}
-          {(personalDetail.gender || personalDetail.dateOfBirth || personalDetail.martialStatus || 
-            personalDetail.address || personalDetail.permanentAddress || 
-            (personalDetail.language && personalDetail.language.length > 0)) && (
+    <CareerProfileModal
+      isOpen={isModalOpen}
+      onClose={() => setIsModalOpen(false)}
+      onSubmit={handleSubmitForCareerProfile}
+      initialData={currentProfile}
+    />
+  </div>
+
+  <div className="min-h-[100px] border rounded-lg flex p-4 flex-col shadow-lg" id="Personal-details">
+    <div className="head flex w-full justify-between px-4">
+      <div className="flex justify-between px-2 w-fit gap-5 items-center">
+        <h1 className="font-semibold text-2xl">Personal details</h1>
+        {!personalDetail && <p className="text-green-400">Add 18%</p>}
+      </div>
+      <button
+        className="text-blue-700 font-semibold cursor-pointer hover:text-blue-800"
+        onClick={() => setShowModal(true)}
+      >
+        {personalDetail ? 'Edit personal details' : 'Add personal details'}
+      </button>
+    </div>
+
+    <p className="text-zinc-400 px-6 mb-4">
+      This information is important for employers to know you better
+    </p>
+
+    {personalDetail && (
+      <div className="px-6 space-y-3 relative">
+        {/* Only show delete button if there's at least one field with data */}
+        {(personalDetail.gender || personalDetail.dateOfBirth || personalDetail.martialStatus ||
+          personalDetail.address || personalDetail.permanentAddress ||
+          (personalDetail.language && personalDetail.language.length > 0)) && (
             <button
               onClick={handleDelete}
               className="absolute top-0 right-0 p-2 text-red-500 transition-colors"
@@ -1523,87 +1531,84 @@ function UserProfile() {
               <Trash2 className="w-5 h-5" />
             </button>
           )}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {personalDetail.gender && (
-              <div className="flex items-center gap-2">
-                <User className="w-5 h-5 text-gray-500" />
-                <div>
-                  <p className="text-sm text-gray-500">Gender</p>
-                  <p className="font-medium">{personalDetail.gender}</p>
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {personalDetail.gender && (
+            <div className="flex items-center gap-2">
+              <User className="w-5 h-5 text-gray-500" />
+              <div>
+                <p className="text-sm text-gray-500">Gender</p>
+                <p className="font-medium">{personalDetail.gender}</p>
               </div>
-            )}
+            </div>
+          )}
 
-            {personalDetail.dateOfBirth && (
-              <div className="flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-gray-500" />
-                <div>
-                  <p className="text-sm text-gray-500">Date of Birth</p>
-                  <p className="font-medium">{personalDetail.dateOfBirth}</p>
-                </div>
+          {personalDetail.dateOfBirth && (
+            <div className="flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-gray-500" />
+              <div>
+                <p className="text-sm text-gray-500">Date of Birth</p>
+                <p className="font-medium">{personalDetail.dateOfBirth}</p>
               </div>
-            )}
+            </div>
+          )}
 
-            {personalDetail.martialStatus && (
-              <div className="flex items-center gap-2">
-                <User className="w-5 h-5 text-gray-500" />
-                <div>
-                  <p className="text-sm text-gray-500">Martial Status</p>
-                  <p className="font-medium">{personalDetail.martialStatus}</p>
-                </div>
+          {personalDetail.martialStatus && (
+            <div className="flex items-center gap-2">
+              <User className="w-5 h-5 text-gray-500" />
+              <div>
+                <p className="text-sm text-gray-500">Martial Status</p>
+                <p className="font-medium">{personalDetail.martialStatus}</p>
               </div>
-            )}
+            </div>
+          )}
 
-            {personalDetail.address && (
-              <div className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-gray-500" />
-                <div>
-                  <p className="text-sm text-gray-500">Current Address</p>
-                  <p className="font-medium">{personalDetail.address}</p>
-                </div>
+          {personalDetail.address && (
+            <div className="flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-gray-500" />
+              <div>
+                <p className="text-sm text-gray-500">Current Address</p>
+                <p className="font-medium">{personalDetail.address}</p>
               </div>
-            )}
+            </div>
+          )}
 
-            {personalDetail.permanentAddress && (
-              <div className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-gray-500" />
-                <div>
-                  <p className="text-sm text-gray-500">Permanent Address</p>
-                  <p className="font-medium">
-                    {personalDetail.permanentAddress}
-                    {personalDetail.pincode && ` - ${personalDetail.pincode}`}
-                  </p>
-                </div>
+          {personalDetail.permanentAddress && (
+            <div className="flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-gray-500" />
+              <div>
+                <p className="text-sm text-gray-500">Permanent Address</p>
+                <p className="font-medium">
+                  {personalDetail.permanentAddress}
+                  {personalDetail.pincode && ` - ${personalDetail.pincode}`}
+                </p>
               </div>
-            )}
+            </div>
+          )}
 
-            {personalDetail.language?.length > 0 && (
-              <div className="flex items-center gap-2">
-                <Globe className="w-5 h-5 text-gray-500" />
-                <div>
-                  <p className="text-sm text-gray-500">Languages</p>
-                  <p className="font-medium">{personalDetail.language.join(', ')}</p>
-                </div>
+          {personalDetail.language?.length > 0 && (
+            <div className="flex items-center gap-2">
+              <Globe className="w-5 h-5 text-gray-500" />
+              <div>
+                <p className="text-sm text-gray-500">Languages</p>
+                <p className="font-medium">{personalDetail.language.join(', ')}</p>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
+    )}
 
-      {showModal && (
-        <ExtraProfile
-          isEdit={!!personalDetail}
-          initialData={personalDetail}
-          onSave={(data) => {
-            handleModalClose();
-          }}
-        />
-      )}
-    </div>
-
-
-
-              </div>
+    {showModal && (
+      <ExtraProfile
+        isEdit={!!personalDetail}
+        initialData={personalDetail}
+        onSave={(data) => {
+          handleModalClose();
+        }}
+      />
+    )}
+  </div>
+</div>
 
             </div>
           </div>
@@ -1676,71 +1681,71 @@ function UserProfile() {
           </div>
         )}
 
-{changePassword && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-xl w-96 p-6 relative">
-            <button 
-              onClick={handleModalClose} 
-              className="absolute top-4 right-4 text-gray-600 hover:text-gray-900 text-2xl"
-            >
-              &times;
-            </button>
-
-            <h2 className="text-2xl font-bold mb-6 text-center">Change Password</h2>
-
-            <form onSubmit={handlePasswordChange}>
-              <div className="mb-4">
-                <label 
-                  htmlFor="oldPassword" 
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                >
-                  Current Password
-                </label>
-                <input 
-                  type="password" 
-                  id="oldPassword"
-                  value={oldPassword}
-                  onChange={(e) => setOldPassword(e.target.value)}
-                  placeholder="Enter current password"
-                  required
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div className="mb-4">
-                <label 
-                  htmlFor="newPassword" 
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                >
-                  New Password
-                </label>
-                <input 
-                  type="password" 
-                  id="newPassword"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="Enter new password"
-                  required
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              {error && (
-                <div className="mb-4 text-red-500 text-sm text-center">
-                  {error}
-                </div>
-              )}
-
-              <button 
-                type="submit" 
-                className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-colors"
+        {changePassword && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-white rounded-lg shadow-xl w-96 p-6 relative">
+              <button
+                onClick={handleModalClose}
+                className="absolute top-4 right-4 text-gray-600 hover:text-gray-900 text-2xl"
               >
-                Change Password
+                &times;
               </button>
-            </form>
+
+              <h2 className="text-2xl font-bold mb-6 text-center">Change Password</h2>
+
+              <form onSubmit={handlePasswordChange}>
+                <div className="mb-4">
+                  <label
+                    htmlFor="oldPassword"
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                  >
+                    Current Password
+                  </label>
+                  <input
+                    type="password"
+                    id="oldPassword"
+                    value={oldPassword}
+                    onChange={(e) => setOldPassword(e.target.value)}
+                    placeholder="Enter current password"
+                    required
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label
+                    htmlFor="newPassword"
+                    className="block text-gray-700 text-sm font-bold mb-2"
+                  >
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    id="newPassword"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Enter new password"
+                    required
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                {error && (
+                  <div className="mb-4 text-red-500 text-sm text-center">
+                    {error}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-colors"
+                >
+                  Change Password
+                </button>
+              </form>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
 
 
@@ -1748,7 +1753,7 @@ function UserProfile() {
 
 
 
-        {isDeleteModalOpen && (
+        {/* {isDeleteModalOpen && (
           <div className="modal fixed top-0 left-0 w-full h-full bg-gray-900 bg-opacity-50 flex justify-center items-center">
             <div className="modal-content bg-white p-6 rounded shadow-lg w-1/3 text-center">
               <h2 className="text-xl font-bold mb-4">Confirm Deletion</h2>
@@ -1767,7 +1772,7 @@ function UserProfile() {
               </div>
             </div>
           </div>
-        )}
+        )} */}
       </div >
     </>
   );

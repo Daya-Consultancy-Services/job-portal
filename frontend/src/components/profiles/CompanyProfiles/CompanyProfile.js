@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { fetchCompany, logout, updateCompanyDetail, uploadCompanyLogos } from '../../../operations/companyAPI';
 import CompanyJobs from './CompanyJobs';
+import HomeHeader from '../../../pages/home/Header';
 
 const CompanyProfile = () => {
    const token = useSelector((state)=>state.company?.token);
@@ -78,7 +79,7 @@ const CompanyProfile = () => {
 
   return (
     <>
-      <CompanyHeader />
+      <HomeHeader />
       <div className="min-h-[100vh] top-20 pt-10 pb-10 relative w-full flex items-center flex-col space-y-6 bg-slate-100">
         <div className="bg-white rounded-lg shadow-md w-[60%]">
           <div className="p-4 border-b flex justify-between items-center">

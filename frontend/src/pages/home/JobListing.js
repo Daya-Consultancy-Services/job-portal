@@ -4,12 +4,15 @@ import React, { useState, useEffect } from 'react';
 import { Building2, MapPin, Briefcase, BanknoteIcon, Send, CheckCircle } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { applyJob, fetchallappliedJob } from '../../operations/userAPI';
+import { useNavigate } from 'react-router-dom';
+
 
 const JobCard = ({ job, onRemove, userRole }) => {
   const defaultImage = "/api/placeholder/80/80";
   const token = useSelector((state) => state.user.token);
   const appliedJobs = useSelector((state) => state.user.appliedJobs);
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   
   const [isApplied, setIsApplied] = useState(
     appliedJobs.some(appliedJob => appliedJob._id === job._id)
@@ -39,6 +42,10 @@ const JobCard = ({ job, onRemove, userRole }) => {
   if (!isVisible) {
     return null;
   }
+
+  const handleViewDetails = () => {
+    navigate(`/job/${job._id}`);
+  };
 
   // Determine if we should show apply buttons based on user role
   const showApplyButtons = userRole !== 'Recruiter' && userRole !== 'Company';
@@ -91,11 +98,11 @@ const JobCard = ({ job, onRemove, userRole }) => {
             </div>
           )}
           
-          {description && (
+          {/* {description && (
             <div className="mt-4">
               <p className="text-gray-600 line-clamp-3">{description}</p>
             </div>
-          )}
+          )} */}
           
           <div className="mt-4 flex gap-3">
             {showApplyButtons ? (
@@ -119,7 +126,7 @@ const JobCard = ({ job, onRemove, userRole }) => {
                 )}
               </>
             ) : null}
-            <button className="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors">
+            <button onClick={handleViewDetails} className="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors">
               View Details
             </button>
           </div>

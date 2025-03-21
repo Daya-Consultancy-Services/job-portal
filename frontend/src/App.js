@@ -23,6 +23,9 @@ import ResetPassword from "./components/ResetPassword";
 import AdminCompanyProfile from "./pages/Admin/AdminCompanyProfile";
 import CompanyProfile from "./components/profiles/CompanyProfiles/CompanyProfile";
 import SearchResults from "./components/SearchResults";
+import JobDetails from "./components/JobDetails";
+import CompanyAnalyticsDashboard from "./components/profiles/CompanyProfiles/CompanyDashboard";
+import AdvancedSearch from "./components/AdvanceSearch";
 
 
 
@@ -42,10 +45,13 @@ function App() {
         <Route path="/components/auth/Admin/AdminRegister" element={<AdminRegister/>}/>
         <Route path="/components/auth/Admin/AdminLogin" element={<AdminLogin/>}/>
         <Route path="/components/profiles/RecruiterDashboard/Dashboard" element={<Dashboard/>}/>
+        <Route path="/components/AdvanceSearch" element={<AdvancedSearch/>}/>
         <Route path="/components/profiles/UserProfile" element={<Profile/>}/>
         <Route path="/components/profiles/AppliedJobs" element={<AppliedJobs/>}/>
         <Route path="/components/profiles/CompanyProfiles/CompanyProfile" element={<CompanyProfile/>}/>
+        <Route path="/components/profiles/CompanyProfiles/CompanyDashboard" element={<CompanyAnalyticsDashboard/>}/>
         <Route path="/home" element={<Home/>}/>
+        <Route path="/job/:jobId" element={<JobDetails/>}/>
         <Route path="/jobs" element={<FindaJob/>}/>
         <Route path="/search-results" element={<SearchResults />} />
         <Route path="/company" element={<Company/>}/>
