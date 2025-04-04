@@ -182,3 +182,34 @@ exports.getSkillProfile = async (req , res) =>{
         });
     }
 }
+
+// exports.getSkillProfile = async (req, res) => {
+//     try {
+//         const userId = req.user.id;
+
+//         // Fetch user's profile separately
+//         const user = await User.findById(userId);
+//         if (!user || !user.profile) {
+//             return res.status(404).json({
+//                 success: false,
+//                 message: "Profile not found",
+//             });
+//         }
+
+//         // Fetch skills directly
+//         const skillsProfile = await SkillsProfile.find({ user: userId });
+//         console.log("Fetched Skills:", skillsProfile); // 🔥 Debugging Log
+
+//         return res.status(200).json({
+//             success: true,
+//             data: skillsProfile,
+//         });
+//     } catch (error) {
+//         console.error("Error fetching skills:", error);
+//         return res.status(500).json({
+//             success: false,
+//             message: "Failed to fetch skills",
+//         });
+//     }
+// };
+

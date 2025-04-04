@@ -34,7 +34,7 @@ export function createSkillProfiles(
             toast.success("SkillProfile Created Successfully!!!!!!!!");
         } catch (error) {
             console.error("Error Creating SkillProfile:", error);
-            toast.error("Failed to create SkillProfile, Please try again.");
+            toast.error(error.response?.data?.message);
         } finally{
             toast.dismiss(toastId);
             dispatch(setLoading(false));
@@ -64,7 +64,7 @@ export function updateSkillProfiles(token,skillProfileId,formdata){
 
         } catch (error) {
             console.log("UPDATE Certificate API ERROR............", error)
-            toast.error("Could Not Update Certificate")
+            toast.error(error.response?.data?.message)
         } finally{
             toast.dismiss(toastId);
             dispatch(setLoading(false));
@@ -94,7 +94,7 @@ export function deleteSkillProfiles(token,skillProfileId){
 
         } catch (error) {
             console.error("Certificate_API error:", error);
-            toast.error("Could not delete Certificate.");
+            toast.error(error.response?.data?.message);
         } finally{
             toast.dismiss(toastId);
             dispatch(setLoading(false));
@@ -110,6 +110,8 @@ export function fetchSkillProfiles(token) {
                 Authorization: `Bearer ${token}`,
             });
 
+            console.log(response);
+
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
@@ -121,7 +123,7 @@ export function fetchSkillProfiles(token) {
             toast.success("Certificates fetched successfully");
         } catch (error) {
             console.error("Error fetching certificates:", error);
-            toast.error("Failed to fetch certificates");
+            toast.error(error.response?.data?.message);
         } finally {
             dispatch(setLoading(false));
         }

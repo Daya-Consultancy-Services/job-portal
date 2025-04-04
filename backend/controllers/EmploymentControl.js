@@ -17,7 +17,8 @@ exports.createEmploymentProfile = async (req , res) => {
             skill,
             jobProfile,
             noticePeriod,
-            jobDescription
+            jobDescription,
+            companyName
 
         } = req.body
         if(
@@ -31,7 +32,8 @@ exports.createEmploymentProfile = async (req , res) => {
             !skill ||
             !jobProfile ||
             !noticePeriod ||
-            !jobDescription
+            !jobDescription ||
+            !companyName
         )   
             {
                 return res.status(403).json({
@@ -64,7 +66,9 @@ exports.createEmploymentProfile = async (req , res) => {
             skill,
             jobProfile,
             noticePeriod,
-            jobDescription
+            jobDescription,
+            companyName
+
         })
 
         profile.employProfile.push(employProfiles.id);
@@ -99,7 +103,8 @@ exports.updateEmploymentProfile = async (req , res) => {
             skill,
             jobProfile,
             noticePeriod,
-            jobDescription
+            jobDescription,
+            companyName
 
         } = req.body
         if(
@@ -114,7 +119,8 @@ exports.updateEmploymentProfile = async (req , res) => {
             !skill ||
             !jobProfile ||
             !noticePeriod ||
-            !jobDescription 
+            !jobDescription ||
+            !companyName
         ){
             return res.status(403).json({
                 success:false,
@@ -152,7 +158,8 @@ exports.updateEmploymentProfile = async (req , res) => {
                 skill             : skill,
                 jobProfile        : jobProfile,
                 noticePeriod      : noticePeriod,
-                jobDescription    : jobDescription
+                jobDescription    : jobDescription,
+                companyName      : companyName
             },
             {new:true}
         )

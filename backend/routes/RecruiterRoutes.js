@@ -15,6 +15,8 @@ const {
     
 } = require("../controllers/RecruiterControl")
 
+const { advancedSearchCandidates } = require("../controllers/AdvanceSearchController")
+
 const { auth , isRecruiter} = require("../middleware/auth");
 
 
@@ -37,6 +39,8 @@ router.get("/getjobrecruiter",auth,isRecruiter,getJobRecruiter)
 
 router.post("/userDetailAccess",auth,isRecruiter,getUserDetailsForRecruiter)
 router.post("/downloaduser",auth,isRecruiter,downloadUserDetailsForRecruiter)
+
+router.post('/advanced-search', auth,isRecruiter, advancedSearchCandidates);
 // {
 //     "name":"Jacks",
 //     "email":"jack66@gmail.com",

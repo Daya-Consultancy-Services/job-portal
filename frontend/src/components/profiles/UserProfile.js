@@ -58,6 +58,7 @@ function UserProfile() {
   const certificates = useSelector(selectors.selectCertificates);
   const Onlineprofile = useSelector(selectors.selectOnlineProfiles);
   const skillProfiles = useSelector((state) => state.profile.skillprofiles);
+  console.log("skill profiles: " , skillProfiles)
   const careerProfiles = useSelector(selectors.selectCareerProfiles);
   const projectProfiles = useSelector(selectors.selectProjectProfiles);
   const empProfile = useSelector(selectors.selectEmployeeProfiles);
@@ -976,8 +977,6 @@ function UserProfile() {
                     </button> */}
 
                     <h1 className=' text-blue-500 cursor-pointer' onClick={handleChangePass}>Reset Password</h1>
-
-
                   </div>
                 </div>
               </div>
@@ -1268,6 +1267,7 @@ function UserProfile() {
                       <p><span className="font-semibold">Type:</span> {employment.empType}</p>
                       <p><span className="font-semibold">Experience:</span> {employment.totalExp} years</p>
                       <p><span className="font-semibold">Salary:</span> {employment.currentSalary}</p>
+                      <p><span className="font-semibold">Company:</span> {employment.companyName}</p>
                       <p><span className="font-semibold">Notice Period:</span> {employment.noticePeriod}</p>
                       <p><span className="font-semibold">Join Date:</span> {new Date(employment.joinDate).toLocaleDateString()}</p>
                       {!employment.isCurrentEmp && employment.leaveDate && (
@@ -1276,7 +1276,7 @@ function UserProfile() {
                       <p><span className="font-semibold">Profile:</span> {employment.jobProfile}</p>
                     </div>
                   </div>
-                  <div className="-mt-2">
+                  <div className="-mt-5">
                     <p><span className="font-semibold">Skills:</span> {employment.skill}</p>
                     <p><span className="font-semibold">Description:</span> {employment.jobDescription}</p>
                   </div>

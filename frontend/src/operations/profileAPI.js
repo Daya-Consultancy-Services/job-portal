@@ -86,7 +86,7 @@ export function updateProfile(token,formdata){
     } catch (error) {
 
         console.log("UPDATE_PROFILE_API API ERROR............", error)
-        toast.error("Could Not Update Profile")
+        toast.error(error.response?.data?.message)
     }
         toast.dismiss(toastId)
     }
@@ -115,7 +115,7 @@ export function uploadResume(token, formData) {
             toast.success("Resume uploaded successfully!");
         } catch (error) {
             console.log("UPLOAD_RESUME_API ERROR", error);
-            toast.error("Failed to upload resume.");
+            toast.error(error.response?.data?.message);
         }
         toast.dismiss(toastId);
     };
@@ -143,7 +143,7 @@ export function deleteResume(token) {
             toast.success("Resume deleted successfully!");
         } catch (error) {
             console.log("DELETE_RESUME_API ERROR", error);
-            toast.error("Failed to delete resume.");
+            toast.error(error.response?.data?.message);
         }
         toast.dismiss(toastId);
     };
@@ -184,7 +184,7 @@ export function downloadResume(token) {
             toast.success("Resume downloaded successfully!");
         } catch (error) {
             console.log("Download Resume API Error", error);
-            toast.error(error.message || "Failed to download resume.");
+            toast.error(error.response?.data?.message);
         }
         toast.dismiss(toastId);
     };
@@ -221,7 +221,7 @@ export function uploadProfileImage(token, imageFile) {
             
         } catch (error) {
             console.log("UPLOAD_PROFILE_IMAGE_API ERROR............", error);
-            toast.error("Could not upload profile image");
+            toast.error(error.response?.data?.message);
         } finally {
             toast.dismiss(toastId);
         }

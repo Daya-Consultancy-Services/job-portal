@@ -121,7 +121,7 @@ function HomeHeader() {
         if (userType === 'Recruiter') {
             return "/components/profiles/RecruiterDashboard/Dashboard";
         } else if(userType === 'Company') {
-            return "/components/profiles/CompanyProfiles/CompanyProfile";
+            return "/components/profiles/CompanyProfiles/CompanyDashboard";
         } else {
             return "/home";
         }

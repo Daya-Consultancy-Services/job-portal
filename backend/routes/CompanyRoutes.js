@@ -9,7 +9,7 @@ const {
     deleteCompany,
     changeCompanyPassword,
     getAllDetailCompany,
-    uploadCompanyLogo,
+    uploadCompanyLogo ,
     createRecruiter,
     updateRecruiterDetail,
     deleteRecruiter,
@@ -62,7 +62,7 @@ router.delete("/delete",auth,isCompany,deleteCompany);
 
 
 router.get("/companydetails",auth,isCompany,getAllDetailCompany);  // get all the detail for the company with the recruiter details
-router.post("/upload-logo", auth, isCompany,uploadCompanyLogo);
+router.post("/upload-logo", auth, isCompany,uploadCompanyLogo );
 router.get("/logout",logoutCompany);  // get all the detail for the company with the recruiter details
 router.get("/getalljobs",auth,isCompany,getAllJobsForCompany)
 router.post("/reset-password-token", resetPasswordToken)

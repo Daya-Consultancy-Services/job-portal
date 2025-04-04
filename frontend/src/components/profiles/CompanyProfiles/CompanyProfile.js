@@ -12,7 +12,7 @@ import HomeHeader from '../../../pages/home/Header';
 const CompanyProfile = () => {
    const token = useSelector((state)=>state.company?.token);
    const company = useSelector((state)=>state.company?.company)
-   console.log(company);
+   console.log("in company profile", company);
    const navigate = useNavigate();
    const dispatch = useDispatch();
    const [isEditing, setIsEditing] = useState(false);
@@ -57,6 +57,7 @@ const CompanyProfile = () => {
 
   const handleSave = () => {
     dispatch(updateCompanyDetail(token,editedCompany));
+    console.log("in handle save",editedCompany);
     setIsEditing(false);
   };
 
@@ -130,11 +131,15 @@ const CompanyProfile = () => {
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <div className="relative group">
-                  <img
-                    src={isEditing ? editedCompany.logo : require("../../../assets/default-profile.jpg")}
-                    alt="Company Logo"
-                    className="w-24 h-24 rounded-lg object-cover border"
-                  />
+                <img
+  src={
+    isEditing
+      ? editedCompany.logo
+      : (company?.logo || require("../../../assets/default-profile.jpg"))
+  }
+  alt="Company Logo"
+  className="w-24 h-24 rounded-lg object-cover border"
+/>
                   {isEditing && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
                       <label className="cursor-pointer">

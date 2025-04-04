@@ -1,5 +1,5 @@
 import { toast } from 'react-hot-toast'
-import { setApplicantData, setLoading, setToken } from '../slices/recruiterSlice'
+import { setApplicantData, setLoading, setSearchResults, setToken } from '../slices/recruiterSlice'
 import { setRecruiter,setRecruiterData } from '../slices/recruiterSlice'
 import { setAllJobs, setRecruiters } from '../slices/companySlice'
 import { apiConnector } from '../services/apiConnector'
@@ -49,7 +49,7 @@ export function createRecruiter(formdata,token,navigate) {
              //navigate("/components/auth/User/login"); // Navigate to login page
         } catch (error) {
              console.error("Signup Error for createRecuiter.....", error);
-             toast.error("Signup Failed, Try again.");
+             toast.error(error.response?.data?.message);
         } finally {
              dispatch(setLoading(false)); 
              toast.dismiss(toastId);
@@ -83,7 +83,7 @@ export function loginRecruiter(formData, navigate)
 
         } catch (error) {
             console.log("Login Api error...............", error)
-            toast.error("Login failed")
+            toast.error(error.response?.data?.message)
 
         }
         dispatch(setLoading(false))
@@ -116,7 +116,7 @@ export function updateRecruiter(token,recruiterId, formdata) {
             toast.success('recruiter updated successfully!');
         } catch (error) {
             console.error('Error updating recruiter:', error);
-            toast.error('Failed to update recruiter.');
+            toast.error(error.response?.data?.message);
         } finally {
             toast.dismiss(toastId);
         }
@@ -145,7 +145,7 @@ export function deleteRecruiter(token,recruiterId, navigate) {
 
         } catch (error) {
             console.error("Delete_recruiter_API error:", error);
-            toast.error("Could not delete recruiter.");
+            toast.error(error.response?.data?.message);
         } finally {
             toast.dismiss(toastId);
             dispatch(setLoading(false));
@@ -177,7 +177,7 @@ export function tokenRecruiters(token,recruiterId,jobToken,userDetailAccessCount
 
         } catch (error) {
             console.error("companyToken Assign_api error.....", error);
-            toast.error("companyTokenAssigned Failed, Try again.");
+            toast.error(error.response?.data?.message);
         } finally{
             dispatch(setLoading(false)); 
             toast.dismiss(toastId);
@@ -203,7 +203,7 @@ export function fetchRecruiter(token) {
 
         } catch (error) {
             console.log("RecruiterData ERROR:", error);
-            toast.error("Could not fetch recruiter data");
+            toast.error(error.response?.data?.message);
         } finally {
             toast.dismiss(toastId);
         }
@@ -351,7 +351,7 @@ export function userDetailAccess(token,userId) {
             dispatch(setApplicantData(response.data.user));
         } catch (error) {
              console.error("Error for userDetailsAccess.....", error);
-             toast.error("userDetailsAccess Failed, Try again.");
+             toast.error(error.response?.data?.message);
         } finally {
              dispatch(setLoading(false)); 
              toast.dismiss(toastId);
@@ -396,9 +396,114 @@ export function downloadUserDetailForRecruiter(token, userId) {
             dispatch(setRecruiter(token));
         } catch (error) {
             console.error("Error downloading user details:", error);
-            toast.error("Failed to download user details, Try again.");
+            toast.error(error.response?.data?.message);
         } finally {
             toast.dismiss(toastId);
+        }
+    };
+}
+
+
+
+// Add this to your frontend API call function
+export function advancedSearchCandidates(token, searchParams) {
+    return async (dispatch) => {
+        console.group("🔍 Advanced Search Diagnostics");
+        console.log("Search Parameters:", JSON.stringify(searchParams, null, 2));
+        
+        // Validate search parameters
+        const validationErrors = [];
+        
+        if (searchParams.keywords && !Array.isArray(searchParams.keywords)) {
+            validationErrors.push("Keywords must be an array");
+        }
+
+        // Check numeric fields
+        const numericFields = [
+            'experienceFrom', 
+            'experienceTo', 
+            'salaryFrom', 
+            'salaryTo', 
+            'ageFrom', 
+            'ageTo'
+        ];
+
+        numericFields.forEach(field => {
+            if (searchParams[field] !== '' && isNaN(parseFloat(searchParams[field]))) {
+                validationErrors.push(`${field} must be a number`);
+            }
+        });
+
+        if (validationErrors.length > 0) {
+            console.error("❌ Search Parameter Validation Errors:", validationErrors);
+            toast.error(validationErrors.response?.data?.message);
+            return;
+        }
+
+        // Sanitize empty string values
+        const sanitizedParams = Object.fromEntries(
+            Object.entries(searchParams).filter(([_, v]) => 
+                v !== '' && v !== null && v !== undefined
+            )
+        );
+
+        console.log("Sanitized Parameters:", JSON.stringify(sanitizedParams, null, 2));
+
+        try {
+            const response = await apiConnector(
+                "POST",
+                recruiterPoint.advanceSearchCandidate,
+                sanitizedParams,
+                {
+                    Authorization: `Bearer ${token}`,
+                },
+                null,
+                null,
+                {
+                    params: {
+                        page: sanitizedParams.page || 1,
+                        limit: sanitizedParams.limit || 10
+                    }
+                }
+            );
+            
+            console.log("API Response Status:", response.status);
+            console.log("Response Data:", JSON.stringify(response.data, null, 2));
+
+            if (!response.data.success) {
+                console.error("❌ Search Failed:", response.data.message);
+                throw new Error(response.data.message);
+            }
+
+            // Log detailed candidate information if available
+            if (response.data.data && response.data.data.length > 0) {
+                console.log("🟢 Candidates Found:", response.data.data.length);
+                response.data.data.forEach((candidate, index) => {
+                    console.log(`Candidate ${index + 1}:`, {
+                        id: candidate.candidateId,
+                        name: candidate.fullName,
+                        skills: candidate.skills,
+                        experience: candidate.experience
+                    });
+                });
+            } else {
+                console.warn("⚠️ No candidates found matching the search criteria");
+            }
+
+            dispatch(setSearchResults({
+                candidates: response.data.data,
+                total: response.data.total,
+                page: response.data.page,
+                limit: response.data.limit
+            }));
+
+            console.groupEnd();
+            return response.data;
+
+        } catch (error) {
+            console.error("❌ Advanced Search Error:", error);
+            console.groupEnd();
+            throw error;
         }
     };
 }
@@ -414,3 +519,4 @@ export function logout(navigate) {
         
     }
 }
+

@@ -314,7 +314,7 @@ exports.getAllDetailCompany = async (req,res) => {
         //         })
         //         .exec();
         const companyDetail =  await Company.findById(id).populate("recruiter")
-                .select("name email role website location logo companyfield recruiter")
+                .select("name email role website location logo companyfield recruiter description")
                 .populate({
                     path:"recruiter",
                     select:"name email contactNumber image role description job"

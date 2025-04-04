@@ -22,11 +22,11 @@ const companySlice = createSlice({
         },
         setToken(state, value){
             state.token = value.payload
-            console.log("token in slice", value)
+            
         },
         setCompany(state,value){
             state.company =  value.payload
-            console.log("token in slice", value)
+           
         },
         setRecruiter(state,actions){
             state.recruiter = actions.payload
@@ -38,10 +38,13 @@ const companySlice = createSlice({
             state.allJobs = action.payload
             
 
+        },
+        setCompanyLogo(state,action){
+            state.companyLogo = action.payload
         }
      
     }
 });
 
-export const { setSignupData, setLoading, setToken, setCompany,setRecruiter,setRecruiters,setallJobs } = companySlice.actions;
+export const { setSignupData, setLoading, setToken, setCompany,setRecruiter,setRecruiters,setallJobs, setCompanyLogo } = companySlice.actions;
 export default companySlice.reducer;

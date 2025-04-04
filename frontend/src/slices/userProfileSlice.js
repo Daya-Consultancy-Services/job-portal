@@ -38,6 +38,7 @@ const profileSlice = createSlice({
         },
         setskillprofiles(state,action){
             state.skillprofiles = action.payload
+            console.log("in slice skill", action)
         },
         setCareers(state,action){
             state.careers = action.payload

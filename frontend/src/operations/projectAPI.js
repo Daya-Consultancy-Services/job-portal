@@ -41,7 +41,7 @@ export function createProjects(
             dispatch(fetchProject(token));
         } catch (error) {
             console.error("Error Creating ProjectProfile:", error);
-            toast.error("Failed to create ProjectProfile, Please try again.")
+            toast.error(error.response?.data?.message)
         } finally{
             toast.dismiss(toastId);
             dispatch(setLoading(false));
@@ -68,7 +68,7 @@ export function updateProjects(token,projectId,formdata){
             toast.success("ProjectProfile is updated Successfully")
         } catch (error) {
             console.log("UPDATE ProjectProfile API ERROR............", error)
-            toast.error("Could Not Update ProjectProfile")
+            toast.error(error.response?.data?.message)
         } finally{
             toast.dismiss(toastId);
             dispatch(setLoading(false));
@@ -93,7 +93,7 @@ export function deleteProjects(token,projectId){
             toast.success("Project deleted Successfully!");
         } catch (error) {
             console.error("ProjectProfile_delete_API error:", error);
-            toast.error("Could not delete Project.");
+            toast.error(error.response?.data?.message);
         } finally{
             toast.dismiss(toastId);
             dispatch(setLoading(false));
@@ -116,7 +116,7 @@ export function fetchProject(token) {
             toast.success("Project fetched successfully");
         } catch (error) {
             console.error("Error fetching Project :", error);
-            toast.error("Failed to fetch Project");
+            toast.error(error.response?.data?.message);
         } finally {
             dispatch(setLoading(false));
         }

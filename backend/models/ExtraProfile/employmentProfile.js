@@ -4,6 +4,9 @@ const empProfileSchema = new mongoose.Schema({
     isCurrentEmp:{
         type:Boolean
     },
+    companyName:{
+        type:String
+    },
     empType:{
         type:String,
         // enum:["Internship","Fulltime","Contract","Freelance"]  

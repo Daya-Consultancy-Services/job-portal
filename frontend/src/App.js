@@ -22,10 +22,11 @@ import ResetPassword from "./components/ResetPassword";
 // import CompanyProfile from "./pages/Admin/AdminCompanyProfile";
 import AdminCompanyProfile from "./pages/Admin/AdminCompanyProfile";
 import CompanyProfile from "./components/profiles/CompanyProfiles/CompanyProfile";
-import SearchResults from "./components/SearchResults";
 import JobDetails from "./components/JobDetails";
 import CompanyAnalyticsDashboard from "./components/profiles/CompanyProfiles/CompanyDashboard";
 import AdvancedSearch from "./components/AdvanceSearch";
+import RecruiterSearchResult from "./components/RecruiterSearchResult";
+import SearchResults from "./components/profiles/SearchResults";
 
 
 
@@ -46,6 +47,7 @@ function App() {
         <Route path="/components/auth/Admin/AdminLogin" element={<AdminLogin/>}/>
         <Route path="/components/profiles/RecruiterDashboard/Dashboard" element={<Dashboard/>}/>
         <Route path="/components/AdvanceSearch" element={<AdvancedSearch/>}/>
+          <Route path="/components/profiles/SearchResults" element={<RecruiterSearchResult/>}/>
         <Route path="/components/profiles/UserProfile" element={<Profile/>}/>
         <Route path="/components/profiles/AppliedJobs" element={<AppliedJobs/>}/>
         <Route path="/components/profiles/CompanyProfiles/CompanyProfile" element={<CompanyProfile/>}/>

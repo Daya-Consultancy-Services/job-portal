@@ -22,7 +22,8 @@ const defaultFormData = {
   skill: '',
   jobProfile: '',
   noticePeriod: '',
-  jobDescription: ''
+  jobDescription: '',
+  companyName: '',
 };
 
 const EmploymentForm = ({ initialData = null, onClose }) => {
@@ -165,6 +166,20 @@ const EmploymentForm = ({ initialData = null, onClose }) => {
                 value={formData.currentJobTitle}
                 onChange={handleChange}
                 placeholder="Enter job title"
+                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="companyName" className="block text-sm font-medium">
+                companyName
+              </label>
+              <input
+                type="text"
+                id="companyName"
+                name="companyName"
+                value={formData.companyName}
+                onChange={handleChange}
+                placeholder="Enter company name"
                 className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
             </div>

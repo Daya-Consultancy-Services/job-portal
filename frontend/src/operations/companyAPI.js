@@ -1,5 +1,5 @@
 import { toast } from 'react-hot-toast'
-import { setallJobs, setLoading, setToken, setCompany } from '../slices/companySlice'
+import { setallJobs, setLoading, setToken, setCompany, setCompanyLogo } from '../slices/companySlice'
 import { apiConnector } from '../services/apiConnector'
 import { companyPoint } from './apis'
 
@@ -96,7 +96,8 @@ export function loginCompany(email, password, navigate) {
 
 export function updateCompanyDetail(token, updatedData) {
     return async (dispatch) => {
-        console.log(updatedData)
+       
+      
         const toastId = toast.loading('Updating profile...');
         dispatch(setLoading(true))
         try {
@@ -110,6 +111,7 @@ export function updateCompanyDetail(token, updatedData) {
             }
 
             const updatedUser = { ...response.data.comp };
+            
             dispatch(setCompany(updatedUser));
             dispatch(fetchCompany(token));
 
@@ -278,7 +280,7 @@ export function fetchCompany(token) {
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
-            
+            console.log("in company api",response.data.data)
             dispatch(setCompany(response.data.data));
             toast.success("Company fetched successfully");
 

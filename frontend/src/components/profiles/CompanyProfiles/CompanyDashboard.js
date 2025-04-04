@@ -4,6 +4,7 @@ import {
   PieChart, Pie, Cell, LineChart, Line, AreaChart, Area
 } from 'recharts';
 import CompanyHeader from './CompanyHeader';
+import HomeHeader from '../../../pages/home/Header';
 
 const CompanyAnalyticsDashboard = () => {
   // Mock data - this would come from your API in a real application
@@ -90,7 +91,7 @@ const CompanyAnalyticsDashboard = () => {
 
   return (
     <>
-    <CompanyHeader/>
+    <HomeHeader/>
     <div className="flex flex-col w-full max-w-6xl mx-auto p-4 space-y-6 relative top-24">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Company Recruitment Analytics</h1>
