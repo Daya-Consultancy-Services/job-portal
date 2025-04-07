@@ -108,7 +108,6 @@ export function uploadResume(token, formData) {
                 throw new Error(response.data.message);
             }
 
-            // Optionally, you can update the state with the uploaded resume data
             // dispatch(setResume(response.data.data));
             dispatch(fetchExtraProfile(token));
 

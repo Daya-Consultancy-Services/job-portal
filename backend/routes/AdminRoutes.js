@@ -12,7 +12,8 @@ const {
     uploadAdminImage,
     getAlldetailAdmin,
     assignTokensToCompany,
-    getAllCompaniesForAdmin
+    getAllCompaniesForAdmin,
+    checkAdminExists
 
 } = require("../controllers/AdminControler")
 const {
@@ -26,6 +27,7 @@ const {auth,isAdmin} = require("../middleware/auth");
 router.post("/signup",createAdmin);
 router.post("/login",loginAdmin);
 router.post("/upload-AdminImage",auth,isAdmin, uploadAdminImage);
+router.get("/check-exists", checkAdminExists);
 router.put("/update",isAdmin,updateAdmin)
 router.post("/changepassword",auth,isAdmin,changeAdminPassword)
 router.post("/reset-password-token", resetPasswordToken)

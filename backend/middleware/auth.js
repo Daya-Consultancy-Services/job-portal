@@ -7,14 +7,13 @@ const Recruiter = require("../models/recruiter")
 
 exports.auth = async(req,res,next) => {
     try {
-        //extraction of token 
-        const token = req.cookies.token  // inside cookie
-                    || req.body.token    // inside body
+        const token = req.cookies.token  
+                    || req.body.token  
                     || req.header("Authorization").replace("Bearer ", "");
              
      
         
-        if(!token){   // if there is no token
+        if(!token){   
             return res.status(401).json({
                 success:false,
                 message:"Token Not Found",
@@ -22,7 +21,7 @@ exports.auth = async(req,res,next) => {
         }
 
         try{
-            const decode = jwt.verify(token, process.env.JWT_SECRET);    // token verification
+            const decode = jwt.verify(token, process.env.JWT_SECRET);    
             
             let roleData;
 
@@ -58,7 +57,6 @@ exports.auth = async(req,res,next) => {
 
         }
         catch(err) {
-            //verification - issue
             return res.status(401).json({
                 success:false,
                 message:'token is invalid',
@@ -74,7 +72,6 @@ exports.auth = async(req,res,next) => {
     }
 }
 
-// Middleware to Check if User is Blocked
 exports.checkBlocked = async (req, res, next) => {
     if (req.roleData.isBlocked) {
         return res.status(403).json({
@@ -85,16 +82,15 @@ exports.checkBlocked = async (req, res, next) => {
     next();
 };
 
-//isjobseeker
 exports.isJobseeker = async (req, res, next) => {
     try{
-           if(req.user.role !== "jobseeker") {               // to check if the user is jobseeker Role or not in User Schema
+           if(req.user.role !== "jobseeker") {              
                return res.status(401).json({
                    success:false,
                    message:'This is a protected route for jobseeker only',
                });
            }
-           next(); // go to next one to check
+           next(); 
     }
     catch(error) {
         console.log(error)
@@ -108,13 +104,13 @@ exports.isJobseeker = async (req, res, next) => {
 
 exports.isCompany = async (req, res, next) => {
     try{
-           if(req.user.role !== "company") {                   // to check if the user is company Role or not in User Schema
+           if(req.user.role !== "company") {                   
                return res.status(401).json({
                    success:false,
                    message:'This is a protected route for company only',
                });
            }
-           next();  // go to next one to check
+           next();  
     }
     catch(error) {
        return res.status(500).json({
@@ -124,16 +120,15 @@ exports.isCompany = async (req, res, next) => {
     }
 }
 
-//isRecruiter
 exports.isRecruiter = async (req, res, next) => {
     try{
-           if(req.user.role !== "recruiter") {                   // to check if the user is recruiter Role or not in User Schema
+           if(req.user.role !== "recruiter") {                   
                return res.status(401).json({
                    success:false,
                    message:'This is a protected route for recruiter only',
                });
            }
-           next();  // go to next one to check
+           next(); 
     }
     catch(error) {
        return res.status(500).json({
@@ -146,13 +141,13 @@ exports.isRecruiter = async (req, res, next) => {
 //isAdmin
 exports.isAdmin = async (req, res, next) => {
     try{    
-           if(req.user.role !== "admin") {                      // to check if the Admin is jobseeker Role or not in User Schema
+           if(req.user.role !== "admin") {                      
                return res.status(401).json({
                    success:false,
                    message:'This is a protected route for Admin only',
                });
            }
-           next();  // go to next one to check
+           next();  
     }
     catch(error) {
        return res.status(500).json({

@@ -126,7 +126,7 @@ export function fetchEmploymentProfile(token) {
 
             dispatch(setEmpProfile(response.data.data));
 
-            toast.success("EmploymentProfile fetched successfully");
+            // toast.success("EmploymentProfile fetched successfully");
         } catch (error) {
             console.error("Error fetching EmploymentProfile:", error);
             toast.error("Failed to fetch EmploymentProfile");

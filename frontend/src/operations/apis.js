@@ -13,6 +13,7 @@ export const userPoint = {
     changePassword : BASE_URL + "/user/changepassword",
     searchJobsEndpoint : BASE_URL +"/user/search",
     jobDetails: BASE_URL + "/user/job",
+    getalluserjobs: BASE_URL +"/user/getalljobs"
 } 
 
 export const profilePoint = {
@@ -117,5 +118,6 @@ export const adminPoint = {
     uploadAdminImage : BASE_URL + "/admin/upload-AdminImage",
     getAdmin_api  : BASE_URL + "/admin/getadmin",
     tokenCompany_api :BASE_URL + "/admin/tokenCompany",
-    getallCompany_api :BASE_URL + "/admin/getallCompany"
+    getallCompany_api :BASE_URL + "/admin/getallCompany",
+    checkAdminExists_api: BASE_URL + "/admin/check-exists"
 }

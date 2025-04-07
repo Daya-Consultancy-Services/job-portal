@@ -1,6 +1,6 @@
 import { toast } from 'react-hot-toast'
 
-import { setLoading, setSearchResults, setToken } from '../slices/userSlice'
+import { setalluserjob, setLoading, setSearchResults, setToken } from '../slices/userSlice'
 import { setUser,setalljob ,setappliedjobs } from '../slices/userSlice'
 import { apiConnector } from '../services/apiConnector'
 import { userPoint } from './apis'
@@ -21,7 +21,8 @@ const {
     getalljob,
     applyjob,
     appliedJob,
-    searchJobsEndpoint
+    searchJobsEndpoint,
+    getalluserjobs
 
 } = userPoint
 
@@ -84,7 +85,7 @@ export function login(
             if (!response.data.success) {
                 throw new Error(response.data.message);
             }
-            toast.success("Login Successful")
+            // toast.success("Login Successful")
             navigate("/home")
 
         } catch (error) {
@@ -231,7 +232,7 @@ export async function changePasswords(token, oldPassword, newPassword ) {
       if (!response.data.success) {
         throw new Error(response.data.message)
       }
-      toast.success("Password Changed Successfully")
+    //   toast.success("Password Changed Successfully")
     } catch (error) {
       console.log("CHANGE_PASSWORD_API API ERROR............", error)
       toast.error(error.response.data.message)
@@ -281,7 +282,7 @@ export function fetchallJob(token) {
             }
             
             dispatch(setalljob(response.data.data));
-            toast.success("User job fetched successfully");
+            // toast.success("User job fetched successfully");
 
         } catch (error) {
             console.log("FETCH_user_alljob_API ERROR............", error);
@@ -291,6 +292,33 @@ export function fetchallJob(token) {
         }
     };
 }
+export function getallJob() {
+    return async (dispatch) => {
+        const toastId = toast.loading("Fetching all job data...");
+        try {
+            const response = await apiConnector(
+                "GET",
+                getalluserjobs,
+                null,
+              
+            );
+            
+            if (!response.data.success) {
+                throw new Error(response.data.message);
+            }
+            
+            dispatch(setalluserjob(response.data.data));
+            // toast.success("User job fetched successfully");
+
+        } catch (error) {
+            console.log("FETCH_user_alljob_API ERROR............", error);
+            toast.error("Could not fetch useralljob");
+        } finally {
+            toast.dismiss(toastId);
+        }
+    };
+}
+
 
 export function performSearchJobs(token, searchTerm) {
     return async (dispatch) => {
@@ -315,7 +343,7 @@ export function performSearchJobs(token, searchTerm) {
             }
             
             dispatch(setSearchResults(response.data.data));
-            toast.success("Search completed");
+            // toast.success("Search completed");
         } catch (error) {
             console.log("SEARCH_JOBS_API ERROR............", error);
             toast.error("Search failed. Please try again.");

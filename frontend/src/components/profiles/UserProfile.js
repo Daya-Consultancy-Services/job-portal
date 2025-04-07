@@ -58,7 +58,6 @@ function UserProfile() {
   const certificates = useSelector(selectors.selectCertificates);
   const Onlineprofile = useSelector(selectors.selectOnlineProfiles);
   const skillProfiles = useSelector((state) => state.profile.skillprofiles);
-  console.log("skill profiles: " , skillProfiles)
   const careerProfiles = useSelector(selectors.selectCareerProfiles);
   const projectProfiles = useSelector(selectors.selectProjectProfiles);
   const empProfile = useSelector(selectors.selectEmployeeProfiles);

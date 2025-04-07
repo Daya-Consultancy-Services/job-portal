@@ -55,7 +55,7 @@ function Footer() {
 
   return (
 
-    <div className="h-[30vh] p-3 flex justify-between bg-white ">
+    <div className="h-[30vh] p-3 flex justify-between bg-white relative z-50">
       {/* Left Section */}
       <div className="onecareer w-[20%] h-[70%] flex flex-col p-5">
         <div className="icon flex items-center">

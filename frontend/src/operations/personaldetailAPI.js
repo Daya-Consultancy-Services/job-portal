@@ -145,7 +145,7 @@ export function fetchPersonalDetails(token) {
             
             // Update the user state with fetched personal details
             dispatch(setPersonalDetails(response.data.data))
-            toast.success("Personal details fetched successfully!")
+            // toast.success("Personal details fetched successfully!")
             
             
         } catch (error) {

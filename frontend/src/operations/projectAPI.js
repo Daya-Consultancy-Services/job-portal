@@ -113,7 +113,7 @@ export function fetchProject(token) {
                 throw new Error(response.data.message);
             }
             dispatch(setProject(response.data.data))
-            toast.success("Project fetched successfully");
+            // toast.success("Project fetched successfully");
         } catch (error) {
             console.error("Error fetching Project :", error);
             toast.error(error.response?.data?.message);

@@ -199,7 +199,7 @@ export function fetchRecruiter(token) {
             }
             
             dispatch(setRecruiters(response.data.data));
-            toast.success("recruiterData fetched successfully");
+            // toast.success("recruiterData fetched successfully");
 
         } catch (error) {
             console.log("RecruiterData ERROR:", error);

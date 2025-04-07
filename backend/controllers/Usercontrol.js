@@ -302,6 +302,78 @@ exports.getJobs = async (req, res) => {
         });
     }
 };
+exports.getAllJobs = async (req, res) => {
+    try {
+        const jobs = await Job.find()
+            .select("jobTitle description skillRequired jobType salaryRange jobLocation") // Select only these fields
+            .populate("companyId","name location email website description logo companyfield") // Populate only the name of the company if needed
+            .exec();
+
+        return res.status(200).json({
+            success: true,
+            message: "Jobs fetched successfully",
+            data: jobs
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Error while fetching jobs"
+        });
+    }
+};
+
+// exports.searchJobs = async (req, res) => {
+//     try {
+//         const { query } = req.query;
+//         console.log("in backend search query");
+        
+//         if (!query) {
+//             return res.status(400).json({
+//                 success: false,
+//                 message: "Search query is required"
+//             });
+//         }
+//         const searchPattern = new RegExp(query, 'i');
+//         const companies = await Company.find({
+//             $or: [
+//                 { name: searchPattern },
+//                 { companyfield: searchPattern }
+//             ]
+//         }).select("_id name location logo companyfield description");
+        
+//         const companyIds = companies.map(company => company._id);
+        
+//         const jobs = await Job.find({
+//             $or: [
+//                 { jobTitle: searchPattern },
+//                 { description: searchPattern },
+//                 { skillRequired: { $in: [searchPattern] } },
+//                 { companyId: { $in: companyIds } }
+//             ]
+//         })
+//         .select("jobTitle description skillRequired jobType salaryRange jobLocation companyId")
+//         .populate("companyId", "name location email website description logo companyfield")
+//         .exec();
+        
+//         return res.status(200).json({
+//             success: true,
+//             message: "Search results fetched successfully",
+//             data: {
+//                 companies: companies,
+//                 jobs: jobs
+//             }
+//         });
+//     } catch (error) {
+//         console.error(error);
+//         return res.status(500).json({
+//             success: false,
+//             message: "Error while searching",
+//             error: error.message
+//         });
+//     }
+// };
 
 exports.searchJobs = async (req, res) => {
     try {
@@ -314,46 +386,41 @@ exports.searchJobs = async (req, res) => {
                 message: "Search query is required"
             });
         }
+
         const searchPattern = new RegExp(query, 'i');
+        
+        // First find companies matching the search query
         const companies = await Company.find({
-            $or: [
-                { name: searchPattern },
-                { companyfield: searchPattern }
-            ]
-        }).select("_id name location logo companyfield description");
+            name: searchPattern
+        }).select("_id");
         
         const companyIds = companies.map(company => company._id);
         
+        // Then find jobs either by skill or by company ID
         const jobs = await Job.find({
             $or: [
-                { jobTitle: searchPattern },
-                { description: searchPattern },
-                { skillRequired: { $in: [searchPattern] } },
+                { skillRequired: { $regex: searchPattern } },
                 { companyId: { $in: companyIds } }
             ]
         })
-        .select("jobTitle description skillRequired jobType salaryRange jobLocation companyId")
-        .populate("companyId", "name location email website description logo companyfield")
+        .select("jobTitle description skillRequired jobType salaryRange jobLocation")
+        .populate("companyId", "name location logo")
         .exec();
         
         return res.status(200).json({
             success: true,
-            message: "Search results fetched successfully",
-            data: {
-                companies: companies,
-                jobs: jobs
-            }
+            message: "Job results fetched successfully",
+            data: jobs
         });
     } catch (error) {
         console.error(error);
         return res.status(500).json({
             success: false,
-            message: "Error while searching",
+            message: "Error while searching for jobs",
             error: error.message
         });
     }
 };
-
 exports.getJobDetails = async (req, res) => {
     try {
         const { jobId } = req.params;

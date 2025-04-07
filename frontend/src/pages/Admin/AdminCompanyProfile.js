@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { adminfetchAllCompany } from '../../operations/adminapi';
 import { Info, MapPin, Briefcase, BarChart2, User, Building, ArrowLeft } from 'lucide-react';
@@ -11,6 +11,7 @@ function AdminCompanyProfile() {
   const [selectedCompany, setSelectedCompany] = useState(null);
   
   const dispatch = useDispatch();
+  const navigate= useNavigate();
   const token = useSelector((state) => state.admin.token);
   const companies = useSelector((state) => state.admin.allCompany);
   useEffect(() => {
@@ -77,7 +78,7 @@ function AdminCompanyProfile() {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <h1 className="text-xl font-bold text-gray-800"><img
+            <h1 onClick={()=> navigate(-1)} className=" cursor-pointer text-xl font-bold text-gray-800"><img
                 src={require('../../assets/logo.png')}
                 className="h-[85px] w-[85px] relative top-[3px]"
                 alt="Logo"

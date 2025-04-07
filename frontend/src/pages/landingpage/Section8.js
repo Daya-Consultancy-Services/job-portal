@@ -170,9 +170,9 @@ const iconSvgCopyStyle = {
   
           {newsCard.map((newsCard,index)=>{
             return(
-              <div key={index} className="reg-news-1 h-[300px] bg-gray-100 rounded-[30px] overflow-hidden flex gap-3 ">
+              <div key={index} className="reg-news-1 h-[200px] bg-gray-100 rounded-[30px] overflow-hidden flex gap-3 ">
 
-              <div className="sub-news-img h-full w-[1200px] bg-blue-500 rounded-[30px] overflow-hidden">
+              <div className="sub-news-img h-full w-[800px] bg-blue-500 rounded-[30px] overflow-hidden">
             <img src={require('../../assets/top-news.avif')} alt="" />
               </div>
               <div className="sub-news-desc w-[1600px] p-4">

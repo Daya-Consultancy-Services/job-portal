@@ -120,7 +120,7 @@ export function fetchSkillProfiles(token) {
             // Update Redux state with certificates
             dispatch(setskillprofiles(response.data.data));
 
-            toast.success("Certificates fetched successfully");
+            // toast.success("Certificates fetched successfully");
         } catch (error) {
             console.error("Error fetching certificates:", error);
             toast.error(error.response?.data?.message);

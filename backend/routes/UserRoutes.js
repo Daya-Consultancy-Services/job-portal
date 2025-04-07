@@ -17,6 +17,7 @@ const {
     changePassword,
     searchJobs,
     getJobDetails,
+    getAllJobs
     
 } = require("../controllers/Usercontrol")
 
@@ -49,6 +50,8 @@ router.post("/applyjob",auth,isJobseeker,applyJobs)
 router.get("/getappliedjob",auth,isJobseeker,getAppliedJobs)
 router.get('/search', auth,isJobseeker, searchJobs);
 router.get("/job/:jobId", auth, isJobseeker, getJobDetails);
+router.get("/getalljobs",getAllJobs);
+
 
 
 

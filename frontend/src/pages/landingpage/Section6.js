@@ -46,7 +46,7 @@ function Section6() {
                     return(
                         <div key={index} className="grid-item-1 h-[100vh] w-full flex gap-10 justify-center">
              
-                        <div className="image h-[500px] w-[500px] bg-zinc-200 border rounded-[30px] overflow-hidden flex justify-center items-center shadow-md">
+                        <div className="image h-[450px] w-[450px] bg-zinc-200 border rounded-[30px] overflow-hidden flex justify-center items-center shadow-md">
                             <img className='hover:h-[520px] hover:w-[520px] ease-in object-center ' src={require(`../../assets/${card.imageUrl}`)} alt='card'></img>
                             </div>
                         <div className="vid-instr w-[40%] h-full flex justify-center items-center relative ">

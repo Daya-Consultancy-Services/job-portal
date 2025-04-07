@@ -282,7 +282,7 @@ export function fetchCompany(token) {
             }
             console.log("in company api",response.data.data)
             dispatch(setCompany(response.data.data));
-            toast.success("Company fetched successfully");
+            // toast.success("Company fetched successfully");
 
         } catch (error) {
             console.log("FETCH_PROFILE_IMAGE_API ERROR............", error);

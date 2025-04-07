@@ -261,6 +261,7 @@ exports.getAlldetailAdmin = async (req, res) => {
   try {
     const adminId = req.user.id;
     const adminDetails = await Admin.findById(adminId);
+    
 
     if (!adminDetails) {
       return res.status(404).json({
@@ -272,7 +273,7 @@ exports.getAlldetailAdmin = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "All admin details fetched successfully",
-      data: adminDetails.admin,
+      data: adminDetails,
     });
   } catch (e) {
     console.log(e);
@@ -301,6 +302,25 @@ exports.logoutAdmin = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Logout failed, please try again",
+    });
+  }
+};
+
+// Add this function to your admin controller (adminController.js)
+exports.checkAdminExists = async (req, res) => {
+  try {
+    // Check if any admin exists in the database
+    const adminCount = await Admin.countDocuments();
+    
+    return res.status(200).json({
+      success: true,
+      exists: adminCount > 0
+    });
+  } catch (error) {
+    console.error("Error checking admin existence:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to check admin existence"
     });
   }
 };

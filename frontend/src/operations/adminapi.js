@@ -1,6 +1,6 @@
 import { toast } from 'react-hot-toast'
 import { adminPoint } from '../operations/apis'
-import { setAdmin, setToken , setLoading, setAllCompany, setAllAdminData } from '../slices/adminSlice'
+import { setAdmin, setToken , setLoading, setAllCompany, setAllAdminData, setAdminExists } from '../slices/adminSlice'
 import { apiConnector } from '../services/apiConnector';
 
 
@@ -12,7 +12,10 @@ const {
     deleteAdmin_api,
     tokenCompany_api,
     getallCompany_api,
-    uploadAdminImage
+    uploadAdminImage,
+    checkAdminExists_api,
+    getAdmin_api
+
 
 } = adminPoint
 
@@ -24,7 +27,7 @@ export function createAdmin(formData) {
         dispatch(setLoading(true)); 
         try {
             const response = await apiConnector("POST", createAdmin_api, formData);
-            console.log("CreateAdmin API response........", response);
+            // console.log("CreateAdmin API response........", response);
 
             if (!response.data.success) {
                 throw new Error(response.data.message);
@@ -49,7 +52,7 @@ export function loginAdmin(formData, navigate) {
         dispatch(setLoading(true))
         try {
             const response = await apiConnector("POST",loginAdmin_api, formData)
-            console.log("Login Admin_Api Response.......", response)
+            // console.log("Login Admin_Api Response.......", response)
 
             if (!response.data.success) {
                 throw new Error(response.data.message);
@@ -79,7 +82,7 @@ export function updateAdmin(token, updatedData) {
             const response = await apiConnector('PUT', updateAdmin_api, updatedData, {
                 Authorization: `Bearer ${token}`,
             });
-            console.log("UPDATE_Admin_API RESPONSE............", response);
+            // console.log("UPDATE_Admin_API RESPONSE............", response);
 
             if (!response.data.success) {
                 throw new Error(response.data.message);
@@ -109,7 +112,7 @@ export function deleteAdmin(token, navigate) {
             const response = await apiConnector("DELETE", deleteAdmin_api, null, {
                 Authorization: `Bearer ${token}`,
             });
-            console.log("DELETE_Admin_API RESPONSE............", response);
+            // console.log("DELETE_Admin_API RESPONSE............", response);
 
             if (!response.data.success) {
                 throw new Error(response.data.message);
@@ -127,6 +130,62 @@ export function deleteAdmin(token, navigate) {
     }
 }
 
+export function getAllAdminDetail(token) {
+    return async (dispatch) => {
+        const toastId = toast.loading("Fetching admin details...");
+        dispatch(setLoading(true));
+        try {
+            const response = await apiConnector(
+                "GET",
+                getAdmin_api,
+                null,
+                {
+                    Authorization: `Bearer ${token}`
+                }
+            );
+            
+            // console.log("GET_ADMIN_DETAILS_API RESPONSE............", response);
+            
+            if (!response.data.success) {
+                throw new Error(response.data.message);
+               
+            }
+            
+            
+            dispatch(setAllAdminData(response.data.data));
+            
+
+        } catch (error) {
+            console.error("GET_ADMIN_DETAILS_API error............", error);
+            toast.error("Could not fetch admin details");
+        } finally {
+            dispatch(setLoading(false)); 
+            toast.dismiss(toastId);
+        }
+    };
+}
+
+export function checkAdminExists() {
+    return async (dispatch) => {
+      dispatch(setLoading(true));
+      try {
+        const response = await apiConnector("GET", checkAdminExists_api);
+        
+        if (!response.data.success) {
+          throw new Error(response.data.message);
+        }
+        
+        dispatch(setAdminExists(response.data.exists));
+      } catch (error) {
+        console.error("Check admin exists API error:", error);
+        // Default to false if there's an error
+        dispatch(setAdminExists(false));
+      } finally {
+        dispatch(setLoading(false));
+      }
+    };
+  }
+
 
 export function uploadImage(token, file) {
     return async (dispatch) => {
@@ -140,7 +199,7 @@ export function uploadImage(token, file) {
             const response = await apiConnector("POST", uploadAdminImage, formData, {
                 Authorization: `Bearer ${token}`,
             });
-            console.log("UPLOAD_ADMIN_IMAGE_API RESPONSE............", response);
+            // console.log("UPLOAD_ADMIN_IMAGE_API RESPONSE............", response);
 
             if (!response.data.success) {
                 throw new Error(response.data.message);
@@ -180,7 +239,7 @@ export function tokenCompanys(token,companyId,jobToken,userDetailAccessCount,isB
             {
                 Authorization: `Bearer ${token}`,
             });
-            console.log("Admin_JobToken_API RESPONSE............", response);
+            // console.log("Admin_JobToken_API RESPONSE............", response);
 
             if (!response.data.success) {
                 throw new Error(response.data.message);
@@ -219,7 +278,7 @@ export function adminfetchAllCompany(token) {
             }
             
             dispatch(setAllCompany(response.data.data));
-            toast.success("Admin fetched Allcompany successfully");
+          
 
         } catch (error) {
             console.log("Admin fetched Allcompany ERROR............", error);

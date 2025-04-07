@@ -1,14 +1,26 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { checkAdminExists } from '../operations/adminapi';
+// Update with correct path
 
 function Header() {
+  const dispatch = useDispatch();
+  const { adminExists } = useSelector(state => state.admin);
+  
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isDropdownValue, setIsDropdownValue] = useState(() => {
     // Initialize from localStorage, default to "User" if not set
     return localStorage.getItem('userType') || "User";
   });
   const [hovered, setHovered] = useState(null);
+
+  // Check if admin exists when component mounts or dropdown value changes to Admin
+  useEffect(() => {
+    if (isDropdownValue === "Admin") {
+      dispatch(checkAdminExists());
+    }
+  }, [dispatch, isDropdownValue]);
 
   // Update localStorage when dropdown value changes
   useEffect(() => {
@@ -60,6 +72,15 @@ function Header() {
     }
   })();
 
+  const showSignupButton = () => {
+    if (isDropdownValue === "Recruiter") {
+      return false; 
+    } else if (isDropdownValue === "Admin" && adminExists) {
+      return false;
+    }
+    return true; 
+  };
+
   const linkStyle = (index) => ({
     position: 'relative',
     fontWeight: '600',
@@ -98,7 +119,7 @@ function Header() {
             </div>
           </Link>
 
-          <div className="navabar w-[40%] h-[40px]">
+          {/* <div className="navabar w-[40%] h-[40px]">
             <nav className="h-full w-full">
               <ul className="flex gap-[10%] items-center justify-center h-full w-full">
                 <li
@@ -130,15 +151,18 @@ function Header() {
                 </li>
               </ul>
             </nav>
-          </div>
+          </div> */}
           <div className="buttons w-[500px] h-[40px] flex justify-center gap-[5%] pl-2 pr-2">
-            <Link to={loginPath} className={isDropdownValue === "Recruiter" ? "w-[80%]" : "w-[40%]"}>
+            <Link 
+              to={loginPath} 
+              className={showSignupButton() ? "w-[40%]" : "w-[80%]"}
+            >
               <button className="pl-2 pr-2 bg-white w-full h-full rounded-full border font-semibold text-black transition-all duration-200 ease-in-out hover:bg-zinc-200">
                 Login
               </button>
             </Link>
 
-            {isDropdownValue !== "Recruiter" && (
+            {showSignupButton() && (
               <Link to={registerPath} className="w-[40%]">
                 <button className="pl-2 pr-2 bg-pink-300 w-full h-full rounded-full font-semibold text-white border transition-all duration-200 ease-in-out hover:text-white hover:bg-pink-400">
                   Sign Up
@@ -204,7 +228,6 @@ function Header() {
                           onClick={() => handleOptionSelect("Admin")}
                         >
                           Admin
-                       
                         </button>
                       </li>
                     </ul>

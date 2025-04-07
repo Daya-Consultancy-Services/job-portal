@@ -126,7 +126,7 @@ export function getOnlineProfiles(token,navigate){
             dispatch(setOnlineprofile(response.data.data));
 
             //dispatch(setUser({ ...response.data.onlineprofile }));
-            toast.success("OnlineProfle_GET_API successfully!");
+            // toast.success("OnlineProfle_GET_API successfully!");
         } catch (error) {
             console.error("OnlineProfle_GET_API error:", error);
             toast.error("Could not get the OnlineProfle_GET_API.");

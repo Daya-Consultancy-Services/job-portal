@@ -11,6 +11,7 @@ const initialState = {
         companies: [],
         jobs: []
     },
+    alluserjob:[],
 };
 
 const userSlice = createSlice({
@@ -50,9 +51,14 @@ const userSlice = createSlice({
                 companies: [],
                 jobs: []
             };
+        },
+        setalluserjob(state, action){
+            state.alluserjob = action.payload
+            console.log(state.alluserjob);
+
         }
     },
 });
 
-export const { setSignupData, setLoading, setToken, setUser,setalljob,setappliedjobs, setSearchLoading, setSearchResults, clearSearchResults } = userSlice.actions;
+export const { setSignupData, setLoading, setToken, setUser,setalljob,setappliedjobs, setSearchLoading, setSearchResults, clearSearchResults, setalluserjob } = userSlice.actions;
 export default userSlice.reducer;

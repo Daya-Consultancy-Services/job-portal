@@ -130,7 +130,7 @@ export function fetchEducationProfile(token) {
             
             dispatch(setEducation(response.data.data));
 
-            toast.success("EducationProfiles fetched successfully");
+            // toast.success("EducationProfiles fetched successfully");
         } catch (error) {
             console.error("Error fetching EducationProfiles:", error);
             toast.error("Failed to fetch EducationProfiles");
